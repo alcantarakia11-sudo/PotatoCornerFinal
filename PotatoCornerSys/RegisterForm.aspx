@@ -390,7 +390,9 @@
                 <div class="form-grid">
                     <div class="form-group two-col">
                         <label class="form-label">Full Name <span class="required">*</span></label>
-                        <asp:TextBox ID="txtFullName" runat="server" CssClass="form-input" placeholder="Enter your full name"></asp:TextBox>
+                                           <asp:TextBox ID="txtFullName" runat="server" CssClass="form-input" placeholder="Enter your full name"
+onkeypress="return /[a-zA-Z ]/.test(String.fromCharCode(event.charCode))"
+oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')"></asp:TextBox>
                     </div>
 
                     <div class="form-group">
@@ -400,7 +402,10 @@
 
                     <div class="form-group">
                         <label class="form-label">Contact Number <span class="required">*</span></label>
-                        <asp:TextBox ID="txtContact" runat="server" CssClass="form-input" placeholder="09XX XXX XXXX"></asp:TextBox>
+                                          <asp:TextBox ID="txtContact" runat="server" CssClass="form-input" placeholder="09XX XXX XXXX"
+onkeypress="return /[0-9]/.test(String.fromCharCode(event.charCode))"
+oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+MaxLength="11"></asp:TextBox>
                     </div>
 
                     <div class="form-group">
