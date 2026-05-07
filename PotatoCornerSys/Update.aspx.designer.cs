@@ -14,6 +14,7 @@ namespace PotatoCornerSys
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         protected global::System.Web.UI.WebControls.LinkButton lnkSales;
         protected global::System.Web.UI.WebControls.LinkButton lnkUpdate;
+        protected global::System.Web.UI.WebControls.LinkButton lnkActivityLog;
         protected global::System.Web.UI.WebControls.LinkButton lnkProfile;
         protected global::System.Web.UI.WebControls.Panel pnlLowStockAlert;
         protected global::System.Web.UI.WebControls.Label lblLowStockItems;

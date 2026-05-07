@@ -39,6 +39,11 @@ namespace PotatoCornerSys
             Response.Redirect("~/ProfileAdmin.aspx");
         }
 
+        protected void lnkActivityLog_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("~/ActivityLog.aspx");
+        }
+
         protected void btnSalesTab_Click(object sender, EventArgs e)
         {
             Response.Redirect("~/Sales.aspx");

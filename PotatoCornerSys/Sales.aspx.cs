@@ -285,6 +285,14 @@ namespace PotatoCornerSys
 
                 conn.Open();
                 cmd.ExecuteNonQuery();
+                
+                // Log activity
+                string adminUser = Session["UserName"]?.ToString() ?? "Admin";
+                ActivityLog.LogActivity("Order Status Change", 
+                    $"Order #{orderID} status changed from Pending to Confirmed", 
+                    adminUser, 
+                    $"Order #{orderID}", 
+                    "Info");
             }
         }
 
@@ -299,6 +307,14 @@ namespace PotatoCornerSys
 
                 conn.Open();
                 cmd.ExecuteNonQuery();
+                
+                // Log activity
+                string adminUser = Session["UserName"]?.ToString() ?? "Admin";
+                ActivityLog.LogActivity("Order Status Change", 
+                    $"Order #{orderID} status changed to {status}", 
+                    adminUser, 
+                    $"Order #{orderID}", 
+                    "Info");
             }
         }
 
@@ -366,6 +382,11 @@ namespace PotatoCornerSys
         protected void lnkProfile_Click(object sender, EventArgs e)
         {
             Response.Redirect("~/ProfileAdmin.aspx");
+        }
+
+        protected void lnkActivityLog_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("~/ActivityLog.aspx");
         }
 
         protected void ddlStatusFilter_SelectedIndexChanged(object sender, EventArgs e)

@@ -9,21 +9,20 @@
 
 namespace PotatoCornerSys
 {
-    public partial class Sales
+    public partial class ActivityLog
     {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
-        protected global::System.Web.UI.ScriptManager ScriptManager1;
         protected global::System.Web.UI.WebControls.LinkButton lnkSales;
         protected global::System.Web.UI.WebControls.LinkButton lnkUpdate;
         protected global::System.Web.UI.WebControls.LinkButton lnkActivityLog;
         protected global::System.Web.UI.WebControls.LinkButton lnkProfile;
-        protected global::System.Web.UI.WebControls.Label lblTotalUsers;
-        protected global::System.Web.UI.WebControls.Label lblTotalRevenue;
-        protected global::System.Web.UI.WebControls.Label lblTotalOrders;
-        protected global::System.Web.UI.WebControls.DropDownList ddlStatusFilter;
-        protected global::System.Web.UI.WebControls.Label lblOrderCount;
-        protected global::System.Web.UI.WebControls.GridView gvOrders;
-        protected global::System.Web.UI.WebControls.Label lblMembershipPendingCount;
-        protected global::System.Web.UI.WebControls.GridView gvMembershipRequests;
+        protected global::System.Web.UI.WebControls.DropDownList ddlActivityType;
+        protected global::System.Web.UI.WebControls.DropDownList ddlSeverity;
+        protected global::System.Web.UI.WebControls.TextBox txtDateFrom;
+        protected global::System.Web.UI.WebControls.TextBox txtDateTo;
+        protected global::System.Web.UI.WebControls.Button btnFilter;
+        protected global::System.Web.UI.WebControls.Button btnClear;
+        protected global::System.Web.UI.WebControls.Label lblLogCount;
+        protected global::System.Web.UI.WebControls.GridView gvActivityLog;
     }
 }
