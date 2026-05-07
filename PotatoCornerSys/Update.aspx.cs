@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -20,10 +20,9 @@ namespace PotatoCornerSys
         {
             if (!IsPostBack)
             {
-                // ✅ Fixed - removed MembershipLevel check
-                if (Session["UserName"] == null)
+                if (Session["UserName"] == null || Session["MembershipLevel"]?.ToString() != "Admin")
                 {
-                    Response.Redirect("~/AdminLogin.aspx");
+                    Response.Redirect("~/Login.aspx");
                 }
                 LoadStockData();
                 CheckLowStock();
@@ -34,6 +33,7 @@ namespace PotatoCornerSys
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
+                // Get product sizes stock - use DISTINCT to avoid duplicates
                 string query = @"SELECT DISTINCT
                                     pss.StockID AS ProductID,
                                     p.ProductName + ' - ' + ps.SizeName AS ProductName,
@@ -103,7 +103,7 @@ namespace PotatoCornerSys
                 if (hasLowStock)
                 {
                     pnlLowStockAlert.Visible = true;
-                    lblLowStockItems.Text = "The following items are running low: " +
+                    lblLowStockItems.Text = "The following items are running low: " + 
                         lowStockItems.ToString().TrimEnd(',', ' ');
                 }
                 else
@@ -141,7 +141,7 @@ namespace PotatoCornerSys
                 int productID = Convert.ToInt32(e.CommandArgument);
                 GridViewRow row = (GridViewRow)((Button)e.CommandSource).NamingContainer;
                 TextBox txtAddStock = (TextBox)row.FindControl("txtAddStock");
-
+                
                 int addStock = 0;
                 if (int.TryParse(txtAddStock.Text, out addStock) && addStock > 0)
                 {
@@ -156,6 +156,7 @@ namespace PotatoCornerSys
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
+                // Try updating ProductSizeStock first
                 string querySizeStock = @"UPDATE ProductSizeStock 
                                 SET StockQuantity = StockQuantity + @AddStock,
                                     LastUpdated = GETDATE()
@@ -168,6 +169,7 @@ namespace PotatoCornerSys
                 conn.Open();
                 int rowsAffected = cmd.ExecuteNonQuery();
 
+                // If no rows affected, try FlavorStock
                 if (rowsAffected == 0)
                 {
                     string queryFlavorStock = @"UPDATE FlavorStock 
@@ -185,7 +187,7 @@ namespace PotatoCornerSys
 
         protected void lnkSales_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/Sale.aspx"); // ✅ Fixed typo
+            Response.Redirect("~/Sales.aspx");
         }
 
         protected void lnkUpdate_Click(object sender, EventArgs e)

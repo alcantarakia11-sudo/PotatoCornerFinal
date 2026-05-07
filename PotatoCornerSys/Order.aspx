@@ -4,12 +4,10 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>Potato Corner - Order</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: linear-gradient(135deg, #f0f4f8 0%, #e8eef3 100%); overflow: hidden; }
         
-        /* NAVBAR */
         .navbar { 
             background: linear-gradient(135deg, #119247 0%, #0d7336 100%); 
             padding: 15px 50px; 
@@ -41,28 +39,27 @@
             box-shadow: 0 4px 12px rgba(232,64,28,0.3);
             transition: all 0.3s;
         }
-        .navbar-links .btn-order-nav::after { display: none; }
-        .navbar-links .btn-order-nav:hover {
-            background: linear-gradient(135deg, #c73516 0%, #a82a12 100%);
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(232,64,28,0.4);
+
+        .navbar-links .btn-order-nav::after {
+            display: none;
         }
 
-         /* ACTIVE NAV LINK */
-
-        .navbar-links .active { color: #f5c800 !important; }
-        .navbar-links .active::after { width: 0 !important; }
-
+        .navbar-links .btn-order-nav:hover {
+           background: linear-gradient(135deg, #c73516 0%, #a82a12 100%);
+           color: white;
+           transform: translateY(-3px);
+           box-shadow: 0 6px 16px rgba(232,64,28,0.4);
+        }
+        
         .pos-container { display: grid; grid-template-columns: 300px 1fr 380px; gap: 20px; padding: 20px; height: calc(100vh - 110px); overflow: hidden; }
         
         .left-panel { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow-y: auto; border: 1px solid rgba(17,146,71,0.1); }
         .panel-title { font-size: 17px; font-weight: 900; color: #119247; text-transform: uppercase; margin-bottom: 18px; border-bottom: 4px solid #f5c800; padding-bottom: 10px; letter-spacing: 0.5px; }
         .input-group { margin-bottom: 16px; }
         .input-group label { display: block; font-size: 13px; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
-        .input-group input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; transition: all 0.3s; }
-        .input-group input:focus { border-color: #119247; outline: none; box-shadow: 0 0 0 3px rgba(17,146,71,0.1); }
-        .input-group input[readonly] { background: #f0f0f0; cursor: not-allowed; color: #555; }
+        .input-group input, .input-group select { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; transition: all 0.3s; }
+        .input-group input:focus, .input-group select:focus { border-color: #119247; outline: none; box-shadow: 0 0 0 3px rgba(17,146,71,0.1); }
+        .input-group input.readonly-field { background: #f5f5f5; color: #666; cursor: not-allowed; }
 
         /* VALIDATION STYLES */
         .field-error { display: block; color: #dc3545; font-size: 11px; font-weight: 600; margin-top: 5px; min-height: 16px; transition: all 0.2s; }
@@ -126,6 +123,21 @@
         .btn-confirm:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(17,146,71,0.4); }
         .btn-confirm:active { transform: translateY(0); }
         
+        /* FILE UPLOAD STYLING */
+        .file-upload-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .file-upload-input:hover {
+            border-color: #119247;
+            background: #f8f9fa;
+        }
+        
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #119247; border-radius: 10px; }
@@ -148,94 +160,11 @@
         .modal-btn-cancel:hover { background: #d0d0d0; }
         .modal-btn-confirm { background: linear-gradient(135deg, #119247 0%, #0d7336 100%); color: white; }
         .modal-btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(17,146,71,0.4); }
-
-        /* LOGIN REQUIRED MODAL */
-        .login-modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.65);
-            z-index: 99999;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(4px);
-        }
-
-        .login-modal-overlay.active { display: flex; }
-
-        .login-modal-box {
-            background: white;
-            border-radius: 20px;
-            padding: 36px 32px;
-            max-width: 420px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-            text-align: center;
-            animation: loginModalIn 0.25s ease-out;
-        }
-
-        @keyframes loginModalIn {
-            from { transform: translateY(-24px) scale(0.97); opacity: 0; }
-            to   { transform: translateY(0) scale(1); opacity: 1; }
-        }
-
-        .login-modal-icon { font-size: 48px; margin-bottom: 12px; }
-        .login-modal-head {
-            font-size: 26px;
-            font-weight: 900;
-            color: #119247;
-            margin-bottom: 10px;
-        }
-
-        .login-modal-msg {
-           font-size: 14px;
-           color: #666;
-           margin-bottom: 28px;
-           line-height: 1.6;
-        }
-
-        .login-modal-btn-group {
-           display: flex;
-           gap: 12px;
-           margin-bottom: 16px;
-        }
-
-        .btn-login-modal {
-           flex: 1; padding: 14px; border: none; border-radius: 10px;
-           background: linear-gradient(135deg, #119247 0%, #0d7336 100%);
-           color: white; font-size: 15px; font-weight: 800;
-           text-transform: uppercase; cursor: pointer; text-decoration: none;
-           display: flex; align-items: center; justify-content: center;
-           transition: all 0.3s; letter-spacing: 1px;
-        }
-
-        .btn-login-modal:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(17,146,71,0.4); }
-
-        .btn-create-modal {
-           flex: 1; padding: 14px; border: none; border-radius: 10px;
-           background: linear-gradient(135deg, #e8401c 0%, #c73516 100%);
-           color: white; font-size: 15px; font-weight: 800;
-           text-transform: uppercase; cursor: pointer; text-decoration: none;
-           display: flex; align-items: center; justify-content: center;
-           transition: all 0.3s; letter-spacing: 1px;
-        }
-
-        .btn-create-modal:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(232,64,28,0.4); }
-
-        .btn-browse-modal {
-           background: none; border: none; color: #999;
-           font-size: 13px; cursor: pointer; text-decoration: underline; margin-top: 4px;
-        }
-
-        .btn-browse-modal:hover { color: #555; }
-
     </style>
 </head>
 <body>
     <form id="form1" runat="server">
         <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true"></asp:ScriptManager>
-
-        <!-- NAVBAR -->
         <div class="navbar">
             <div class="navbar-logo">
                 <img src="logopotcor.png" alt="Potato Corner" />
@@ -245,7 +174,7 @@
                 <li><a href="Menu.aspx">Menu</a></li>
                 <li><a href="Membership.aspx">Membership</a></li>
                 <li><a href="AboutUs.aspx">About Us</a></li>
-                <li><a href="Order.aspx" class="btn-order-nav active">Order Now</a></li>
+                <li><a href="Order.aspx" class="btn-order-nav">Order Now</a></li>
                 <li><asp:LinkButton ID="lnkProfile" runat="server" ForeColor="White" Font-Bold="true" Text="Profile" OnClick="lnkProfile_Click"></asp:LinkButton></li>
             </ul>
         </div>
@@ -257,17 +186,35 @@
 
                 <div class="input-group">
                     <label>Name</label>
-                    <asp:TextBox ID="txtName" runat="server" placeholder="Enter full name" ReadOnly="true" Style="background:#f0f0f0; cursor:not-allowed;"></asp:TextBox>
+                    <asp:TextBox ID="txtName" runat="server" placeholder="Your name" ReadOnly="true" CssClass="readonly-field"></asp:TextBox>
                     <span id="errName" class="field-error"></span>
                 </div>
                 <div class="input-group">
-                    <label>Address</label>
-                    <asp:TextBox ID="txtAddress" runat="server" placeholder="Enter address"></asp:TextBox>
-                    <span id="errAddress" class="field-error"></span>
+                    <label>Location</label>
+                    <asp:DropDownList ID="ddlLocation" runat="server" CssClass="input-group input" onchange="checkLocationAvailability()">
+                        <asp:ListItem Value="" Text="-- Select Location --"></asp:ListItem>
+                        <asp:ListItem Value="Balisong|Delivery" Text="Balisong (Delivery)"></asp:ListItem>
+                        <asp:ListItem Value="Talo-ot|Delivery" Text="Talo-ot (Delivery)"></asp:ListItem>
+                        <asp:ListItem Value="Tulic|Delivery" Text="Tulic (Delivery)"></asp:ListItem>
+                        <asp:ListItem Value="Talaga|Delivery" Text="Talaga (Delivery)"></asp:ListItem>
+                        <asp:ListItem Value="Bogo|Delivery" Text="Bogo (Delivery)"></asp:ListItem>
+                        <asp:ListItem Value="Binlod|Delivery" Text="Binlod (Delivery)"></asp:ListItem>
+                        <asp:ListItem Value="Bulasa|Delivery" Text="Bulasa (Delivery)"></asp:ListItem>
+                        <asp:ListItem Value="Poblacion|Both" Text="Poblacion"></asp:ListItem>
+                        <asp:ListItem Value="Lamacan|Both" Text="Lamacan"></asp:ListItem>
+                        <asp:ListItem Value="Langtad|Both" Text="Langtad"></asp:ListItem>
+                        <asp:ListItem Value="Canbanua|Both" Text="Canbanua"></asp:ListItem>
+                    </asp:DropDownList>
+                    <span id="errLocation" class="field-error"></span>
+                </div>
+                <div class="input-group">
+                    <label>Street Address</label>
+                    <asp:TextBox ID="txtStreet" runat="server" placeholder="Enter street address"></asp:TextBox>
+                    <span id="errStreet" class="field-error"></span>
                 </div>
                 <div class="input-group">
                     <label>Contact</label>
-                    <asp:TextBox ID="txtContact" runat="server" placeholder="e.g. 09123456789"></asp:TextBox>
+                    <asp:TextBox ID="txtContact" runat="server" placeholder="e.g. 09123456789" MaxLength="11"></asp:TextBox>
                     <span id="errContact" class="field-error"></span>
                 </div>
 
@@ -431,14 +378,12 @@
                         <asp:Button ID="btnPoints" runat="server" Text="Points" CssClass="option-btn" OnClick="btnPayment_Click" CausesValidation="false" />
                     </div>
                     <asp:HiddenField ID="hdnPaymentMethod" runat="server" Value="" />
-                    <div class="input-group" style="margin-top:12px;">
-                        <label>Amount Paid</label>
-                        <asp:TextBox ID="txtAmountPaid" runat="server" placeholder="Enter amount" TextMode="Number"></asp:TextBox>
-                    </div>
+                    <asp:HiddenField ID="hdnGeneratedReference" runat="server" />
                 </div>
 
                 <asp:Label ID="lblErrorMsg" runat="server" CssClass="status-msg status-error" Visible="false" Style="margin-top:12px;"></asp:Label>
-                <asp:Button ID="btnConfirm" runat="server" Text="Confirm Order" CssClass="btn-confirm" OnClick="btnConfirm_Click" />
+                <asp:Button ID="btnConfirm" runat="server" Text="Confirm Order" CssClass="btn-confirm" OnClientClick="return handleConfirmOrder();" OnClick="btnConfirm_Click" />
+                <asp:HiddenField ID="hdnShowQRModal" runat="server" Value="false" />
             </div>
         </div>
 
@@ -460,49 +405,144 @@
                 </div>
             </div>
         </div>
-        <!-- LOGIN REQUIRED MODAL -->
-        <div id="loginRequiredModal" class="login-modal-overlay">
-            <div class="login-modal-box">
-                <div class="login-modal-icon">🛒</div>
-                <div class="login-modal-head">Login Required</div>
-                <div class="login-modal-msg">
-                    You need to be logged in to place an order.
-                    Create an account to start ordering your
-                    favorite <strong>Potato Corner</strong> flavors!
+
+        <!-- LOCATION NOT AVAILABLE MODAL -->
+        <div id="locationModal" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-header" style="color: #e8401c;">Location Not Available</div>
+                <div class="modal-message">This location is only available for delivery orders. Please select "Delivery" as your delivery type or choose a different location that supports walk-in.</div>
+                <div class="modal-buttons">
+                    <button type="button" class="modal-btn modal-btn-confirm" onclick="hideLocationModal()" style="width: 100%;">OK</button>
                 </div>
-                <div class="login-modal-btn-group">
-                    <a href="Login.aspx" class="btn-login-modal">Login</a>
-                    <a href="Register.aspx" class="btn-create-modal">Create Account</a>
+            </div>
+        </div>
+
+        <!-- PAYMENT QR CODE MODAL (Phase 2.5 - 2 Column Grid) -->
+        <div id="qrCodeModal" class="modal-overlay">
+            <div class="modal-box" style="max-width: 650px; padding: 24px;">
+                <div class="modal-header" style="margin-bottom: 8px;">Scan QR Code to Pay</div>
+                <div class="modal-message" style="margin-bottom: 20px; font-size: 13px;">
+                    Scan the QR code to get your payment reference, then enter it below
+                </div>
+                
+                <!-- 2x2 Grid Layout -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+                    <!-- LEFT SIDE: QR CODE -->
+                    <div style="background: white; padding: 16px; border-radius: 10px; text-align: center; border: 2px solid #e8f5ee;">
+                        <div style="background: linear-gradient(135deg, #f5c800 0%, #e8b000 100%); padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                            <div style="font-size: 20px; font-weight: 900; color: #1a1a1a;">
+                                PHP <asp:Label ID="lblQRTotal" runat="server" Text="0.00"></asp:Label>
+                            </div>
+                            <div style="font-size: 11px; color: #1a1a1a; opacity: 0.8;">Total Amount</div>
+                        </div>
+                        
+                        <img id="qrCodeImage" src="" alt="Payment QR Code" style="width: 100%; max-width: 220px; height: auto; aspect-ratio: 1; border: 3px solid #119247; border-radius: 10px; padding: 8px; background: white;" />
+                        
+                        <div style="margin-top: 12px; padding: 10px; background: #e3f2fd; border-radius: 6px; border-left: 3px solid #119247;">
+                            <div style="font-size: 11px; color: #0d47a1; font-weight: 600; line-height: 1.4;">
+                                📱 Use your phone camera or QR scanner app
+                            </div>
+                        </div>
                     </div>
-                 <button type="button" class="btn-browse-modal" onclick="window.location.href='Default.aspx'">
-                    Continue browsing
-                </button>
+                    
+                    <!-- RIGHT SIDE: REFERENCE INPUT -->
+                    <div style="background: #f8f9fa; padding: 16px; border-radius: 10px; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid #e0e0e0;">
+                        <div>
+                            <div style="font-size: 13px; font-weight: 800; color: #119247; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.3px;">
+                                Enter Payment Reference
+                            </div>
+                            <div style="font-size: 11px; color: #666; margin-bottom: 12px; line-height: 1.5;">
+                                After scanning the QR code, you will see a reference number. Enter it below to confirm your payment.
+                            </div>
+                            <asp:TextBox ID="txtPaymentReferenceModal" runat="server" 
+                                placeholder="e.g., REF-2024-001234"
+                                CssClass="file-upload-input"
+                                MaxLength="50"
+                                style="text-transform: uppercase; font-family: monospace; font-size: 14px; font-weight: 600; width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;"></asp:TextBox>
+                            <div id="modalRefError" style="color: #dc3545; font-size: 11px; font-weight: 600; margin-top: 6px; min-height: 16px;"></div>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 12px;">
+                            <asp:Button ID="btnSubmitPaymentModal" runat="server" 
+                                Text="Done" 
+                                CssClass="modal-btn modal-btn-confirm" 
+                                OnClientClick="return validateAndSubmitReference();"
+                                OnClick="btnSubmitPaymentModal_Click"
+                                style="padding: 10px 32px; font-size: 13px; font-weight: 700; background: linear-gradient(135deg, #119247 0%, #0d7336 100%); color: white; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s; display: inline-block;" />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
 
     <script>
-        // LOGIN MODAL
-        var isLoggedIn = '<%= Session["IsLoggedIn"] %>';
-
-        function showLoginRequiredModal() {
-            document.getElementById('loginRequiredModal').classList.add('active');
+        // ── QR CODE MODAL ──
+        function showQRCodeModal(paymentMethod, total) {
+            document.getElementById('<%= lblQRTotal.ClientID %>').textContent = total;
+            
+            // Get the generated reference from hidden field
+            var reference = document.getElementById('<%= hdnGeneratedReference.ClientID %>').value;
+            
+            // Create QR code data (this is what customer sees when they scan)
+            var qrData = 'PAYMENT SUCCESSFUL!\n' +
+                        'Merchant: Potato Corner\n' +
+                        'Amount: PHP ' + total + '\n' +
+                        'Reference: ' + reference + '\n' +
+                        'Date: ' + new Date().toLocaleString();
+            
+            // Generate QR code image
+            var qrImage = document.getElementById('qrCodeImage');
+            qrImage.src = 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=' + encodeURIComponent(qrData);
+            
+            // Clear previous input and error
+            document.getElementById('<%= txtPaymentReferenceModal.ClientID %>').value = '';
+            document.getElementById('modalRefError').textContent = '';
+            
+            document.getElementById('qrCodeModal').classList.add('active');
         }
-
-        function hideLoginRequiredModal() {
-            document.getElementById('loginRequiredModal').classList.remove('active');
+        
+        function hideQRCodeModal() {
+            document.getElementById('qrCodeModal').classList.remove('active');
         }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            if (isLoggedIn !== 'True') {
-                showLoginRequiredModal();
+        
+        // Validate reference in modal before submitting
+        function validateAndSubmitReference() {
+            var enteredRef = document.getElementById('<%= txtPaymentReferenceModal.ClientID %>').value.trim().toUpperCase();
+            var generatedRef = document.getElementById('<%= hdnGeneratedReference.ClientID %>').value;
+            var errorDiv = document.getElementById('modalRefError');
+            
+            if (enteredRef === '') {
+                errorDiv.textContent = 'Please enter the payment reference number from the QR code.';
+                return false;
             }
-
-            document.getElementById('loginRequiredModal').addEventListener('click', function (e) {
-                if (e.target === this) hideLoginRequiredModal();
-            });
-        });
-
+            
+            if (!enteredRef.startsWith('REF-') || enteredRef.length < 15) {
+                errorDiv.textContent = 'Invalid reference format. Please scan the QR code and enter the correct reference.';
+                return false;
+            }
+            
+            if (enteredRef !== generatedRef) {
+                errorDiv.textContent = 'Reference number does not match. Please check and try again.';
+                return false;
+            }
+            
+            // Valid reference - allow form submission
+            return true;
+        }
+        
+        // Generate reference when payment method is selected
+        function generatePaymentReference() {
+            var timestamp = new Date().getTime();
+            var random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            var reference = 'REF-' + new Date().getFullYear() + '-' + timestamp.toString().slice(-6) + random;
+            
+            // Store in hidden field
+            document.getElementById('<%= hdnGeneratedReference.ClientID %>').value = reference;
+            
+            return reference;
+        }
+        
         // ── MODAL ──
         function showPickupTimeModal() {
             document.getElementById('pickupTimeModal').classList.add('active');
@@ -510,11 +550,36 @@
         function hidePickupTimeModal() {
             document.getElementById('pickupTimeModal').classList.remove('active');
         }
+        function showLocationModal() {
+            document.getElementById('locationModal').classList.add('active');
+        }
+        function hideLocationModal() {
+            document.getElementById('locationModal').classList.remove('active');
+        }
         function removeCartItem(index) {
             if (confirm('Remove this item from cart?')) {
                 __doPostBack('RemoveCartItem', index);
             }
         }
+        
+        // Check location availability
+        function checkLocationAvailability() {
+            var locationDropdown = document.getElementById('<%= ddlLocation.ClientID %>');
+            var deliveryType = document.getElementById('<%= hdnDeliveryType.ClientID %>').value;
+            var selectedValue = locationDropdown.value;
+            
+            if (selectedValue) {
+                var parts = selectedValue.split('|');
+                var locationType = parts[1];
+                
+                // If location is Delivery-only and user selected Walk-in
+                if (locationType === 'Delivery' && deliveryType === 'WalkIn') {
+                    showLocationModal();
+                    locationDropdown.selectedIndex = 0; // Reset to "Select Location"
+                }
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', function () {
             var modal = document.getElementById('pickupTimeModal');
             if (modal) {
@@ -522,14 +587,32 @@
                     if (e.target === this) hidePickupTimeModal();
                 });
             }
+            
+            var locationModalEl = document.getElementById('locationModal');
+            if (locationModalEl) {
+                locationModalEl.addEventListener('click', function (e) {
+                    if (e.target === this) hideLocationModal();
+                });
+            }
+            
+            var qrModalEl = document.getElementById('qrCodeModal');
+            if (qrModalEl) {
+                qrModalEl.addEventListener('click', function (e) {
+                    if (e.target === this) hideQRCodeModal();
+                });
+            }
         });
 
-        // ── REAL-TIME INPUT VALIDATION (Address & Contact only) ──
-        var addressInput = document.getElementById('<%= txtAddress.ClientID %>');
+        // ── REAL-TIME INPUT VALIDATION ──
+        var nameInput    = document.getElementById('<%= txtName.ClientID %>');
+        var streetInput  = document.getElementById('<%= txtStreet.ClientID %>');
         var contactInput = document.getElementById('<%= txtContact.ClientID %>');
+        var locationDropdown = document.getElementById('<%= ddlLocation.ClientID %>');
 
-        var errAddress = document.getElementById('errAddress');
+        var errName    = document.getElementById('errName');
+        var errStreet  = document.getElementById('errStreet');
         var errContact = document.getElementById('errContact');
+        var errLocation = document.getElementById('errLocation');
 
         function setValid(input, errEl) {
             input.classList.remove('invalid');
@@ -546,72 +629,158 @@
             errEl.textContent = '';
         }
 
-        // ADDRESS
-        addressInput.addEventListener('input', function () {
+        // NAME
+        nameInput.addEventListener('input', function () {
             var val = this.value.trim();
             if (val === '') {
-                clearState(this, errAddress);
-            } else if (val.length < 5) {
-                setInvalid(this, errAddress, 'Please enter a valid address (min 5 characters).');
-            } else if (!/^[a-zA-Z0-9\s,.\-#\/]+$/.test(val)) {
-                setInvalid(this, errAddress, 'Address contains invalid characters.');
+                clearState(this, errName);
+            } else if (val.length < 2) {
+                setInvalid(this, errName, 'Name must be at least 2 characters.');
+            } else if (/\d/.test(val)) {
+                setInvalid(this, errName, 'Name cannot contain numbers.');
+            } else if (!/^[a-zA-Z\s\-\.]+$/.test(val)) {
+                setInvalid(this, errName, 'Name can only contain letters, spaces, hyphens, or periods.');
             } else {
-                setValid(this, errAddress);
+                setValid(this, errName);
             }
         });
-        addressInput.addEventListener('blur', function () {
-            if (this.value.trim() === '') setInvalid(this, errAddress, 'Address is required.');
+        nameInput.addEventListener('blur', function () {
+            if (this.value.trim() === '') setInvalid(this, errName, 'Full name is required.');
         });
 
-        // CONTACT
+        // STREET ADDRESS
+        streetInput.addEventListener('input', function () {
+            var val = this.value.trim();
+            if (val === '') {
+                clearState(this, errStreet);
+            } else if (val.length < 5) {
+                setInvalid(this, errStreet, 'Please enter a valid street address (min 5 characters).');
+            } else if (!/^[a-zA-Z0-9\s,.\-#\/]+$/.test(val)) {
+                setInvalid(this, errStreet, 'Street address contains invalid characters.');
+            } else {
+                setValid(this, errStreet);
+            }
+        });
+        streetInput.addEventListener('blur', function () {
+            if (this.value.trim() === '') setInvalid(this, errStreet, 'Street address is required.');
+        });
+
+        // CONTACT — digits only, must be exactly 11 digits starting with 09
         contactInput.addEventListener('input', function () {
             this.value = this.value.replace(/[^0-9]/g, '');
             var val = this.value.trim();
             if (val === '') {
                 clearState(this, errContact);
             } else if (val.length < 11) {
-                setInvalid(this, errContact, 'Contact number must be 11 digits.');
-            } else if (val.length > 11) {
-                setInvalid(this, errContact, 'Contact number cannot exceed 11 digits.');
-            } else if (!/^09\d{9}$/.test(val)) {
+                setInvalid(this, errContact, 'Contact number must be exactly 11 digits.');
+            } else if (val.length === 11 && !/^09\d{9}$/.test(val)) {
                 setInvalid(this, errContact, 'Contact must start with 09 (e.g. 09123456789).');
-            } else {
+            } else if (val.length === 11) {
                 setValid(this, errContact);
             }
         });
         contactInput.addEventListener('blur', function () {
-            if (this.value.trim() === '') setInvalid(this, errContact, 'Contact number is required.');
+            var val = this.value.trim();
+            if (val === '') {
+                setInvalid(this, errContact, 'Contact number is required.');
+            } else if (val.length !== 11) {
+                setInvalid(this, errContact, 'Contact number must be exactly 11 digits.');
+            } else if (!/^09\d{9}$/.test(val)) {
+                setInvalid(this, errContact, 'Contact must start with 09.');
+            }
+        });
+
+        // LOCATION VALIDATION
+        locationDropdown.addEventListener('change', function () {
+            if (this.value === '') {
+                setInvalid(this, errLocation, 'Please select a location.');
+            } else {
+                setValid(this, errLocation);
+            }
         });
 
         // BLOCK CONFIRM if frontend validation fails
         var confirmBtn = document.getElementById('<%= btnConfirm.ClientID %>');
+        
+        function handleConfirmOrder() {
+            var nameVal = nameInput.value.trim();
+            var streetVal = streetInput.value.trim();
+            var contactVal = contactInput.value.trim();
+            var locationVal = locationDropdown.value;
+            var paymentMethod = document.getElementById('<%= hdnPaymentMethod.ClientID %>').value;
+            var hasError = false;
+
+            if (nameVal === '') {
+                setInvalid(nameInput, errName, 'Full name is required.');
+                hasError = true;
+            } else if (/\d/.test(nameVal) || !/^[a-zA-Z\s\-\.]+$/.test(nameVal)) {
+                setInvalid(nameInput, errName, 'Please enter a valid full name.');
+                hasError = true;
+            }
+
+            if (locationVal === '') {
+                setInvalid(locationDropdown, errLocation, 'Please select a location.');
+                hasError = true;
+            }
+
+            if (streetVal === '') {
+                setInvalid(streetInput, errStreet, 'Street address is required.');
+                hasError = true;
+            } else if (streetVal.length < 5) {
+                setInvalid(streetInput, errStreet, 'Please enter a complete street address.');
+                hasError = true;
+            }
+
+            if (contactVal === '') {
+                setInvalid(contactInput, errContact, 'Contact number is required.');
+                hasError = true;
+            } else if (contactVal.length !== 11) {
+                setInvalid(contactInput, errContact, 'Contact number must be exactly 11 digits.');
+                hasError = true;
+            } else if (!/^09\d{9}$/.test(contactVal)) {
+                setInvalid(contactInput, errContact, 'Enter a valid 11-digit number starting with 09.');
+                hasError = true;
+            }
+
+            // CHECK IF CART IS EMPTY
+            var cartCountElement = document.getElementById('<%= lblTotal.ClientID %>');
+            if (!cartCountElement || cartCountElement.textContent === '0.00') {
+                alert('Your cart is empty! Please add items before checking out.');
+                hasError = true;
+            }
+            
+            // CHECK PAYMENT METHOD
+            if (!paymentMethod) {
+                alert('Please select a payment method.');
+                hasError = true;
+            }
+
+            if (hasError) {
+                if (!cartCountElement || cartCountElement.textContent === '0.00') {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return false;
+            }
+            
+            // If payment method is NOT Points, generate reference and show QR modal
+            if (paymentMethod !== 'Points') {
+                // Generate reference number
+                generatePaymentReference();
+                
+                var total = document.getElementById('<%= lblTotal.ClientID %>').textContent;
+                showQRCodeModal(paymentMethod, total);
+                return false; // Prevent form submission, user will enter reference in modal
+            }
+            
+            // For Points payment, allow form submission
+            return true;
+        }
+        
         if (confirmBtn) {
             confirmBtn.addEventListener('click', function (e) {
-                var addressVal = addressInput.value.trim();
-                var contactVal = contactInput.value.trim();
-                var hasError = false;
-
-                if (addressVal === '') {
-                    setInvalid(addressInput, errAddress, 'Address is required.');
-                    hasError = true;
-                } else if (addressVal.length < 5) {
-                    setInvalid(addressInput, errAddress, 'Please enter a complete address.');
-                    hasError = true;
-                }
-
-                if (contactVal === '') {
-                    setInvalid(contactInput, errContact, 'Contact number is required.');
-                    hasError = true;
-                } else if (!/^09\d{9}$/.test(contactVal)) {
-                    setInvalid(contactInput, errContact, 'Enter a valid 11-digit number starting with 09.');
-                    hasError = true;
-                }
-
-                if (hasError) {
-                    e.preventDefault();
-                    addressInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    return false;
-                }
+                // Validation is now handled in handleConfirmOrder
             });
         }
     </script>

@@ -25,7 +25,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--off-white);
             color: var(--ink);
             min-height: 100vh;
@@ -109,31 +109,19 @@
             box-shadow: 0 6px 16px rgba(232,64,28,0.4);
         }
 
-        /* ACTIVE NAV LINK */
-
-        .navbar-links .active {
-            color: #f5c800 !important;
-        }
-
-        .navbar-links .active::after {
-            width: 0 !important;
-        }
-
         /* ── PAGE HERO ──────────────────────────────────────── */
         .page-hero {
-            background: linear-gradient(135deg, #e8401c 0%, #c73516 100%);
-            padding: 20px 48px 0;
+            background: var(--off-white);
+            padding: 48px 48px 0;
             position: relative;
             overflow: hidden;
         }
-
         .page-hero::before {
             content: 'PROFILE';
             position: absolute;
             font-family: 'Bebas Neue', sans-serif;
-            font-weight: 700;
             font-size: 220px;
-            color: rgba(255,255,255,0.04);
+            color: rgba(17, 146, 71, 0.03);
             top: -20px;
             right: -20px;
             line-height: 1;
@@ -151,7 +139,7 @@
         .hero-tag {
             background: var(--yellow);
             color: var(--ink);
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 11px;
             font-weight: 900;
             letter-spacing: 3px;
@@ -161,28 +149,28 @@
             display: inline-block;
             margin-bottom: 12px;
         }
-        
         .hero-title {
-           font-family: 'Bebas Neue', sans-serif;
-           font-size: 96px;
-           color: white;
-           line-height: 0.9;
-           letter-spacing: 2px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 96px;
+            line-height: 0.9;
+            letter-spacing: 2px;
         }
-
-        .hero-title span {
-           color: var(--yellow);
+        .hero-title .my-text {
+            color: #e8401c;
+            font-weight: 900;
         }
-
+        .hero-title .profile-text {
+            color: var(--yellow);
+        }
         .hero-subtitle {
             font-size: 14px;
-            color: rgba(255,255,255,0.6);
+            color: var(--grey-mid);
             font-weight: 600;
             margin-top: 10px;
             letter-spacing: 0.5px;
         }
         .hero-tab-bar {
-            background: rgba(0,0,0,0.15);
+            background: var(--grey-light);
             border-radius: 10px 10px 0 0;
             display: flex;
             gap: 2px;
@@ -191,12 +179,12 @@
             align-self: flex-end;
         }
         .hero-tab {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 13px;
             font-weight: 700;
             letter-spacing: 1px;
             text-transform: uppercase;
-            color: rgba(255,255,255,0.6);
+            color: var(--grey-mid);
             padding: 10px 20px;
             border-radius: 6px 6px 0 0;
             cursor: pointer;
@@ -215,7 +203,6 @@
             grid-template-columns: 300px 1fr;
             gap: 24px;
             align-items: start;
-            align-content: start;
         }
 
         /* ── LEFT SIDEBAR ───────────────────────────────────── */
@@ -224,8 +211,7 @@
             flex-direction: column;
             gap: 16px;
             position: sticky;
-            top: 32px;
-            align-self: start;
+            top: 115px;
         }
 
         .profile-card {
@@ -234,6 +220,48 @@
             overflow: hidden;
             box-shadow: 0 2px 16px rgba(0,0,0,0.08);
         }
+        
+        /* ROYALTY MEMBER STYLING - KEEP CARD WHITE */
+        .profile-card.royalty-gold {
+            background: var(--white);
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-card.royalty-gold::before {
+            display: none;
+        }
+        
+        .profile-card.royalty-gold .profile-card-top {
+            background: linear-gradient(160deg, var(--green) 0%, var(--green-deep) 100%);
+        }
+        
+        .profile-card.royalty-gold .profile-card-top::after {
+            background: var(--yellow);
+        }
+        
+        .profile-card.royalty-gold .profile-card-body {
+            background: var(--white);
+        }
+        
+        .profile-card.royalty-gold .info-row {
+            border-bottom-color: var(--grey-light);
+        }
+        
+        .profile-card.royalty-gold .info-row-label {
+            color: var(--grey-mid);
+        }
+        
+        .profile-card.royalty-gold .info-row-value {
+            color: var(--grey-dark);
+        }
+        
+        .profile-card.royalty-gold .royalty-number-value {
+            color: var(--green);
+        }
+        
         .profile-card-top {
             background: linear-gradient(160deg, var(--green) 0%, var(--green-deep) 100%);
             padding: 28px 24px 20px;
@@ -263,8 +291,15 @@
             color: var(--yellow);
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
+        
+        .profile-card.royalty-gold .avatar-wrap {
+            border: 4px solid var(--yellow);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            background: var(--green-dark);
+            color: var(--yellow);
+        }
         .profile-fullname {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 22px;
             font-weight: 900;
             color: var(--white);
@@ -286,10 +321,43 @@
             border: 1px solid rgba(255,255,255,0.2);
         }
         .membership-pill.royalty {
-            background: var(--yellow);
-            color: var(--ink);
-            border-color: var(--yellow);
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffc107 100%);
+            color: #1a1612;
+            border: none;
+            box-shadow: 
+                0 0 20px rgba(255, 215, 0, 0.6),
+                0 4px 12px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            padding: 10px 20px;
+            position: relative;
+            overflow: hidden;
+            font-weight: 900;
+            letter-spacing: 2.5px;
+            border-radius: 25px;
         }
+        .membership-pill.royalty::before {
+            content: '★';
+            font-size: 14px;
+            margin-right: 6px;
+            color: #1a1612;
+        }
+        .membership-pill.royalty::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
         .membership-pill::before {
             content: '●';
             font-size: 7px;
@@ -321,7 +389,7 @@
         }
         .royalty-number-value {
             color: var(--green);
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 18px;
             font-weight: 900;
             letter-spacing: 2px;
@@ -332,14 +400,14 @@
             flex-direction: column;
             gap: 10px;
         }
-        .btn-backup {
+        .btn-settings {
             width: 100%;
             padding: 13px;
             border: none;
             border-radius: 10px;
-            background: var(--green);
+            background: linear-gradient(135deg, #e8401c, #c73516);
             color: var(--white);
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 14px;
             font-weight: 700;
             letter-spacing: 1.5px;
@@ -351,10 +419,11 @@
             justify-content: center;
             gap: 8px;
         }
-        .btn-backup::before { content: '💾'; font-size: 15px; }
-        .btn-backup:hover {
+        .btn-settings::before { content: '🗑️'; font-size: 15px; }
+        .btn-settings:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,119,182,0.35);
+            box-shadow: 0 6px 20px rgba(232,64,28,0.35);
+            background: linear-gradient(135deg, #c73516, #a82a12);
         }
         .btn-logout-new {
             width: 100%;
@@ -363,7 +432,7 @@
             border-radius: 10px;
             background: transparent;
             color: var(--red);
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 14px;
             font-weight: 700;
             letter-spacing: 1.5px;
@@ -456,7 +525,7 @@
             border-radius: 10px;
             background: var(--red);
             color: var(--white);
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 14px;
             font-weight: 700;
             letter-spacing: 1.5px;
@@ -503,10 +572,10 @@
             box-shadow: 0 2px 12px rgba(0,0,0,0.06);
             border-top: 4px solid transparent;
         }
-        .stat-tile.t-green      { border-top-color: var(--green); }
-        .stat-tile.t-red        { border-top-color: var(--red); }
-        .stat-tile.t-yellow     { border-top-color: var(--yellow); }
-        .stat-tile.t-green-deep { border-top-color: var(--green-deep); }
+        .stat-tile.t-green  { border-top-color: var(--green); }
+        .stat-tile.t-red    { border-top-color: var(--red); }
+        .stat-tile.t-yellow { border-top-color: var(--yellow); }
+        .stat-tile.t-green-alt   { border-top-color: #0d7336; }
         .stat-tile::after {
             content: attr(data-icon);
             position: absolute;
@@ -528,10 +597,10 @@
             font-size: 38px;
             line-height: 1;
         }
-        .stat-tile.t-green      .stat-tile-value { color: var(--green); }
-        .stat-tile.t-red        .stat-tile-value { color: var(--red); }
-        .stat-tile.t-yellow     .stat-tile-value { color: #c8970a; }
-        .stat-tile.t-green-deep .stat-tile-value { color: var(--green-deep); }
+        .stat-tile.t-green  .stat-tile-value { color: var(--green); }
+        .stat-tile.t-red    .stat-tile-value { color: var(--red); }
+        .stat-tile.t-yellow .stat-tile-value { color: #c8970a; }
+        .stat-tile.t-green-alt   .stat-tile-value { color: #0d7336; }
 
         /* ── ORDER HISTORY SECTION ──────────────────────────── */
         .section-card {
@@ -550,7 +619,7 @@
             gap: 12px;
         }
         .section-title-label {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 20px;
             font-weight: 900;
             letter-spacing: 1px;
@@ -577,7 +646,7 @@
             border: 2px solid var(--grey-light);
             border-radius: 8px;
             padding: 7px 12px;
-            font-family: 'Barlow', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 12px;
             font-weight: 700;
             color: var(--grey-dark);
@@ -593,7 +662,7 @@
             border: none;
             border-radius: 8px;
             padding: 8px 18px;
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 13px;
             font-weight: 700;
             letter-spacing: 1px;
@@ -622,7 +691,7 @@
             padding: 9px 14px;
             border: 2px solid var(--grey-light);
             border-radius: 8px;
-            font-family: 'Barlow', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 13px;
             font-weight: 600;
             color: var(--ink);
@@ -637,7 +706,7 @@
             border: none;
             border-radius: 8px;
             padding: 9px 18px;
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 13px;
             font-weight: 700;
             letter-spacing: 1px;
@@ -652,7 +721,7 @@
             border: 2px solid var(--grey-light);
             border-radius: 8px;
             padding: 7px 16px;
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 13px;
             font-weight: 700;
             letter-spacing: 1px;
@@ -688,11 +757,10 @@
         }
 
         /* order table */
-        .order-tbl { width: 100%; border-collapse: collapse; table-layout: fixed; }
-
-        /* Sticky header */
-        .order-tbl thead { display: table; width: 100%; table-layout: fixed; }
-        .order-tbl thead tr { background: var(--off-white); }
+        .order-tbl { width: 100%; border-collapse: collapse; }
+        .order-tbl thead tr {
+            background: var(--off-white);
+        }
         .order-tbl th {
             padding: 12px 20px;
             text-align: left;
@@ -702,19 +770,6 @@
             text-transform: uppercase;
             color: var(--grey-mid);
         }
-
-        /* Scrollable tbody */
-        .order-tbl tbody {
-            display: block;
-            max-height: 400px; /* fallback, overridden by JS */
-            overflow-y: auto;
-            width: 100%;
-        }
-        .order-tbl tbody tr {
-            display: table;
-            width: 100%;
-            table-layout: fixed;
-        }
         .order-tbl td {
             padding: 16px 20px;
             border-bottom: 1px solid var(--grey-light);
@@ -723,22 +778,8 @@
         .order-tbl tbody tr:last-child td { border-bottom: none; }
         .order-tbl tbody tr:hover { background: #fafaf8; }
 
-        /* Scrollbar styling */
-        .order-tbl tbody::-webkit-scrollbar { width: 6px; }
-        .order-tbl tbody::-webkit-scrollbar-track { background: var(--off-white); }
-        .order-tbl tbody::-webkit-scrollbar-thumb { background: var(--grey-light); border-radius: 3px; }
-        .order-tbl tbody::-webkit-scrollbar-thumb:hover { background: var(--grey-mid); }
-
-        /* Column widths */
-        .order-tbl th:nth-child(1), .order-tbl td:nth-child(1) { width: 12%; }
-        .order-tbl th:nth-child(2), .order-tbl td:nth-child(2) { width: 16%; }
-        .order-tbl th:nth-child(3), .order-tbl td:nth-child(3) { width: 30%; }
-        .order-tbl th:nth-child(4), .order-tbl td:nth-child(4) { width: 14%; }
-        .order-tbl th:nth-child(5), .order-tbl td:nth-child(5) { width: 14%; }
-        .order-tbl th:nth-child(6), .order-tbl td:nth-child(6) { width: 14%; }
-
         .order-num {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 16px;
             font-weight: 900;
             color: var(--ink);
@@ -757,7 +798,7 @@
             max-width: 220px;
         }
         .order-amount {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 18px;
             font-weight: 900;
             color: var(--green);
@@ -775,7 +816,10 @@
         }
         .badge-pending    { background: #fff8e1; color: #856404; border: 1px solid #ffe082; }
         .badge-confirmed  { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
-        .badge-delivered  { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+        .badge-out-delivery { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+        .badge-delivered  { background: #d4edda; color: #155724; border: 1px solid #81c784; }
+        .badge-picked-up  { background: #f3e5f5; color: #6a1b9a; border: 1px solid #ce93d8; }
+        .badge-no-show    { background: #fff3e0; color: #e65100; border: 1px solid #ffb74d; }
         .badge-cancelled  { background: #fce4ec; color: #b71c1c; border: 1px solid #ef9a9a; }
 
         /* action buttons */
@@ -786,7 +830,7 @@
             border: none;
             border-radius: 6px;
             padding: 7px 14px;
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 12px;
             font-weight: 700;
             letter-spacing: 1px;
@@ -805,7 +849,7 @@
             border: 2px solid var(--red);
             border-radius: 6px;
             padding: 5px 12px;
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 12px;
             font-weight: 700;
             letter-spacing: 1px;
@@ -818,12 +862,31 @@
             background: var(--red);
             color: var(--white);
         }
+        .btn-delivered-new {
+            background: transparent;
+            color: var(--green);
+            border: 2px solid var(--green);
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-delivered-new:hover {
+            background: var(--green);
+            color: var(--white);
+        }
 
         .view-all-link {
             display: block;
             text-align: center;
             padding: 16px;
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 13px;
             font-weight: 700;
             letter-spacing: 1px;
@@ -841,7 +904,7 @@
             border-top: 5px solid var(--yellow);
             text-align: center;
             padding: 36px 40px;
-            margin-top: 0px;
+            margin-top: 48px;
         }
         .footer a {
             color: var(--yellow);
@@ -872,7 +935,7 @@
             background: var(--white);
             border-radius: 20px;
             padding: 36px 32px;
-            max-width: 400px;
+            max-width: 450px;
             width: 90%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.25);
             animation: modalIn 0.25s ease-out;
@@ -881,24 +944,31 @@
             from { transform: translateY(-24px) scale(0.97); opacity: 0; }
             to   { transform: translateY(0) scale(1); opacity: 1; }
         }
-        .modal-icon { font-size: 40px; text-align: center; margin-bottom: 12px; }
+        .modal-icon {
+            font-size: 50px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
         .modal-head {
-            font-family: 'Barlow Condensed', sans-serif;
-            font-size: 26px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 28px;
             font-weight: 900;
             color: var(--ink);
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             letter-spacing: 0.5px;
         }
         .modal-msg {
             font-size: 14px;
             color: var(--grey-mid);
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             line-height: 1.6;
         }
-        .modal-btns { display: flex; gap: 10px; }
+        .modal-btns {
+            display: flex;
+            gap: 10px;
+        }
         .modal-btn-cancel-style {
             flex: 1;
             padding: 12px;
@@ -906,7 +976,7 @@
             border-radius: 10px;
             background: transparent;
             color: var(--grey-dark);
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 14px;
             font-weight: 700;
             letter-spacing: 1px;
@@ -914,7 +984,9 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .modal-btn-cancel-style:hover { background: var(--grey-light); }
+        .modal-btn-cancel-style:hover {
+            background: var(--grey-light);
+        }
         .modal-btn-confirm-style {
             flex: 1;
             padding: 12px;
@@ -922,7 +994,7 @@
             border-radius: 10px;
             background: var(--red);
             color: var(--white);
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 14px;
             font-weight: 700;
             letter-spacing: 1px;
@@ -930,66 +1002,234 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .modal-btn-confirm-style:hover { background: var(--red-dark); }
+        .modal-btn-confirm-style:hover {
+            background: var(--red-dark);
+        }
 
         /* cancel order modal */
         .cancel-modal-overlay {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.75);
-            z-index: 10000; justify-content: center; align-items: center;
-            backdrop-filter: blur(6px);
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
         }
         .cancel-modal-box {
             background: var(--white);
             border-radius: 20px;
-            padding: 36px 30px;
-            max-width: 460px; width: 90%;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.35);
-            text-align: center;
-            border-top: 6px solid var(--red);
-            animation: modalIn 0.3s ease-out;
+            padding: 36px 32px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            animation: modalIn 0.25s ease-out;
         }
-        .cancel-modal-icon { font-size: 48px; margin-bottom: 12px; }
+        .cancel-modal-icon {
+            font-size: 50px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
         .cancel-modal-head {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 32px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
             color: var(--red);
-            letter-spacing: 1px;
-            margin-bottom: 10px;
+            text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
         }
         .cancel-modal-body {
             font-size: 14px;
             color: var(--grey-mid);
+            text-align: center;
             line-height: 1.6;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
         .cancel-warning-box {
             background: #fff8f0;
             border: 2px solid #ff9800;
             border-radius: 10px;
-            padding: 10px 14px;
+            padding: 12px 16px;
             margin-bottom: 24px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
             color: #e65100;
+            text-align: center;
         }
-        .cancel-modal-btns { display: flex; gap: 10px; justify-content: center; }
+        .cancel-modal-btns {
+            display: flex;
+            gap: 10px;
+        }
         .cancel-confirm-btn {
-            padding: 13px 28px; border: none; border-radius: 10px;
-            background: var(--red); color: var(--white);
-            font-family: 'Barlow Condensed', sans-serif;
-            font-size: 14px; font-weight: 700; letter-spacing: 1px;
-            text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: var(--red);
+            color: var(--white);
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .cancel-confirm-btn:hover { background: var(--red-dark); }
+        .cancel-confirm-btn:hover {
+            background: var(--red-dark);
+        }
         .cancel-keep-btn {
-            padding: 13px 28px; border: 2px solid var(--green);
-            border-radius: 10px; background: transparent; color: var(--green);
-            font-family: 'Barlow Condensed', sans-serif;
-            font-size: 14px; font-weight: 700; letter-spacing: 1px;
-            text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--grey-light);
+            border-radius: 10px;
+            background: transparent;
+            color: var(--grey-dark);
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .cancel-keep-btn:hover { background: var(--green); color: var(--white); }
+        .cancel-keep-btn:hover {
+            background: var(--grey-light);
+        }
+
+        /* ── DELETE ACCOUNT MODAL ─────────────────────────── */
+        .delete-modal-box {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 36px 32px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            animation: modalIn 0.25s ease-out;
+        }
+        
+        .delete-modal-icon {
+            font-size: 50px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .delete-modal-title {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--red);
+            text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+        
+        .delete-modal-warning {
+            font-size: 14px;
+            color: var(--grey-dark);
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+        
+        .delete-input-group {
+            margin-bottom: 24px;
+        }
+        
+        .delete-input-label {
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--grey-mid);
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .delete-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--grey-light);
+            border-radius: 10px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--ink);
+            outline: none;
+            transition: border 0.2s;
+        }
+        
+        .delete-input:focus {
+            border-color: var(--red);
+        }
+        
+        .delete-error-msg {
+            color: var(--red);
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 8px;
+            display: none;
+        }
+        
+        .delete-error-msg.show {
+            display: block;
+        }
+
+        /* ── ORDER STATUS BADGES ────────────────────────────── */
+        .order-status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #a5d6a7;
+        }
+
+        .status-out-delivery {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #90caf9;
+        }
+
+        .status-delivered {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #64b5f6;
+        }
+
+        .status-picked-up {
+            background: #f3e5f5;
+            color: #6a1b9a;
+            border: 1px solid #ce93d8;
+        }
+
+        .status-no-show {
+            background: #fff3e0;
+            color: #e65100;
+            border: 1px solid #ffb74d;
+        }
+
+        .status-cancelled {
+            background: #fce4ec;
+            color: #b71c1c;
+            border: 1px solid #ef9a9a;
+        }
 
         /* ── RESPONSIVE ─────────────────────────────────────── */
         @media (max-width: 1100px) {
@@ -1027,9 +1267,81 @@
                 document.getElementById('<%= btnCancelOrderHidden.ClientID %>').click();
             }
         }
+        function markAsDelivered(orderID) {
+            if (confirm('Mark this order as delivered?')) {
+                document.getElementById('<%= hdnMarkDeliveredOrderID.ClientID %>').value = orderID;
+                document.getElementById('<%= btnMarkDeliveredHidden.ClientID %>').click();
+            }
+        }
+        
+        // Delete Account Modal
+        function showDeleteAccountModal() {
+            document.getElementById('deleteAccountModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeDeleteAccountModal() {
+            document.getElementById('deleteAccountModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            document.getElementById('<%= txtDeletePassword.ClientID %>').value = '';
+            document.getElementById('deleteErrorMsg').classList.remove('show');
+        }
+        function confirmDelete() {
+            var password = document.getElementById('<%= txtDeletePassword.ClientID %>').value;
+            if (!password) {
+                alert('Please enter your password');
+                return false;
+            }
+            return true;
+        }
+        
+        // Security: Protect password fields
+        document.addEventListener('DOMContentLoaded', function() {
+            var passwordFields = document.querySelectorAll('input[type="password"]');
+            passwordFields.forEach(function(field) {
+                // Disable right-click
+                field.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
+                // Prevent copy/cut
+                field.addEventListener('copy', function(e) { e.preventDefault(); });
+                field.addEventListener('cut', function(e) { e.preventDefault(); });
+                field.setAttribute('autocomplete', 'new-password');
+            });
+        });
+        
+        // Detect DevTools and clear password
+        var devtoolsOpen = false;
+        setInterval(function() {
+            if (window.outerWidth - window.innerWidth > 160 || 
+                window.outerHeight - window.innerHeight > 160) {
+                if (!devtoolsOpen) {
+                    devtoolsOpen = true;
+                    var passwordFields = document.querySelectorAll('input[type="password"]');
+                    passwordFields.forEach(function(field) { field.value = ''; });
+                }
+            } else {
+                devtoolsOpen = false;
+            }
+        }, 500);
+        
+        // Disable inspect shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode == 123 || 
+                (e.ctrlKey && e.shiftKey && e.keyCode == 73) || 
+                (e.ctrlKey && e.shiftKey && e.keyCode == 74) || 
+                (e.ctrlKey && e.keyCode == 85)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
         document.addEventListener('DOMContentLoaded', function () {
             var modal = document.getElementById('cancelOrderModal');
             if (modal) modal.addEventListener('click', function (e) { if (e.target === this) closeCancelModal(); });
+            
+            var deleteModal = document.getElementById('deleteAccountModal');
+            if (deleteModal) deleteModal.addEventListener('click', function (e) { if (e.target === this) closeDeleteAccountModal(); });
         });
     </script>
 </head>
@@ -1037,6 +1349,8 @@
 <form id="form1" runat="server">
     <asp:HiddenField ID="hdnCancelOrderID" runat="server" />
     <asp:Button ID="btnCancelOrderHidden" runat="server" style="display:none;" OnClick="btnCancelOrder_Click" />
+    <asp:HiddenField ID="hdnMarkDeliveredOrderID" runat="server" />
+    <asp:Button ID="btnMarkDeliveredHidden" runat="server" style="display:none;" OnClick="btnMarkDelivered_Click" />
 
     <!-- NAVBAR -->
     <nav class="navbar">
@@ -1049,7 +1363,7 @@
             <li><a href="Membership.aspx">Membership</a></li>
             <li><a href="AboutUs.aspx">About Us</a></li>
             <li><a href="Order.aspx" class="btn-order-nav">Order Now</a></li>
-            <li><a href="Profile.aspx" class="active">Profile</a></li>
+            <li><a href="Profile.aspx">Profile</a></li>
         </ul>
     </nav>
 
@@ -1057,7 +1371,7 @@
     <div class="page-hero">
         <div class="hero-inner">
             <div>
-                <div class="hero-title">MY <span>PROFILE</span></div>
+                <div class="hero-title"><span class="my-text">MY</span> <span class="profile-text">PROFILE</span></div>
             </div>
             <div class="hero-tab-bar">
                 <div class="hero-tab active">Overview</div>
@@ -1072,7 +1386,7 @@
         <aside class="sidebar">
 
             <!-- Profile Card -->
-            <div class="profile-card">
+            <div class="profile-card" id="profileCardContainer" runat="server">
                 <div class="profile-card-top">
                     <div class="avatar-wrap">
                         <asp:Image ID="imgProfilePic" runat="server" Visible="false"
@@ -1108,6 +1422,12 @@
                             <asp:Label ID="lblRoyaltyNumber" runat="server" Text="N/A" />
                         </div>
                     </div>
+                    <div class="info-row" id="membershipRequestStatusRow" runat="server" visible="false">
+                        <div class="info-row-label">Membership Request</div>
+                        <div class="info-row-value">
+                            <asp:Label ID="lblMembershipRequestStatus" runat="server" Text="Pending Confirmation" />
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1125,7 +1445,6 @@
                             PHP <asp:Label ID="lblDiscountPower" runat="server" Text="0.00" />
                         </div>
                     </div>
-                    <div style="font-size:28px;">🍟</div>
                 </div>
                 <asp:Button ID="btnUsePoints" runat="server"
                     Text="USE POINTS ON NEXT ORDER"
@@ -1137,10 +1456,10 @@
 
             <!-- Sidebar Actions -->
             <div class="sidebar-actions">
-                <asp:Button ID="btnBackupDatabase" runat="server"
-                    Text="BACKUP DATABASE"
-                    CssClass="btn-backup"
-                    OnClick="btnBackupDatabase_Click" />
+                <asp:Button ID="btnAccountSettings" runat="server"
+                    Text="DELETE ACCOUNT"
+                    CssClass="btn-settings"
+                    OnClientClick="showDeleteAccountModal(); return false;" />
                 <asp:Button ID="btnLogout" runat="server"
                     Text="LOG OUT"
                     CssClass="btn-logout-new"
@@ -1172,7 +1491,7 @@
                         <asp:Label ID="lblAvgOrder" runat="server" Text="₱0.00" />
                     </div>
                 </div>
-                <div class="stat-tile t-green-deep" data-icon="🏆">
+                <div class="stat-tile t-green-alt" data-icon="🏆">
                     <div class="stat-tile-label">Biggest Order</div>
                     <div class="stat-tile-value">
                         <asp:Label ID="lblBiggestOrder" runat="server" Text="₱0.00" />
@@ -1280,6 +1599,7 @@
                                                     CssClass="btn-reorder-new"
                                                     CommandName="Reorder"
                                                     CommandArgument='<%# Eval("OrderID") %>' />
+                                                <%# GetMarkDeliveredButton(Eval("DeliveryType").ToString(), Eval("OrderID").ToString(), Eval("OrderStatus").ToString()) %>
                                                 <%# GetCancelButton((DateTime)Eval("OrderDate"), Eval("OrderID").ToString(), Eval("OrderStatus").ToString()) %>
                                             </div>
                                         </td>
@@ -1308,7 +1628,6 @@
     <!-- LOGOUT MODAL -->
     <div id="logoutModal" class="modal-overlay">
         <div class="modal-box">
-            <div class="modal-icon">👋</div>
             <div class="modal-head">Logging Out</div>
             <div class="modal-msg">Are you sure you want to log out of your account?</div>
             <div class="modal-btns">
@@ -1331,41 +1650,9 @@
         });
     </script>
 
-    <script>
-        function syncTableHeight() {
-            var sidebar = document.querySelector('.sidebar');
-            var tbody = document.querySelector('.order-tbl tbody');
-            if (!sidebar || !tbody) return;
-
-            var sidebarHeight = sidebar.offsetHeight;
-            var sectionCard = document.querySelector('.section-card');
-            var thead = document.querySelector('.order-tbl thead');
-            var topBar = document.querySelector('.section-top-bar');
-            var searchBar = document.querySelector('.search-bar');
-            var viewAllLink = document.querySelector('.view-all-link');
-
-            if (!sectionCard || !thead || !topBar || !searchBar) return;
-
-            var nonTableHeight = topBar.offsetHeight + searchBar.offsetHeight + thead.offsetHeight + (viewAllLink ? viewAllLink.offsetHeight : 0);
-            var statsRow = document.querySelector('.stats-row');
-            var statsHeight = statsRow ? statsRow.offsetHeight + 24 : 0; /* 24 = gap */
-
-            var availableForTable = sidebarHeight - statsHeight - nonTableHeight;
-            if (availableForTable > 100) {
-                tbody.style.maxHeight = availableForTable + 'px';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            syncTableHeight();
-            window.addEventListener('resize', syncTableHeight);
-        });
-    </script>
-
     <!-- CANCEL ORDER MODAL -->
     <div id="cancelOrderModal" class="cancel-modal-overlay">
         <div class="cancel-modal-box">
-            <div class="cancel-modal-icon">⚠️</div>
             <div class="cancel-modal-head">Cancel Order</div>
             <div class="cancel-modal-body">
                 Are you sure you want to cancel this order?
@@ -1377,6 +1664,30 @@
             <div class="cancel-modal-btns">
                 <button type="button" class="cancel-confirm-btn" onclick="confirmCancelOrder()">Yes, Cancel</button>
                 <button type="button" class="cancel-keep-btn" onclick="closeCancelModal()">Keep Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE ACCOUNT MODAL -->
+    <div id="deleteAccountModal" class="modal-overlay">
+        <div class="delete-modal-box">
+            <div class="delete-modal-title">Delete Account</div>
+            <div class="delete-modal-warning">
+                This action cannot be undone. All your data, orders, and points will be permanently deleted.
+                <br /><br />
+                <strong>Please enter your password to confirm:</strong>
+            </div>
+            <div class="delete-input-group">
+                <label class="delete-input-label">Password</label>
+                <asp:TextBox ID="txtDeletePassword" runat="server" TextMode="Password" 
+                    CssClass="delete-input" placeholder="Enter your password" autocomplete="new-password" />
+                <div id="deleteErrorMsg" class="delete-error-msg">Incorrect password. Please try again.</div>
+            </div>
+            <div class="modal-btns">
+                <button class="modal-btn-cancel-style" onclick="closeDeleteAccountModal()">Cancel</button>
+                <asp:Button ID="btnConfirmDelete" runat="server" Text="Delete Account" 
+                    CssClass="modal-btn-confirm-style" OnClick="btnConfirmDelete_Click" 
+                    OnClientClick="return confirmDelete();" />
             </div>
         </div>
     </div>

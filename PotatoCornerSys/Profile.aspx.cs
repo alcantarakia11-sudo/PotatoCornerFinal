@@ -30,9 +30,81 @@ namespace PotatoCornerSys
             Response.Redirect("Login.aspx");
         }
 
-        protected void btnBackupDatabase_Click(object sender, EventArgs e)
+        protected void btnConfirmDelete_Click(object sender, EventArgs e)
         {
-            Response.Redirect("DatabaseBackup.aspx");
+            try
+            {
+                string enteredPassword = txtDeletePassword.Text.Trim();
+                string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
+                
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    int customerID = 0;
+                    if (Session["CustomerID"] != null)
+                        int.TryParse(Session["CustomerID"].ToString(), out customerID);
+                    
+                    if (customerID == 0)
+                    {
+                        Response.Redirect("Login.aspx");
+                        return;
+                    }
+
+                    // Verify password
+                    string verifyQuery = "SELECT Password FROM USERS WHERE CustomerID = @CustomerID";
+                    using (SqlCommand cmd = new SqlCommand(verifyQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@CustomerID", customerID);
+                        string storedPassword = cmd.ExecuteScalar()?.ToString();
+                        
+                        // Check if password is hashed (64 characters) or plain text
+                        bool isPasswordValid = false;
+                        
+                        if (storedPassword != null && storedPassword.Length == 64)
+                        {
+                            // Password is hashed
+                            isPasswordValid = PasswordHelper.VerifyPassword(enteredPassword, storedPassword);
+                        }
+                        else
+                        {
+                            // Password is plain text (backward compatibility)
+                            isPasswordValid = (enteredPassword == storedPassword);
+                        }
+                        
+                        if (!isPasswordValid)
+                        {
+                            // Password incorrect - show error via JavaScript
+                            ClientScript.RegisterStartupScript(this.GetType(), "showError", 
+                                "document.getElementById('deleteErrorMsg').classList.add('show'); document.getElementById('deleteAccountModal').classList.add('active');", true);
+                            return;
+                        }
+                    }
+
+                    // Delete account - cascade delete will handle related records
+                    string deleteQuery = @"
+                        DELETE FROM OrderItems WHERE OrderID IN (SELECT OrderID FROM Orders WHERE CustomerID = @CustomerID);
+                        DELETE FROM Orders WHERE CustomerID = @CustomerID;
+                        DELETE FROM Membership WHERE CustomerID = @CustomerID;
+                        DELETE FROM USERS WHERE CustomerID = @CustomerID;";
+                    
+                    using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@CustomerID", customerID);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                // Clear session and redirect to login
+                Session.Clear();
+                Session.Abandon();
+                Response.Redirect("Login.aspx?deleted=true");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error deleting account: " + ex.Message);
+                ClientScript.RegisterStartupScript(this.GetType(), "showError", 
+                    "alert('An error occurred while deleting your account. Please try again.');", true);
+            }
         }
 
         private void LoadCustomerInfo()
@@ -112,6 +184,7 @@ namespace PotatoCornerSys
             lblMemberSince.Text = Session["MemberSince"]?.ToString() ?? DateTime.Now.ToString("MMM dd, yyyy");
 
             bool isRoyaltyMember = CheckIfRoyaltyMember();
+            LoadMembershipRequestStatus();
 
             string picturePath = GetProfilePicturePath();
             if (!string.IsNullOrEmpty(picturePath))
@@ -129,7 +202,8 @@ namespace PotatoCornerSys
             if (isRoyaltyMember)
             {
                 lblMembershipBadge.Text = "ROYALTY MEMBER";
-                lblMembershipBadge.CssClass = "membership-badge royalty";
+                lblMembershipBadge.CssClass = "membership-pill royalty";
+                profileCardContainer.Attributes["class"] = "profile-card royalty-gold";
                 if (Session["RoyaltyNumber"] != null)
                 {
                     lblRoyaltyNumber.Text = Session["RoyaltyNumber"].ToString();
@@ -139,7 +213,77 @@ namespace PotatoCornerSys
             else
             {
                 lblMembershipBadge.Text = "REGULAR MEMBER";
-                lblMembershipBadge.CssClass = "membership-badge";
+                lblMembershipBadge.CssClass = "membership-pill";
+            }
+        }
+
+        private void LoadMembershipRequestStatus()
+        {
+            try
+            {
+                int customerID = 0;
+                if (Session["CustomerID"] != null)
+                    int.TryParse(Session["CustomerID"].ToString(), out customerID);
+
+                if (customerID == 0)
+                {
+                    membershipRequestStatusRow.Visible = false;
+                    return;
+                }
+
+                string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    string query = @"
+                        IF OBJECT_ID('dbo.Membership', 'U') IS NOT NULL
+                        BEGIN
+                            SELECT TOP 1 RequestStatus, RequestedDate, ConfirmedDate
+                            FROM Membership
+                            WHERE CustomerID = @CustomerID
+                            ORDER BY MembershipID DESC
+                        END";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@CustomerID", customerID);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                string requestStatus = reader["RequestStatus"]?.ToString() ?? "Pending";
+                                string requestedDate = reader["RequestedDate"] != DBNull.Value
+                                    ? Convert.ToDateTime(reader["RequestedDate"]).ToString("MMM dd, yyyy")
+                                    : "";
+
+                                if (string.Equals(requestStatus, "Pending", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    lblMembershipRequestStatus.Text = "Pending Confirmation (" + requestedDate + ")";
+                                }
+                                else if (string.Equals(requestStatus, "Confirmed", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    lblMembershipRequestStatus.Text = "Confirmed";
+                                }
+                                else
+                                {
+                                    lblMembershipRequestStatus.Text = requestStatus;
+                                }
+
+                                membershipRequestStatusRow.Visible = true;
+                            }
+                            else
+                            {
+                                membershipRequestStatusRow.Visible = false;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                membershipRequestStatusRow.Visible = false;
+                System.Diagnostics.Debug.WriteLine("Error loading membership request status: " + ex.Message);
             }
         }
 
@@ -157,7 +301,7 @@ namespace PotatoCornerSys
                     if (customerID == 0) return false;
 
                     string query = @"
-                        SELECT m.MembershipNumber, m.RegistrationDate, u.MembershipLevel
+                        SELECT m.MembershipNumber, m.RegistrationDate, m.ProfileImagePath, u.MembershipLevel
                         FROM Membership m
                         INNER JOIN USERS u ON m.CustomerID = u.CustomerID
                         WHERE m.CustomerID = @CustomerID AND u.MembershipLevel = 'Royalty'";
@@ -173,16 +317,16 @@ namespace PotatoCornerSys
                                 Session["MembershipLevel"] = "Royalty";
                                 string membershipNumber = reader["MembershipNumber"].ToString();
                                 Session["RoyaltyNumber"] = membershipNumber;
-
-                                string[] possibleExtensions = { ".jpg", ".jpeg", ".png" };
-                                foreach (string ext in possibleExtensions)
+                                if (!reader.IsDBNull(reader.GetOrdinal("ProfileImagePath")))
                                 {
-                                    string path = $"~/Uploads/{membershipNumber}{ext}";
-                                    string serverPath = Server.MapPath(path);
-                                    if (System.IO.File.Exists(serverPath))
+                                    string dbPicturePath = reader["ProfileImagePath"].ToString();
+                                    if (!string.IsNullOrWhiteSpace(dbPicturePath))
                                     {
-                                        Session["MemberPicture"] = path;
-                                        break;
+                                        string serverPath = Server.MapPath(dbPicturePath);
+                                        if (System.IO.File.Exists(serverPath))
+                                        {
+                                            Session["MemberPicture"] = dbPicturePath;
+                                        }
                                     }
                                 }
                                 return true;
@@ -219,21 +363,22 @@ namespace PotatoCornerSys
                         int.TryParse(Session["CustomerID"].ToString(), out customerID);
                     if (customerID == 0) return null;
 
-                    string membershipQuery = "SELECT MembershipNumber FROM Membership WHERE CustomerID = @CustomerID";
+                    string membershipQuery = @"SELECT TOP 1 ProfileImagePath
+                                               FROM Membership
+                                               WHERE CustomerID = @CustomerID
+                                               ORDER BY MembershipID DESC";
                     using (SqlCommand cmd = new SqlCommand(membershipQuery, conn))
                     {
                         cmd.Parameters.AddWithValue("@CustomerID", customerID);
                         object result = cmd.ExecuteScalar();
                         if (result != null)
                         {
-                            string membershipNumber = result.ToString();
-                            string[] possibleExtensions = { ".jpg", ".jpeg", ".png" };
-                            foreach (string ext in possibleExtensions)
+                            string picturePath = result.ToString();
+                            if (!string.IsNullOrWhiteSpace(picturePath))
                             {
-                                string path = $"~/Uploads/{membershipNumber}{ext}";
-                                string serverPath = Server.MapPath(path);
+                                string serverPath = Server.MapPath(picturePath);
                                 if (System.IO.File.Exists(serverPath))
-                                    return path;
+                                    return picturePath;
                             }
                         }
                     }
@@ -653,6 +798,9 @@ namespace PotatoCornerSys
             switch (dbStatus?.ToLower())
             {
                 case "delivered": return "<span class='order-status status-delivered'>Delivered</span>";
+                case "out for delivery": return "<span class='order-status status-out-delivery'>Out for Delivery</span>";
+                case "picked up": return "<span class='order-status status-picked-up'>Picked Up</span>";
+                case "no show": return "<span class='order-status status-no-show'>No Show - Not Picked Up</span>";
                 case "confirmed": return "<span class='order-status status-confirmed'>Confirmed</span>";
                 case "cancelled": return "<span class='order-status status-cancelled'>Cancelled</span>";
                 case "pending":
@@ -706,16 +854,59 @@ namespace PotatoCornerSys
 
         protected string GetCancelButton(DateTime orderDate, string orderID, string orderStatus)
         {
-            // ✅ Hide if already cancelled, delivered, or confirmed
-            if (orderStatus == "Cancelled" || orderStatus == "Delivered" || orderStatus == "Confirmed")
+            // Hide if already cancelled, delivered, picked up, no show, or out for delivery
+            if (orderStatus == "Cancelled" || orderStatus == "Delivered" || orderStatus == "Picked Up" || orderStatus == "No Show" || orderStatus == "Out for Delivery")
                 return "";
 
-            // ✅ Time restriction still intact
+            // Time restriction: can only cancel within 10 minutes and if Pending or Confirmed
             TimeSpan timeSinceOrder = DateTime.Now - orderDate;
-            if (timeSinceOrder.TotalMinutes <= 10)
-                return $"<button type='button' class='btn-cancel' onclick='cancelOrder({orderID})'>Cancel Order</button>";
+            if (timeSinceOrder.TotalMinutes <= 10 && (orderStatus == "Pending" || orderStatus == "Confirmed"))
+                return $"<button type='button' class='btn-cancel-new' onclick='cancelOrder({orderID})'>Cancel Order</button>";
 
             return "";
+        }
+
+        protected string GetMarkDeliveredButton(string deliveryType, string orderID, string orderStatus)
+        {
+            // Only show for Delivery orders that are "Out for Delivery" (not Pending, Confirmed, Delivered, Picked Up, or Cancelled)
+            if (deliveryType == "Delivery" && orderStatus == "Out for Delivery")
+            {
+                return $"<button type='button' class='btn-delivered-new' onclick='markAsDelivered({orderID})'>Mark Delivered</button>";
+            }
+            return "";
+        }
+
+        protected void btnMarkDelivered_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string orderID = hdnMarkDeliveredOrderID.Value;
+                if (string.IsNullOrEmpty(orderID)) return;
+
+                string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    string updateQuery = @"UPDATE Orders 
+                                          SET OrderStatus = 'Delivered', 
+                                              DeliveryTime = GETDATE() 
+                                          WHERE OrderID = @OrderID 
+                                          AND DeliveryType = 'Delivery' 
+                                          AND OrderStatus = 'Out for Delivery'";
+                    
+                    using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@OrderID", int.Parse(orderID));
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                LoadOrderHistory();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error marking order as delivered: " + ex.Message);
+            }
         }
 
         protected void btnOrderSummary_Click(object sender, EventArgs e)
