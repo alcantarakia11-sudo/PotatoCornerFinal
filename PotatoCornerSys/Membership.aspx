@@ -4,7 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-        <title>Potato Corner - Membership</title>
+    <title>Potato Corner - Membership</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -14,7 +14,7 @@
             min-height: 100vh;
         }
         
-        /* NAVBAR - CONSISTENT ACROSS ALL PAGES */
+        /* NAVBAR */
         .navbar { 
             background: linear-gradient(135deg, #119247 0%, #0d7336 100%); 
             padding: 15px 50px; 
@@ -34,9 +34,7 @@
             transition: transform 0.3s;
         }
         
-        .navbar-logo img:hover {
-            transform: scale(1.05);
-        }
+        .navbar-logo img:hover { transform: scale(1.05); }
         
         .navbar-links { 
             display: flex; 
@@ -71,9 +69,7 @@
             transition: width 0.3s;
         }
         
-        .navbar-links a:hover::after {
-            width: 100%;
-        }
+        .navbar-links a:hover::after { width: 100%; }
 
         .navbar-links .btn-order-nav {
             background: linear-gradient(135deg, #e8401c 0%, #c73516 100%);
@@ -87,9 +83,7 @@
             transition: all 0.3s;
         }
 
-        .navbar-links .btn-order-nav::after {
-            display: none;
-        }
+        .navbar-links .btn-order-nav::after { display: none; }
 
         .navbar-links .btn-order-nav:hover {
             background: linear-gradient(135deg, #c73516 0%, #a82a12 100%);
@@ -98,17 +92,17 @@
             box-shadow: 0 6px 16px rgba(232,64,28,0.4);
         }
 
-        
-        /* HERO BANNER - ORANGE */
+        /* ACTIVE NAV LINK */
+        .navbar-links .active { color: #f5c800 !important; }
+        .navbar-links .active::after { width: 0 !important; }
+
+        /* HERO BANNER */
         .hero { 
             background: #e8e8e8;
             padding: 30px 40px 50px 40px;
         }
         
-        .hero-content {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        .hero-content { max-width: 1400px; margin: 0 auto; }
         
         .hero-banner {
             background: linear-gradient(135deg, #e8401c 0%, #ff6b47 100%);
@@ -157,8 +151,7 @@
         .benefits-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             width: 100%;
             height: 6px;
             background: linear-gradient(90deg, #f5c800 0%, #ffd700 100%);
@@ -173,10 +166,7 @@
             letter-spacing: 1px;
         }
         
-        .benefits-list { 
-            list-style: none; 
-            padding: 0;
-        }
+        .benefits-list { list-style: none; padding: 0; }
         
         .benefit-item { 
             padding: 18px 20px; 
@@ -197,9 +187,7 @@
             background: linear-gradient(135deg, #d4edda 0%, #e8f5ee 100%);
         }
         
-        .benefit-item:last-child {
-            margin-bottom: 0;
-        }
+        .benefit-item:last-child { margin-bottom: 0; }
         
         /* HOW IT WORKS CARD */
         .how-it-works-card {
@@ -215,17 +203,13 @@
         .how-it-works-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             width: 100%;
             height: 6px;
             background: linear-gradient(90deg, #119247 0%, #0d7336 100%);
         }
         
-        .steps-list {
-            list-style: none;
-            padding: 0;
-        }
+        .steps-list { list-style: none; padding: 0; }
         
         .step-item {
             padding: 20px;
@@ -328,9 +312,7 @@
             border-top: 5px solid #f5c800;
         }
         
-        .footer-links {
-            margin-bottom: 20px;
-        }
+        .footer-links { margin-bottom: 20px; }
         
         .footer-links a {
             color: #f5c800;
@@ -340,32 +322,121 @@
             transition: all 0.3s;
         }
         
-        .footer-links a:hover {
-            color: white;
-        }
+        .footer-links a:hover { color: white; }
         
         .footer-copy {
             font-size: 14px;
             color: #ccc;
             margin-top: 15px;
         }
+
+        /* LOGIN REQUIRED MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: white;
+            border-radius: 20px;
+            padding: 36px 32px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            text-align: center;
+            animation: modalIn 0.25s ease-out;
+        }
+        @keyframes modalIn {
+            from { transform: translateY(-24px) scale(0.97); opacity: 0; }
+            to   { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .modal-icon { font-size: 48px; margin-bottom: 12px; }
+        .modal-head {
+            font-size: 26px;
+            font-weight: 900;
+            color: #119247;
+            margin-bottom: 10px;
+        }
+        .modal-msg {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+        .modal-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .btn-modal-login {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #119247 0%, #0d7336 100%);
+            color: white;
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+        .btn-modal-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(17,146,71,0.4);
+        }
+        .btn-modal-register {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #e8401c 0%, #c73516 100%);
+            color: white;
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+        .btn-modal-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(232,64,28,0.4);
+        }
+        .btn-modal-close {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 4px;
+        }
+        .btn-modal-close:hover { color: #555; }
         
         /* RESPONSIVE */
         @media (max-width: 1024px) {
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
+            .content-grid { grid-template-columns: 1fr; }
         }
         
         @media (max-width: 768px) {
-            .hero h1 { 
-                font-size: 36px; 
-            }
-            
-            .navbar {
-                flex-direction: column;
-                gap: 20px;
-            }
+            .hero h1 { font-size: 36px; }
+            .navbar { flex-direction: column; gap: 20px; }
         }
     </style>
 </head>
@@ -378,14 +449,14 @@
             <ul class="navbar-links">
                 <li><a href="Default.aspx">Home</a></li>
                 <li><a href="Menu.aspx">Menu</a></li>
-                <li><a href="Membership.aspx">Membership</a></li>
+                <li><a href="Membership.aspx" class="active">Membership</a></li>
                 <li><a href="AboutUs.aspx">About Us</a></li>
                 <li><a href="Order.aspx" class="btn-order-nav">Order Now</a></li>
                 <li><a href="Profile.aspx">Profile</a></li>
             </ul>
         </div>
         
-        <!-- HERO BANNER - ORANGE -->
+        <!-- HERO BANNER -->
         <div class="hero">
             <div class="hero-content">
                 <div class="hero-banner">
@@ -451,18 +522,66 @@
             <div class="cta-section">
                 <h2>Ready to Join?</h2>
                 <p>Start enjoying exclusive benefits today - it's free and easy!</p>
-                <asp:Button ID="btnRegister" runat="server" Text="Register Now" CssClass="btn-register" OnClick="btnRegister_Click" />
+
+                <%-- KEY CHANGE: OnClientClick handles modal, return false prevents postback --%>
+                <asp:Button ID="btnRegister" runat="server" Text="Register Now" 
+                    CssClass="btn-register" 
+                    OnClientClick="handleRegisterClick(); return false;" />
             </div>
         </div>
         
         <!-- FOOTER -->
         <div class="footer">
             <div class="footer-links">
-                <a href="#">Terms & Conditions</a> |
+                <a href="#">Terms &amp; Conditions</a> |
                 <a href="#">Privacy Policy</a>
             </div>
             <div class="footer-copy">© 2026 Potato Corner. All rights reserved.</div>
         </div>
+
+        <!-- LOGIN REQUIRED MODAL -->
+        <div id="loginRequiredModal" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-icon">🔒</div>
+                <div class="modal-head">Login Required</div>
+                <div class="modal-msg">
+                    To register as a Royalty Member, you need an account first 
+                    to track your <strong>points</strong>, <strong>perks</strong>, 
+                    and <strong>membership status</strong>.
+                </div>
+                <div class="modal-btn-group">
+                    <a href="Login.aspx" class="btn-modal-login">Login</a>
+                    <a href="Register.aspx" class="btn-modal-register">Create Account</a>
+                </div>
+                <button type="button" class="btn-modal-close" onclick="hideLoginModal()">
+                    Continue browsing
+                </button>
+            </div>
+        </div>
+
     </form>
+
+    <script>
+        // Check session from server side
+        var isLoggedIn = '<%= Session["IsLoggedIn"] %>';
+
+        function handleRegisterClick() {
+            if (isLoggedIn === 'True') {
+                window.location.href = 'RegisterForm.aspx';
+            } else {
+                showLoginModal();
+            }
+        }
+
+        function showLoginModal() {
+            document.getElementById('loginRequiredModal').classList.add('active');
+        }
+        function hideLoginModal() {
+            document.getElementById('loginRequiredModal').classList.remove('active');
+        }
+        document.getElementById('loginRequiredModal').addEventListener('click', function (e) {
+            if (e.target === this) hideLoginModal();
+        });
+    </script>
 </body>
 </html>

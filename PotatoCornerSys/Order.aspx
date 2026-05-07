@@ -4,10 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+    <title>Potato Corner - Order</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: linear-gradient(135deg, #f0f4f8 0%, #e8eef3 100%); overflow: hidden; }
         
+        /* NAVBAR */
         .navbar { 
             background: linear-gradient(135deg, #119247 0%, #0d7336 100%); 
             padding: 15px 50px; 
@@ -39,18 +41,19 @@
             box-shadow: 0 4px 12px rgba(232,64,28,0.3);
             transition: all 0.3s;
         }
-
-        .navbar-links .btn-order-nav::after {
-            display: none;
-        }
-
+        .navbar-links .btn-order-nav::after { display: none; }
         .navbar-links .btn-order-nav:hover {
-           background: linear-gradient(135deg, #c73516 0%, #a82a12 100%);
-           color: white;
-           transform: translateY(-3px);
-           box-shadow: 0 6px 16px rgba(232,64,28,0.4);
+            background: linear-gradient(135deg, #c73516 0%, #a82a12 100%);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(232,64,28,0.4);
         }
-        
+
+         /* ACTIVE NAV LINK */
+
+        .navbar-links .active { color: #f5c800 !important; }
+        .navbar-links .active::after { width: 0 !important; }
+
         .pos-container { display: grid; grid-template-columns: 300px 1fr 380px; gap: 20px; padding: 20px; height: calc(100vh - 110px); overflow: hidden; }
         
         .left-panel { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow-y: auto; border: 1px solid rgba(17,146,71,0.1); }
@@ -59,6 +62,7 @@
         .input-group label { display: block; font-size: 13px; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
         .input-group input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; transition: all 0.3s; }
         .input-group input:focus { border-color: #119247; outline: none; box-shadow: 0 0 0 3px rgba(17,146,71,0.1); }
+        .input-group input[readonly] { background: #f0f0f0; cursor: not-allowed; color: #555; }
 
         /* VALIDATION STYLES */
         .field-error { display: block; color: #dc3545; font-size: 11px; font-weight: 600; margin-top: 5px; min-height: 16px; transition: all 0.2s; }
@@ -144,11 +148,94 @@
         .modal-btn-cancel:hover { background: #d0d0d0; }
         .modal-btn-confirm { background: linear-gradient(135deg, #119247 0%, #0d7336 100%); color: white; }
         .modal-btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(17,146,71,0.4); }
+
+        /* LOGIN REQUIRED MODAL */
+        .login-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .login-modal-overlay.active { display: flex; }
+
+        .login-modal-box {
+            background: white;
+            border-radius: 20px;
+            padding: 36px 32px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            text-align: center;
+            animation: loginModalIn 0.25s ease-out;
+        }
+
+        @keyframes loginModalIn {
+            from { transform: translateY(-24px) scale(0.97); opacity: 0; }
+            to   { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .login-modal-icon { font-size: 48px; margin-bottom: 12px; }
+        .login-modal-head {
+            font-size: 26px;
+            font-weight: 900;
+            color: #119247;
+            margin-bottom: 10px;
+        }
+
+        .login-modal-msg {
+           font-size: 14px;
+           color: #666;
+           margin-bottom: 28px;
+           line-height: 1.6;
+        }
+
+        .login-modal-btn-group {
+           display: flex;
+           gap: 12px;
+           margin-bottom: 16px;
+        }
+
+        .btn-login-modal {
+           flex: 1; padding: 14px; border: none; border-radius: 10px;
+           background: linear-gradient(135deg, #119247 0%, #0d7336 100%);
+           color: white; font-size: 15px; font-weight: 800;
+           text-transform: uppercase; cursor: pointer; text-decoration: none;
+           display: flex; align-items: center; justify-content: center;
+           transition: all 0.3s; letter-spacing: 1px;
+        }
+
+        .btn-login-modal:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(17,146,71,0.4); }
+
+        .btn-create-modal {
+           flex: 1; padding: 14px; border: none; border-radius: 10px;
+           background: linear-gradient(135deg, #e8401c 0%, #c73516 100%);
+           color: white; font-size: 15px; font-weight: 800;
+           text-transform: uppercase; cursor: pointer; text-decoration: none;
+           display: flex; align-items: center; justify-content: center;
+           transition: all 0.3s; letter-spacing: 1px;
+        }
+
+        .btn-create-modal:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(232,64,28,0.4); }
+
+        .btn-browse-modal {
+           background: none; border: none; color: #999;
+           font-size: 13px; cursor: pointer; text-decoration: underline; margin-top: 4px;
+        }
+
+        .btn-browse-modal:hover { color: #555; }
+
     </style>
 </head>
 <body>
     <form id="form1" runat="server">
         <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true"></asp:ScriptManager>
+
+        <!-- NAVBAR -->
         <div class="navbar">
             <div class="navbar-logo">
                 <img src="logopotcor.png" alt="Potato Corner" />
@@ -158,7 +245,7 @@
                 <li><a href="Menu.aspx">Menu</a></li>
                 <li><a href="Membership.aspx">Membership</a></li>
                 <li><a href="AboutUs.aspx">About Us</a></li>
-                <li><a href="Order.aspx" class="btn-order-nav">Order Now</a></li>
+                <li><a href="Order.aspx" class="btn-order-nav active">Order Now</a></li>
                 <li><asp:LinkButton ID="lnkProfile" runat="server" ForeColor="White" Font-Bold="true" Text="Profile" OnClick="lnkProfile_Click"></asp:LinkButton></li>
             </ul>
         </div>
@@ -170,7 +257,7 @@
 
                 <div class="input-group">
                     <label>Name</label>
-                    <asp:TextBox ID="txtName" runat="server" placeholder="Enter full name"></asp:TextBox>
+                    <asp:TextBox ID="txtName" runat="server" placeholder="Enter full name" ReadOnly="true" Style="background:#f0f0f0; cursor:not-allowed;"></asp:TextBox>
                     <span id="errName" class="field-error"></span>
                 </div>
                 <div class="input-group">
@@ -373,9 +460,49 @@
                 </div>
             </div>
         </div>
+        <!-- LOGIN REQUIRED MODAL -->
+        <div id="loginRequiredModal" class="login-modal-overlay">
+            <div class="login-modal-box">
+                <div class="login-modal-icon">🛒</div>
+                <div class="login-modal-head">Login Required</div>
+                <div class="login-modal-msg">
+                    You need to be logged in to place an order.
+                    Create an account to start ordering your
+                    favorite <strong>Potato Corner</strong> flavors!
+                </div>
+                <div class="login-modal-btn-group">
+                    <a href="Login.aspx" class="btn-login-modal">Login</a>
+                    <a href="Register.aspx" class="btn-create-modal">Create Account</a>
+                    </div>
+                 <button type="button" class="btn-browse-modal" onclick="window.location.href='Default.aspx'">
+                    Continue browsing
+                </button>
+            </div>
+        </div>
     </form>
 
     <script>
+        // LOGIN MODAL
+        var isLoggedIn = '<%= Session["IsLoggedIn"] %>';
+
+        function showLoginRequiredModal() {
+            document.getElementById('loginRequiredModal').classList.add('active');
+        }
+
+        function hideLoginRequiredModal() {
+            document.getElementById('loginRequiredModal').classList.remove('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            if (isLoggedIn !== 'True') {
+                showLoginRequiredModal();
+            }
+
+            document.getElementById('loginRequiredModal').addEventListener('click', function (e) {
+                if (e.target === this) hideLoginRequiredModal();
+            });
+        });
+
         // ── MODAL ──
         function showPickupTimeModal() {
             document.getElementById('pickupTimeModal').classList.add('active');
@@ -397,12 +524,10 @@
             }
         });
 
-        // ── REAL-TIME INPUT VALIDATION ──
-        var nameInput    = document.getElementById('<%= txtName.ClientID %>');
+        // ── REAL-TIME INPUT VALIDATION (Address & Contact only) ──
         var addressInput = document.getElementById('<%= txtAddress.ClientID %>');
         var contactInput = document.getElementById('<%= txtContact.ClientID %>');
 
-        var errName    = document.getElementById('errName');
         var errAddress = document.getElementById('errAddress');
         var errContact = document.getElementById('errContact');
 
@@ -421,25 +546,6 @@
             errEl.textContent = '';
         }
 
-        // NAME
-        nameInput.addEventListener('input', function () {
-            var val = this.value.trim();
-            if (val === '') {
-                clearState(this, errName);
-            } else if (val.length < 2) {
-                setInvalid(this, errName, 'Name must be at least 2 characters.');
-            } else if (/\d/.test(val)) {
-                setInvalid(this, errName, 'Name cannot contain numbers.');
-            } else if (!/^[a-zA-Z\s\-\.]+$/.test(val)) {
-                setInvalid(this, errName, 'Name can only contain letters, spaces, hyphens, or periods.');
-            } else {
-                setValid(this, errName);
-            }
-        });
-        nameInput.addEventListener('blur', function () {
-            if (this.value.trim() === '') setInvalid(this, errName, 'Full name is required.');
-        });
-
         // ADDRESS
         addressInput.addEventListener('input', function () {
             var val = this.value.trim();
@@ -457,7 +563,7 @@
             if (this.value.trim() === '') setInvalid(this, errAddress, 'Address is required.');
         });
 
-        // CONTACT — digits only, must be 11 digits starting with 09
+        // CONTACT
         contactInput.addEventListener('input', function () {
             this.value = this.value.replace(/[^0-9]/g, '');
             var val = this.value.trim();
@@ -481,18 +587,9 @@
         var confirmBtn = document.getElementById('<%= btnConfirm.ClientID %>');
         if (confirmBtn) {
             confirmBtn.addEventListener('click', function (e) {
-                var nameVal = nameInput.value.trim();
                 var addressVal = addressInput.value.trim();
                 var contactVal = contactInput.value.trim();
                 var hasError = false;
-
-                if (nameVal === '') {
-                    setInvalid(nameInput, errName, 'Full name is required.');
-                    hasError = true;
-                } else if (/\d/.test(nameVal) || !/^[a-zA-Z\s\-\.]+$/.test(nameVal)) {
-                    setInvalid(nameInput, errName, 'Please enter a valid full name.');
-                    hasError = true;
-                }
 
                 if (addressVal === '') {
                     setInvalid(addressInput, errAddress, 'Address is required.');
@@ -512,7 +609,7 @@
 
                 if (hasError) {
                     e.preventDefault();
-                    nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    addressInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     return false;
                 }
             });

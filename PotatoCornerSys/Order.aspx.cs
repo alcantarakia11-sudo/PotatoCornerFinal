@@ -37,6 +37,8 @@ namespace PotatoCornerSys
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Removed redirect - modal handles it on frontend
+
             if (Request.Form["__EVENTTARGET"] == "RemoveCartItem")
             {
                 try
@@ -59,6 +61,9 @@ namespace PotatoCornerSys
             {
                 if (Session["Cart"] == null)
                     Session["Cart"] = new List<CartItem>();
+
+                if (Session["Name"] != null)
+                    txtName.Text = Session["Name"].ToString();
 
                 hdnFriesQty.Value = "1";
                 hdnChickenQty.Value = "1";
@@ -133,7 +138,6 @@ namespace PotatoCornerSys
                     return;
                 }
 
-                // ✅ Flexible name matching
                 string storedFullName = Session["Fullname"]?.ToString();
 
                 if (!string.IsNullOrEmpty(storedFullName))
@@ -174,10 +178,10 @@ namespace PotatoCornerSys
                     conn.Open();
 
                     string query = @"
-                SELECT u.CustomerID, u.Fullname, u.MembershipLevel
-                FROM USERS u
-                INNER JOIN Membership m ON u.CustomerID = m.CustomerID
-                WHERE u.MembershipLevel = 'Royalty' AND m.MembershipNumber = @MembershipNumber";
+                        SELECT u.CustomerID, u.Fullname, u.MembershipLevel
+                        FROM USERS u
+                        INNER JOIN Membership m ON u.CustomerID = m.CustomerID
+                        WHERE u.MembershipLevel = 'Royalty' AND m.MembershipNumber = @MembershipNumber";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -478,7 +482,6 @@ namespace PotatoCornerSys
             }
         }
 
-        // ✅ Blocks Points selection if balance is insufficient
         protected void btnPayment_Click(object sender, EventArgs e)
         {
             Button btn = (Button)sender;
@@ -496,7 +499,7 @@ namespace PotatoCornerSys
                 if (Session["Points"] != null)
                     int.TryParse(Session["Points"].ToString(), out userPoints);
 
-                decimal pointsValue = userPoints * 10m; // 1 point = PHP 10
+                decimal pointsValue = userPoints * 10m;
 
                 if (userPoints == 0 || pointsValue < currentTotal)
                 {
@@ -514,9 +517,16 @@ namespace PotatoCornerSys
             lblErrorMsg.Visible = false;
         }
 
-        // ✅ Points deduction + safety re-check before processing
         protected void btnConfirm_Click(object sender, EventArgs e)
         {
+            // Block if not logged in
+            if (Session["IsLoggedIn"] == null || !(bool)Session["IsLoggedIn"])
+            {
+                ScriptManager.RegisterStartupScript(this, GetType(),
+                    "showLoginModal", "showLoginRequiredModal();", true);
+                return;
+            }
+
             if (string.IsNullOrEmpty(txtName.Text.Trim()) ||
                 string.IsNullOrEmpty(txtAddress.Text.Trim()) ||
                 string.IsNullOrEmpty(txtContact.Text.Trim()))
@@ -599,7 +609,6 @@ namespace PotatoCornerSys
             }
             else
             {
-                // ✅ Safety re-check — cart total may have changed after Points was selected
                 int userPoints = 0;
                 if (Session["Points"] != null)
                     int.TryParse(Session["Points"].ToString(), out userPoints);
@@ -628,17 +637,14 @@ namespace PotatoCornerSys
 
                 if (orderID > 0)
                 {
-                    // ✅ FIX: Deduct points if paid with Points, otherwise add earned points
                     int pointsEarned = (int)(orderTotal / 500) * 2;
 
                     if (hdnPaymentMethod.Value == "Points")
                     {
-                        // Points used to pay = orderTotal / 10 (1 pt = PHP 10), rounded up
                         int pointsUsed = (int)Math.Ceiling(orderTotal / 10m);
-                        // Net delta: subtract points spent, then add points earned
                         int pointsDelta = pointsEarned - pointsUsed;
                         UpdateCustomerPoints(pointsDelta);
-                        Session["PointsEarned"] = "0"; // no bonus points shown on receipt when paying with points
+                        Session["PointsEarned"] = "0";
                     }
                     else
                     {
@@ -823,7 +829,6 @@ namespace PotatoCornerSys
             }
         }
 
-        // ✅ UPDATED — handles both earning (positive delta) and spending (negative delta) points
         private void UpdateCustomerPoints(int pointsDelta)
         {
             if (Session["CustomerID"] == null) return;
@@ -837,7 +842,6 @@ namespace PotatoCornerSys
                 {
                     conn.Open();
 
-                    // Prevent points from going below 0 in the database
                     string updateQuery = @"
                         UPDATE USERS 
                         SET Points = CASE 
@@ -853,7 +857,6 @@ namespace PotatoCornerSys
                         cmd.ExecuteNonQuery();
                     }
 
-                    // Sync session to reflect updated balance
                     if (Session["Points"] != null)
                     {
                         int currentPoints = Convert.ToInt32(Session["Points"]);
@@ -875,10 +878,10 @@ namespace PotatoCornerSys
             if (cart.Count == 0)
             {
                 cartDisplay.InnerHtml = @"
-            <div class='cart-empty' style='text-align:center;color:#aaa;padding:60px 20px;font-size:16px;font-weight:600;'>
-                Your cart is empty<br/>
-                <small style='font-size:13px;color:#ccc;'>Add items from the menu to get started</small>
-            </div>";
+                    <div class='cart-empty' style='text-align:center;color:#aaa;padding:60px 20px;font-size:16px;font-weight:600;'>
+                        Your cart is empty<br/>
+                        <small style='font-size:13px;color:#ccc;'>Add items from the menu to get started</small>
+                    </div>";
             }
             else
             {
@@ -888,16 +891,16 @@ namespace PotatoCornerSys
                 {
                     var item = cart[i];
                     html.AppendFormat(@"
-                <div class='cart-item'>
-                    <div class='cart-item-header'>
-                        <span>{0} ({1})</span>
-                        <button type='button' class='btn-remove' onclick='removeCartItem({2})'>Remove</button>
-                    </div>
-                    <div class='cart-item-details'>
-                        <strong>Flavor:</strong> {3}<br/>
-                        <strong>Qty:</strong> {4} &times; PHP {5:0.00} = <strong>PHP {6:0.00}</strong>
-                    </div>
-                </div>",
+                        <div class='cart-item'>
+                            <div class='cart-item-header'>
+                                <span>{0} ({1})</span>
+                                <button type='button' class='btn-remove' onclick='removeCartItem({2})'>Remove</button>
+                            </div>
+                            <div class='cart-item-details'>
+                                <strong>Flavor:</strong> {3}<br/>
+                                <strong>Qty:</strong> {4} &times; PHP {5:0.00} = <strong>PHP {6:0.00}</strong>
+                            </div>
+                        </div>",
                         item.Product, item.Size, i, item.Flavor, item.Qty, item.UnitPrice, item.LineTotal);
                 }
 
@@ -909,12 +912,12 @@ namespace PotatoCornerSys
                 decimal total = subtotal - discount + delivery;
 
                 html.AppendFormat(@"
-            <div class='cart-totals'>
-                <div class='total-row'><span>Subtotal:</span><span>PHP {0:0.00}</span></div>
-                <div class='total-row'><span>Discount:</span><span>PHP {1:0.00}</span></div>
-                <div class='total-row'><span>Delivery Fee:</span><span>PHP {2:0.00}</span></div>
-                <div class='total-row grand'><span>Total:</span><span>PHP {3:0.00}</span></div>
-            </div>", subtotal, discount, delivery, total);
+                    <div class='cart-totals'>
+                        <div class='total-row'><span>Subtotal:</span><span>PHP {0:0.00}</span></div>
+                        <div class='total-row'><span>Discount:</span><span>PHP {1:0.00}</span></div>
+                        <div class='total-row'><span>Delivery Fee:</span><span>PHP {2:0.00}</span></div>
+                        <div class='total-row grand'><span>Total:</span><span>PHP {3:0.00}</span></div>
+                    </div>", subtotal, discount, delivery, total);
 
                 cartDisplay.InnerHtml = html.ToString();
                 lblSubtotal.Text = subtotal.ToString("0.00");

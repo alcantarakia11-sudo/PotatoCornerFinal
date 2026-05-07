@@ -98,6 +98,16 @@
             box-shadow: 0 6px 16px rgba(232,64,28,0.4);
         }
 
+        /* ACTIVE NAV LINK */
+
+        .navbar-links .active {
+            color: #f5c800 !important;
+        }
+
+        .navbar-links .active::after {
+            width: 0 !important;
+        }
+
         /* HERO BANNER WITH VIDEO */
         .hero {
             padding: 0;
@@ -375,9 +385,10 @@
         <!-- NAVBAR -->
         <div class="navbar">
             <div class="navbar-logo">
-                <img src="logopotcor.png" alt="Potato Corner" />
+                <img src="logo.png" alt="Potato Corner" />
             </div>
             <ul class="navbar-links">
+                <li><asp:LinkButton ID="lnkHome" runat="server" CssClass="active" OnClick="lnkHome_Click" Text="Home"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="lnkMenu" runat="server" OnClick="lnkMenu_Click" Text="Menu"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="lnkMembership" runat="server" OnClick="lnkMembership_Click" Text="Membership"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="lnkAboutUs" runat="server" OnClick="lnkAboutUs_Click" Text="About Us"></asp:LinkButton></li>

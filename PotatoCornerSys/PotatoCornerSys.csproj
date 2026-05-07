@@ -61,6 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="aboutus.jpg" />
+    <Content Include="Admin.aspx" />
+    <Content Include="AdminLogin.aspx" />
     <Content Include="award.jpg" />
     <Content Include="ba.jpg" />
     <Content Include="branches.jpg" />
@@ -71,7 +73,9 @@
     <Content Include="logopotcor.png" />
     <Content Include="loopys.png" />
     <Content Include="pops.png" />
+    <Content Include="Sale.aspx" />
     <Content Include="TestDatabase.aspx" />
+    <Content Include="Update.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -81,6 +85,20 @@
     </Compile>
     <Compile Include="AboutUs.aspx.designer.cs">
       <DependentUpon>AboutUs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin.aspx.cs">
+      <DependentUpon>Admin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin.aspx.designer.cs">
+      <DependentUpon>Admin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminLogin.aspx.cs">
+      <DependentUpon>AdminLogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminLogin.aspx.designer.cs">
+      <DependentUpon>AdminLogin.aspx</DependentUpon>
     </Compile>
     <Compile Include="DatabaseBackup.aspx.cs">
       <DependentUpon>DatabaseBackup.aspx</DependentUpon>
@@ -167,12 +185,26 @@
     <Compile Include="RegisterForm.aspx.designer.cs">
       <DependentUpon>RegisterForm.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Sale.aspx.cs">
+      <DependentUpon>Sale.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Sale.aspx.designer.cs">
+      <DependentUpon>Sale.aspx</DependentUpon>
+    </Compile>
     <Compile Include="TestDatabase.aspx.cs">
       <DependentUpon>TestDatabase.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="TestDatabase.aspx.designer.cs">
       <DependentUpon>TestDatabase.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Update.aspx.cs">
+      <DependentUpon>Update.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Update.aspx.designer.cs">
+      <DependentUpon>Update.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

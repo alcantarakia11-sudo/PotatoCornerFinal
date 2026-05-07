@@ -42,5 +42,10 @@ namespace PotatoCornerSys
         {
             Response.Redirect("~/AboutUs.aspx");
         }
+
+        protected void lnkHome_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Default.aspx");
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace PotatoCornerSys
 {
 
 
-    public partial class Default
+    public partial class Sales
     {
 
         /// <summary>
@@ -24,49 +24,22 @@ namespace PotatoCornerSys
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// lnkHome control.
+        /// lnkSales control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkHome;
+        protected global::System.Web.UI.WebControls.LinkButton lnkSales;
 
         /// <summary>
-        /// lnkMenu control.
+        /// lnkUpdate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkMenu;
-
-        /// <summary>
-        /// lnkMembership control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkMembership;
-
-        /// <summary>
-        /// lnkAboutUs control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkAboutUs;
-
-        /// <summary>
-        /// btnOrderNav control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnOrderNav;
+        protected global::System.Web.UI.WebControls.LinkButton lnkUpdate;
 
         /// <summary>
         /// lnkProfile control.
@@ -78,12 +51,57 @@ namespace PotatoCornerSys
         protected global::System.Web.UI.WebControls.LinkButton lnkProfile;
 
         /// <summary>
-        /// btnOrder1 control.
+        /// lblTotalUsers control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnOrder1;
+        protected global::System.Web.UI.WebControls.Label lblTotalUsers;
+
+        /// <summary>
+        /// lblTotalRevenue control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblTotalRevenue;
+
+        /// <summary>
+        /// lblTotalOrders control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblTotalOrders;
+
+        /// <summary>
+        /// ddlStatusFilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlStatusFilter;
+
+        /// <summary>
+        /// lblOrderCount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblOrderCount;
+
+        /// <summary>
+        /// gvOrders control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvOrders;
     }
 }

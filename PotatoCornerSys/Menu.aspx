@@ -80,6 +80,39 @@
             color: #f5c800; 
             transform: translateY(-2px);
         }
+
+        .navbar-links .btn-order-nav {
+            background: linear-gradient(135deg, #e8401c 0%, #c73516 100%);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 15px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px rgba(232,64,28,0.3);
+            transition: all 0.3s;
+        }
+
+        .navbar-links .btn-order-nav::after {
+            display: none;
+        }
+
+        .navbar-links .btn-order-nav:hover {
+            background: linear-gradient(135deg, #c73516 0%, #a82a12 100%);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(232,64,28,0.4);
+        }
+
+        /* ACTIVE NAV LINK */
+
+        .navbar-links .active {
+            color: #f5c800 !important;
+        }
+
+        .navbar-links .active::after {
+            width: 100% !important;
+        }
         
         /* SECTION */
         .menu-section {
@@ -306,10 +339,10 @@
             </div>
             <ul class="navbar-links">
                 <li><a href="Default.aspx">Home</a></li>
-                <li><a href="Menu.aspx">Menu</a></li>
+                <li><a href="Menu.aspx" class="active">Menu</a></li>
                 <li><a href="Membership.aspx">Membership</a></li>
                 <li><a href="AboutUs.aspx">About Us</a></li>
-                <li><a href="Order.aspx">Order Now</a></li>
+                <li><a href="Order.aspx" class="btn-order-nav">Order Now</a></li>
                 <li><a href="Profile.aspx">Profile</a></li>
             </ul>
         </div>

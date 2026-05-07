@@ -99,6 +99,16 @@
             box-shadow: 0 6px 16px rgba(232,64,28,0.4);
         }
 
+        /* ACTIVE NAV LINK */
+
+        .navbar-links .active {
+            color: #f5c800 !important;
+        }
+
+        .navbar-links .active::after {
+            width: 0 !important;
+        }
+
 
         /* HERO BANNER */
         .hero-banner {
@@ -269,7 +279,7 @@
                 <li><a href="Default.aspx">Home</a></li>
                 <li><a href="Menu.aspx">Menu</a></li>
                 <li><a href="Membership.aspx">Membership</a></li>
-                <li><a href="AboutUs.aspx">About Us</a></li>
+                <li><a href="AboutUs.aspx" class="active">About Us</a></li>
                 <li><a href="Order.aspx" class="btn-order-nav">Order Now</a></li>
                 <li><a href="Profile.aspx">Profile</a></li>
             </ul>
