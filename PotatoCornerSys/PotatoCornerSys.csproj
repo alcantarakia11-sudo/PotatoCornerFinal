@@ -69,13 +69,16 @@
     <Content Include="CREW-PHOTO-copy.jpg" />
     <Content Include="DatabaseBackup.aspx" />
     <Content Include="finalhomepage.jpg" />
+    <Content Include="ForgotPassword.aspx" />
     <Content Include="fries.png" />
     <Content Include="logopotcor.png" />
     <Content Include="loopys.png" />
     <Content Include="pops.png" />
+    <Content Include="ResetPassword.aspx" />
     <Content Include="Sale.aspx" />
     <Content Include="TestDatabase.aspx" />
     <Content Include="Update.aspx" />
+    <Content Include="VerifyResetCode.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +116,13 @@
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ForgotPassword.aspx.cs">
+      <DependentUpon>ForgotPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ForgotPassword.aspx.designer.cs">
+      <DependentUpon>ForgotPassword.aspx</DependentUpon>
     </Compile>
     <Compile Include="Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>
@@ -156,6 +166,7 @@
     <Compile Include="OrderSummary.aspx.designer.cs">
       <DependentUpon>OrderSummary.aspx</DependentUpon>
     </Compile>
+    <Compile Include="PasswordHelper.cs" />
     <Compile Include="Profile.aspx.cs">
       <DependentUpon>Profile.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -185,6 +196,13 @@
     <Compile Include="RegisterForm.aspx.designer.cs">
       <DependentUpon>RegisterForm.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ResetPassword.aspx.cs">
+      <DependentUpon>ResetPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ResetPassword.aspx.designer.cs">
+      <DependentUpon>ResetPassword.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Sale.aspx.cs">
       <DependentUpon>Sale.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -205,6 +223,13 @@
     </Compile>
     <Compile Include="Update.aspx.designer.cs">
       <DependentUpon>Update.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="VerifyResetCode.aspx.cs">
+      <DependentUpon>VerifyResetCode.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VerifyResetCode.aspx.designer.cs">
+      <DependentUpon>VerifyResetCode.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

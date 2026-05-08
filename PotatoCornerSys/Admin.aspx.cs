@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,23 +11,22 @@ namespace PotatoCornerSys
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Check session on EVERY load, not just first load
-            if (Session["UserName"] == null)
-            {
-                Response.Redirect("~/AdminLogin.aspx");
-            }
-
             if (!IsPostBack)
             {
-                lblAdminName.Text = Session["Fullname"] != null
-                    ? Session["Fullname"].ToString()
-                    : Session["UserName"].ToString();
+                if (Session["UserName"] != null)
+                {
+                    lblAdminName.Text = Session["Fullname"] != null ? Session["Fullname"].ToString() : Session["UserName"].ToString();
+                }
+                else
+                {
+                    Response.Redirect("~/Login.aspx");
+                }
             }
         }
 
         protected void lnkSales_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/Sale.aspx");
+            Response.Redirect("~/Sales.aspx");
         }
 
         protected void lnkUpdate_Click(object sender, EventArgs e)
@@ -42,7 +41,7 @@ namespace PotatoCornerSys
 
         protected void btnSalesTab_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/Sale.aspx");
+            Response.Redirect("~/Sales.aspx");
         }
 
         protected void btnUpdateTab_Click(object sender, EventArgs e)

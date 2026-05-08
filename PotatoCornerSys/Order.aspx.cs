@@ -37,8 +37,23 @@ namespace PotatoCornerSys
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Removed redirect - modal handles it on frontend
-
+            if (!IsPostBack)
+            {
+                // Auto-fill name from session
+                if (Session["Name"] != null)
+                {
+                    txtName.Text = Session["Name"].ToString();
+                }
+                else if (Session["Fullname"] != null)
+                {
+                    txtName.Text = Session["Fullname"].ToString();
+                }
+                else if (Session["Username"] != null)
+                {
+                    txtName.Text = Session["Username"].ToString();
+                }
+            }
+            
             if (Request.Form["__EVENTTARGET"] == "RemoveCartItem")
             {
                 try
@@ -61,9 +76,6 @@ namespace PotatoCornerSys
             {
                 if (Session["Cart"] == null)
                     Session["Cart"] = new List<CartItem>();
-
-                if (Session["Name"] != null)
-                    txtName.Text = Session["Name"].ToString();
 
                 hdnFriesQty.Value = "1";
                 hdnChickenQty.Value = "1";
@@ -138,6 +150,7 @@ namespace PotatoCornerSys
                     return;
                 }
 
+                // ✅ Flexible name matching
                 string storedFullName = Session["Fullname"]?.ToString();
 
                 if (!string.IsNullOrEmpty(storedFullName))
@@ -178,10 +191,10 @@ namespace PotatoCornerSys
                     conn.Open();
 
                     string query = @"
-                        SELECT u.CustomerID, u.Fullname, u.MembershipLevel
-                        FROM USERS u
-                        INNER JOIN Membership m ON u.CustomerID = m.CustomerID
-                        WHERE u.MembershipLevel = 'Royalty' AND m.MembershipNumber = @MembershipNumber";
+                SELECT u.CustomerID, u.Fullname, u.MembershipLevel
+                FROM USERS u
+                INNER JOIN Membership m ON u.CustomerID = m.CustomerID
+                WHERE u.MembershipLevel = 'Royalty' AND m.MembershipNumber = @MembershipNumber";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -464,6 +477,42 @@ namespace PotatoCornerSys
             UpdateCartTotals();
         }
 
+        // ✅ Payment method selection with Points balance check
+        protected void btnPayment_Click(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+            btnGoTyme.CssClass = "option-btn";
+            btnMayaBank.CssClass = "option-btn";
+            btnGCash.CssClass = "option-btn";
+            btnPoints.CssClass = "option-btn";
+
+            if (btn.ID == "btnPoints")
+            {
+                decimal currentTotal = 0;
+                decimal.TryParse(lblTotal.Text, out currentTotal);
+
+                int userPoints = 0;
+                if (Session["Points"] != null)
+                    int.TryParse(Session["Points"].ToString(), out userPoints);
+
+                decimal pointsValue = userPoints * 10m; // 1 point = PHP 10
+
+                if (userPoints == 0 || pointsValue < currentTotal)
+                {
+                    lblErrorMsg.Text = $"Insufficient points balance. You have {userPoints} pts " +
+                                       $"(PHP {pointsValue:0.00}) but the total is PHP {currentTotal:0.00}.";
+                    lblErrorMsg.CssClass = "status-msg status-error";
+                    lblErrorMsg.Visible = true;
+                    hdnPaymentMethod.Value = "";
+                    return;
+                }
+            }
+
+            btn.CssClass = "option-btn selected";
+            hdnPaymentMethod.Value = btn.Text;
+            lblErrorMsg.Visible = false;
+        }
+
         protected void btnConfirmPickupTime_Click(object sender, EventArgs e)
         {
             if (rblPickupTime.SelectedValue != "")
@@ -482,53 +531,86 @@ namespace PotatoCornerSys
             }
         }
 
-        protected void btnPayment_Click(object sender, EventArgs e)
+        // ✅ NEW: Handle modal submission with reference validation
+        protected void btnSubmitPaymentModal_Click(object sender, EventArgs e)
         {
-            Button btn = (Button)sender;
-            btnGoTyme.CssClass = "option-btn";
-            btnMayaBank.CssClass = "option-btn";
-            btnGCash.CssClass = "option-btn";
-            btnPoints.CssClass = "option-btn";
-
-            if (btn.ID == "btnPoints")
+            string enteredReference = txtPaymentReferenceModal.Text.Trim().ToUpper();
+            string generatedReference = hdnGeneratedReference.Value;
+            
+            // Validate reference format
+            if (!enteredReference.StartsWith("REF-") || enteredReference.Length < 15)
             {
-                decimal currentTotal = 0;
-                decimal.TryParse(lblTotal.Text, out currentTotal);
-
-                int userPoints = 0;
-                if (Session["Points"] != null)
-                    int.TryParse(Session["Points"].ToString(), out userPoints);
-
-                decimal pointsValue = userPoints * 10m;
-
-                if (userPoints == 0 || pointsValue < currentTotal)
-                {
-                    lblErrorMsg.Text = $"Insufficient points balance. You have {userPoints} pts " +
-                                       $"(PHP {pointsValue:0.00}) but the total is PHP {currentTotal:0.00}.";
-                    lblErrorMsg.CssClass = "status-msg status-error";
-                    lblErrorMsg.Visible = true;
-                    hdnPaymentMethod.Value = "";
-                    return;
-                }
-            }
-
-            btn.CssClass = "option-btn selected";
-            hdnPaymentMethod.Value = btn.Text;
-            lblErrorMsg.Visible = false;
-        }
-
-        protected void btnConfirm_Click(object sender, EventArgs e)
-        {
-            // Block if not logged in
-            if (Session["IsLoggedIn"] == null || !(bool)Session["IsLoggedIn"])
-            {
-                ScriptManager.RegisterStartupScript(this, GetType(),
-                    "showLoginModal", "showLoginRequiredModal();", true);
+                lblErrorMsg.Text = "Invalid reference number format. Please scan the QR code and enter the correct reference.";
+                lblErrorMsg.CssClass = "status-msg status-error";
+                lblErrorMsg.Visible = true;
+                ScriptManager.RegisterStartupScript(this, GetType(), "showModal", 
+                    $"showQRCodeModal('{hdnPaymentMethod.Value}', '{lblTotal.Text}');", true);
                 return;
             }
+            
+            // Validate reference matches generated one
+            if (enteredReference != generatedReference)
+            {
+                lblErrorMsg.Text = "Reference number does not match. Please scan the QR code and enter the correct reference.";
+                lblErrorMsg.CssClass = "status-msg status-error";
+                lblErrorMsg.Visible = true;
+                ScriptManager.RegisterStartupScript(this, GetType(), "showModal", 
+                    $"showQRCodeModal('{hdnPaymentMethod.Value}', '{lblTotal.Text}');", true);
+                return;
+            }
+            
+            // Check for duplicate reference
+            try
+            {
+                string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string checkQuery = "SELECT COUNT(*) FROM Orders WHERE PaymentReference = @Reference AND OrderStatus != 'Cancelled'";
+                    using (SqlCommand cmd = new SqlCommand(checkQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Reference", enteredReference);
+                        int count = (int)cmd.ExecuteScalar();
+                        
+                        if (count > 0)
+                        {
+                            lblErrorMsg.Text = "This reference number has already been used. Please generate a new QR code.";
+                            lblErrorMsg.CssClass = "status-msg status-error";
+                            lblErrorMsg.Visible = true;
+                            ScriptManager.RegisterStartupScript(this, GetType(), "showModal", 
+                                $"showQRCodeModal('{hdnPaymentMethod.Value}', '{lblTotal.Text}');", true);
+                            return;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                lblErrorMsg.Text = "Error validating reference: " + ex.Message;
+                lblErrorMsg.CssClass = "status-msg status-error";
+                lblErrorMsg.Visible = true;
+                return;
+            }
+            
+            // Reference is valid, process order
+            ProcessOrder(enteredReference);
+        }
 
+        // ✅ Points payment or direct submission
+        protected void btnConfirm_Click(object sender, EventArgs e)
+        {
+            // Only Points payment reaches here (GCash/Maya/GoTyme show modal instead)
+            if (hdnPaymentMethod.Value == "Points")
+            {
+                ProcessOrder(null);
+            }
+        }
+        
+        private void ProcessOrder(string paymentReference)
+        {
             if (string.IsNullOrEmpty(txtName.Text.Trim()) ||
-                string.IsNullOrEmpty(txtAddress.Text.Trim()) ||
+                string.IsNullOrEmpty(ddlLocation.SelectedValue) ||
+                string.IsNullOrEmpty(txtStreet.Text.Trim()) ||
                 string.IsNullOrEmpty(txtContact.Text.Trim()))
             {
                 lblErrorMsg.Text = "Please fill in all customer information.";
@@ -552,10 +634,23 @@ namespace PotatoCornerSys
                 return;
             }
 
-            string address = txtAddress.Text.Trim();
-            if (!address.All(c => char.IsLetterOrDigit(c) || c == ' ' || c == ','))
+            string street = txtStreet.Text.Trim();
+            if (!street.All(c => char.IsLetterOrDigit(c) || c == ' ' || c == ',' || c == '.' || c == '-' || c == '#' || c == '/'))
             {
-                lblErrorMsg.Text = "Address can only contain letters, numbers, spaces, and commas.";
+                lblErrorMsg.Text = "Street address contains invalid characters.";
+                lblErrorMsg.Visible = true;
+                return;
+            }
+
+            // Parse location
+            string[] locationParts = ddlLocation.SelectedValue.Split('|');
+            string barangay = locationParts[0];
+            string locationType = locationParts[1];
+
+            // Validate delivery type matches location
+            if (locationType == "Delivery" && hdnDeliveryType.Value == "WalkIn")
+            {
+                lblErrorMsg.Text = "This location is only available for delivery orders.";
                 lblErrorMsg.Visible = true;
                 return;
             }
@@ -586,29 +681,14 @@ namespace PotatoCornerSys
             decimal subtotal = decimal.Parse(lblSubtotal.Text);
             decimal discount = decimal.Parse(lblDiscount.Text);
             decimal deliveryFee = decimal.Parse(lblDeliveryFee.Text);
-            decimal amountPaid = 0;
+            
+            // Points payment validation
+            decimal amountPaid = orderTotal;
             decimal change = 0;
 
-            if (hdnPaymentMethod.Value != "Points")
+            if (hdnPaymentMethod.Value == "Points")
             {
-                if (!decimal.TryParse(txtAmountPaid.Text.Trim(), out amountPaid) || amountPaid <= 0)
-                {
-                    lblErrorMsg.Text = "Please enter a valid payment amount.";
-                    lblErrorMsg.Visible = true;
-                    return;
-                }
-
-                if (amountPaid < orderTotal)
-                {
-                    lblErrorMsg.Text = $"Insufficient amount. Total is PHP {orderTotal:0.00}. You entered PHP {amountPaid:0.00}.";
-                    lblErrorMsg.Visible = true;
-                    return;
-                }
-
-                change = amountPaid - orderTotal;
-            }
-            else
-            {
+                // ✅ Safety re-check — cart total may have changed after Points was selected
                 int userPoints = 0;
                 if (Session["Points"] != null)
                     int.TryParse(Session["Points"].ToString(), out userPoints);
@@ -626,25 +706,28 @@ namespace PotatoCornerSys
                     btnPoints.CssClass = "option-btn";
                     return;
                 }
-
-                amountPaid = orderTotal;
-                change = 0;
             }
 
             try
             {
-                int orderID = SaveOrderToDatabase(name, address, contact, orderTotal, subtotal, discount, deliveryFee, amountPaid, change);
+                int orderID = SaveOrderToDatabase(name, barangay, street, contact, orderTotal, subtotal, discount, deliveryFee, amountPaid, change, paymentReference);
 
                 if (orderID > 0)
                 {
+                    // Deduct stock for each item
+                    DeductStockForOrder();
+
+                    // ✅ FIX: Deduct points if paid with Points, otherwise add earned points
                     int pointsEarned = (int)(orderTotal / 500) * 2;
 
                     if (hdnPaymentMethod.Value == "Points")
                     {
+                        // Points used to pay = orderTotal / 10 (1 pt = PHP 10), rounded up
                         int pointsUsed = (int)Math.Ceiling(orderTotal / 10m);
+                        // Net delta: subtract points spent, then add points earned
                         int pointsDelta = pointsEarned - pointsUsed;
                         UpdateCustomerPoints(pointsDelta);
-                        Session["PointsEarned"] = "0";
+                        Session["PointsEarned"] = "0"; // no bonus points shown on receipt when paying with points
                     }
                     else
                     {
@@ -654,7 +737,7 @@ namespace PotatoCornerSys
 
                     Session["OrderID"] = orderID.ToString();
                     Session["OrderName"] = name;
-                    Session["OrderAddress"] = address;
+                    Session["OrderAddress"] = barangay + ", " + street;
                     Session["OrderContact"] = contact;
                     Session["OrderDelivery"] = hdnDeliveryType.Value == "Delivery" ? "Delivery" : "Walk-in";
                     Session["OrderPickupTime"] = hdnPickupTime.Value;
@@ -691,9 +774,9 @@ namespace PotatoCornerSys
             }
         }
 
-        private int SaveOrderToDatabase(string customerName, string address, string contact,
+        private int SaveOrderToDatabase(string customerName, string barangay, string street, string contact,
             decimal totalAmount, decimal subtotal, decimal discount, decimal deliveryFee,
-            decimal amountPaid, decimal change)
+            decimal amountPaid, decimal change, string paymentReference)
         {
             try
             {
@@ -703,13 +786,17 @@ namespace PotatoCornerSys
                 {
                     conn.Open();
 
-                    int customerID = GetOrCreateCustomerID(conn, customerName, address, contact);
+                    int customerID = GetOrCreateCustomerID(conn, customerName, barangay + ", " + street, contact);
+
+                    // Phase 2.5: All orders start as "Pending", but PaymentVerified flag differs
+                    string orderStatus = "Pending";
+                    bool paymentVerified = hdnPaymentMethod.Value == "Points"; // Points = auto-verified
 
                     string orderQuery = @"
                         INSERT INTO Orders (CustomerID, OrderDate, DeliveryType, TotalAmount, Discount, 
-                                          AmountPaid, ChangeAmount, PaymentMethod, OrderStatus, PickupTime, TotalQuantity)
+                                          AmountPaid, ChangeAmount, PaymentMethod, OrderStatus, PickupTime, TotalQuantity, Barangay, Street, PaymentReference, PaymentVerified)
                         VALUES (@CustomerID, @OrderDate, @DeliveryType, @TotalAmount, @Discount, 
-                                @AmountPaid, @ChangeAmount, @PaymentMethod, @OrderStatus, @PickupTime, @TotalQuantity);
+                                @AmountPaid, @ChangeAmount, @PaymentMethod, @OrderStatus, @PickupTime, @TotalQuantity, @Barangay, @Street, @PaymentReference, @PaymentVerified);
                         SELECT SCOPE_IDENTITY();";
 
                     int orderID = 0;
@@ -723,10 +810,15 @@ namespace PotatoCornerSys
                         cmd.Parameters.AddWithValue("@AmountPaid", amountPaid);
                         cmd.Parameters.AddWithValue("@ChangeAmount", change);
                         cmd.Parameters.AddWithValue("@PaymentMethod", hdnPaymentMethod.Value);
-                        cmd.Parameters.AddWithValue("@OrderStatus", "Pending");
+                        cmd.Parameters.AddWithValue("@OrderStatus", orderStatus);
                         cmd.Parameters.AddWithValue("@PickupTime",
                             !string.IsNullOrEmpty(hdnPickupTime.Value) ? (object)DateTime.Parse(hdnPickupTime.Value) : DBNull.Value);
                         cmd.Parameters.AddWithValue("@TotalQuantity", Cart.Sum(item => item.Qty));
+                        cmd.Parameters.AddWithValue("@Barangay", barangay);
+                        cmd.Parameters.AddWithValue("@Street", street);
+                        cmd.Parameters.AddWithValue("@PaymentReference", 
+                            !string.IsNullOrEmpty(paymentReference) ? (object)paymentReference : DBNull.Value);
+                        cmd.Parameters.AddWithValue("@PaymentVerified", paymentVerified);
 
                         orderID = Convert.ToInt32(cmd.ExecuteScalar());
                     }
@@ -829,6 +921,7 @@ namespace PotatoCornerSys
             }
         }
 
+        // ✅ UPDATED — handles both earning (positive delta) and spending (negative delta) points
         private void UpdateCustomerPoints(int pointsDelta)
         {
             if (Session["CustomerID"] == null) return;
@@ -842,6 +935,7 @@ namespace PotatoCornerSys
                 {
                     conn.Open();
 
+                    // Prevent points from going below 0 in the database
                     string updateQuery = @"
                         UPDATE USERS 
                         SET Points = CASE 
@@ -857,6 +951,7 @@ namespace PotatoCornerSys
                         cmd.ExecuteNonQuery();
                     }
 
+                    // Sync session to reflect updated balance
                     if (Session["Points"] != null)
                     {
                         int currentPoints = Convert.ToInt32(Session["Points"]);
@@ -871,6 +966,67 @@ namespace PotatoCornerSys
             }
         }
 
+        private void DeductStockForOrder()
+        {
+            try
+            {
+                string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    foreach (var item in Cart)
+                    {
+                        int productID = GetProductID(conn, item.Product);
+                        int? sizeID = GetSizeID(conn, productID, item.Size);
+                        int? flavorID = GetFlavorID(conn, productID, item.Flavor);
+
+                        // Deduct size stock (1:1 ratio - 1 order = 1 stock unit)
+                        if (sizeID.HasValue)
+                        {
+                            string sizeStockQuery = @"
+                                UPDATE ProductSizeStock 
+                                SET StockQuantity = StockQuantity - @Quantity,
+                                    LastUpdated = GETDATE()
+                                WHERE ProductID = @ProductID AND SizeID = @SizeID";
+
+                            using (SqlCommand cmd = new SqlCommand(sizeStockQuery, conn))
+                            {
+                                cmd.Parameters.AddWithValue("@ProductID", productID);
+                                cmd.Parameters.AddWithValue("@SizeID", sizeID.Value);
+                                cmd.Parameters.AddWithValue("@Quantity", item.Qty);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        // Deduct flavor stock (1:10 ratio - 1 flavor unit serves 10 orders)
+                        if (flavorID.HasValue)
+                        {
+                            int flavorUnitsNeeded = (int)Math.Ceiling(item.Qty / 10.0);
+
+                            string flavorStockQuery = @"
+                                UPDATE FlavorStock 
+                                SET StockQuantity = StockQuantity - @FlavorUnits,
+                                    LastUpdated = GETDATE()
+                                WHERE FlavorID = @FlavorID";
+
+                            using (SqlCommand cmd = new SqlCommand(flavorStockQuery, conn))
+                            {
+                                cmd.Parameters.AddWithValue("@FlavorID", flavorID.Value);
+                                cmd.Parameters.AddWithValue("@FlavorUnits", flavorUnitsNeeded);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error deducting stock: " + ex.Message);
+            }
+        }
+
         private void BindCart()
         {
             var cart = Cart;
@@ -878,10 +1034,10 @@ namespace PotatoCornerSys
             if (cart.Count == 0)
             {
                 cartDisplay.InnerHtml = @"
-                    <div class='cart-empty' style='text-align:center;color:#aaa;padding:60px 20px;font-size:16px;font-weight:600;'>
-                        Your cart is empty<br/>
-                        <small style='font-size:13px;color:#ccc;'>Add items from the menu to get started</small>
-                    </div>";
+            <div class='cart-empty' style='text-align:center;color:#aaa;padding:60px 20px;font-size:16px;font-weight:600;'>
+                Your cart is empty<br/>
+                <small style='font-size:13px;color:#ccc;'>Add items from the menu to get started</small>
+            </div>";
             }
             else
             {
@@ -891,16 +1047,16 @@ namespace PotatoCornerSys
                 {
                     var item = cart[i];
                     html.AppendFormat(@"
-                        <div class='cart-item'>
-                            <div class='cart-item-header'>
-                                <span>{0} ({1})</span>
-                                <button type='button' class='btn-remove' onclick='removeCartItem({2})'>Remove</button>
-                            </div>
-                            <div class='cart-item-details'>
-                                <strong>Flavor:</strong> {3}<br/>
-                                <strong>Qty:</strong> {4} &times; PHP {5:0.00} = <strong>PHP {6:0.00}</strong>
-                            </div>
-                        </div>",
+                <div class='cart-item'>
+                    <div class='cart-item-header'>
+                        <span>{0} ({1})</span>
+                        <button type='button' class='btn-remove' onclick='removeCartItem({2})'>Remove</button>
+                    </div>
+                    <div class='cart-item-details'>
+                        <strong>Flavor:</strong> {3}<br/>
+                        <strong>Qty:</strong> {4} &times; PHP {5:0.00} = <strong>PHP {6:0.00}</strong>
+                    </div>
+                </div>",
                         item.Product, item.Size, i, item.Flavor, item.Qty, item.UnitPrice, item.LineTotal);
                 }
 
@@ -912,12 +1068,12 @@ namespace PotatoCornerSys
                 decimal total = subtotal - discount + delivery;
 
                 html.AppendFormat(@"
-                    <div class='cart-totals'>
-                        <div class='total-row'><span>Subtotal:</span><span>PHP {0:0.00}</span></div>
-                        <div class='total-row'><span>Discount:</span><span>PHP {1:0.00}</span></div>
-                        <div class='total-row'><span>Delivery Fee:</span><span>PHP {2:0.00}</span></div>
-                        <div class='total-row grand'><span>Total:</span><span>PHP {3:0.00}</span></div>
-                    </div>", subtotal, discount, delivery, total);
+            <div class='cart-totals'>
+                <div class='total-row'><span>Subtotal:</span><span>PHP {0:0.00}</span></div>
+                <div class='total-row'><span>Discount:</span><span>PHP {1:0.00}</span></div>
+                <div class='total-row'><span>Delivery Fee:</span><span>PHP {2:0.00}</span></div>
+                <div class='total-row grand'><span>Total:</span><span>PHP {3:0.00}</span></div>
+            </div>", subtotal, discount, delivery, total);
 
                 cartDisplay.InnerHtml = html.ToString();
                 lblSubtotal.Text = subtotal.ToString("0.00");

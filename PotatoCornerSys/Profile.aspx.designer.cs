@@ -42,6 +42,33 @@ namespace PotatoCornerSys
         protected global::System.Web.UI.WebControls.Button btnCancelOrderHidden;
 
         /// <summary>
+        /// hdnMarkDeliveredOrderID control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnMarkDeliveredOrderID;
+
+        /// <summary>
+        /// btnMarkDeliveredHidden control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnMarkDeliveredHidden;
+
+        /// <summary>
+        /// profileCardContainer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl profileCardContainer;
+
+        /// <summary>
         /// imgProfilePic control.
         /// </summary>
         /// <remarks>
@@ -132,6 +159,24 @@ namespace PotatoCornerSys
         protected global::System.Web.UI.WebControls.Label lblRoyaltyNumber;
 
         /// <summary>
+        /// membershipRequestStatusRow control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl membershipRequestStatusRow;
+
+        /// <summary>
+        /// lblMembershipRequestStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMembershipRequestStatus;
+
+        /// <summary>
         /// lblPoints control.
         /// </summary>
         /// <remarks>
@@ -168,13 +213,13 @@ namespace PotatoCornerSys
         protected global::System.Web.UI.WebControls.Label lblPointsMsg;
 
         /// <summary>
-        /// btnBackupDatabase control.
+        /// btnAccountSettings control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnBackupDatabase;
+        protected global::System.Web.UI.WebControls.Button btnAccountSettings;
 
         /// <summary>
         /// btnLogout control.
@@ -337,5 +382,23 @@ namespace PotatoCornerSys
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnConfirmLogout;
+
+        /// <summary>
+        /// txtDeletePassword control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtDeletePassword;
+
+        /// <summary>
+        /// btnConfirmDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnConfirmDelete;
     }
 }

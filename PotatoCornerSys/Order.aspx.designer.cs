@@ -51,13 +51,22 @@ namespace PotatoCornerSys
         protected global::System.Web.UI.WebControls.TextBox txtName;
 
         /// <summary>
-        /// txtAddress control.
+        /// ddlLocation control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtAddress;
+        protected global::System.Web.UI.WebControls.DropDownList ddlLocation;
+
+        /// <summary>
+        /// txtStreet control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtStreet;
 
         /// <summary>
         /// txtContact control.
@@ -609,13 +618,13 @@ namespace PotatoCornerSys
         protected global::System.Web.UI.WebControls.HiddenField hdnPaymentMethod;
 
         /// <summary>
-        /// txtAmountPaid control.
+        /// hdnGeneratedReference control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtAmountPaid;
+        protected global::System.Web.UI.WebControls.HiddenField hdnGeneratedReference;
 
         /// <summary>
         /// lblErrorMsg control.
@@ -652,5 +661,41 @@ namespace PotatoCornerSys
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnConfirmPickupTime;
+
+        /// <summary>
+        /// lblQRTotal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblQRTotal;
+
+        /// <summary>
+        /// txtPaymentReferenceModal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtPaymentReferenceModal;
+
+        /// <summary>
+        /// btnSubmitPaymentModal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnSubmitPaymentModal;
+
+        /// <summary>
+        /// hdnShowQRModal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnShowQRModal;
     }
 }
