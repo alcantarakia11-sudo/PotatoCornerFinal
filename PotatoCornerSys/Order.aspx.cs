@@ -19,10 +19,16 @@ namespace PotatoCornerSys
         {
             public string Product { get; set; }
             public string Size { get; set; }
-            public string Flavor { get; set; }
+            public string Flavor { get; set; } // Can be "BBQ" or "BBQ + Cheese" for dual flavors
             public int Qty { get; set; }
             public decimal UnitPrice { get; set; }
             public decimal LineTotal => UnitPrice * Qty;
+            
+            // Helper to get flavor list
+            public List<string> GetFlavors()
+            {
+                return Flavor.Split(new[] { " + " }, StringSplitOptions.None).ToList();
+            }
         }
 
         private List<CartItem> Cart
@@ -313,18 +319,37 @@ namespace PotatoCornerSys
                 return;
             }
 
-            string flavor = "";
-            if (rbFriesSourCream.Checked) flavor = "Sour Cream";
-            else if (rbFriesBBQ.Checked) flavor = "BBQ";
-            else if (rbFriesCheese.Checked) flavor = "Cheese";
-            else if (rbFriesSalt.Checked) flavor = "Salt";
-            else
+            // Collect selected flavors
+            List<string> selectedFlavors = new List<string>();
+            if (cbFriesSourCream.Checked) selectedFlavors.Add("Sour Cream");
+            if (cbFriesBBQ.Checked) selectedFlavors.Add("BBQ");
+            if (cbFriesCheese.Checked) selectedFlavors.Add("Cheese");
+            if (cbFriesSalt.Checked) selectedFlavors.Add("Salt");
+            
+            if (selectedFlavors.Count == 0)
             {
-                lblErrorMsg.Text = "Please select a flavor for French Fries.";
+                lblErrorMsg.Text = "Please select at least one flavor for French Fries.";
+                lblErrorMsg.Visible = true;
+                return;
+            }
+            
+            // Check if Mega+ size allows 2 flavors
+            bool isMegaOrAbove = rbFriesMega.Checked || rbFriesGiga.Checked || rbFriesTerra.Checked;
+            if (!isMegaOrAbove && selectedFlavors.Count > 1)
+            {
+                lblErrorMsg.Text = "Only Mega size and above can have 2 flavors.";
+                lblErrorMsg.Visible = true;
+                return;
+            }
+            
+            if (selectedFlavors.Count > 2)
+            {
+                lblErrorMsg.Text = "You can select a maximum of 2 flavors.";
                 lblErrorMsg.Visible = true;
                 return;
             }
 
+            string flavor = string.Join(" + ", selectedFlavors);
             int qty = int.Parse(hdnFriesQty.Value);
             Cart.Add(new CartItem { Product = "French Fries", Size = size, Flavor = flavor, Qty = qty, UnitPrice = price });
 
@@ -334,8 +359,8 @@ namespace PotatoCornerSys
 
             rbFriesRegular.Checked = rbFriesLarge.Checked = rbFriesJumbo.Checked = false;
             rbFriesMega.Checked = rbFriesGiga.Checked = rbFriesTerra.Checked = false;
-            rbFriesSourCream.Checked = rbFriesBBQ.Checked = rbFriesCheese.Checked = false;
-            rbFriesSalt.Checked = false;
+            cbFriesSourCream.Checked = cbFriesBBQ.Checked = cbFriesCheese.Checked = false;
+            cbFriesSalt.Checked = false;
             hdnFriesQty.Value = "1";
             lblFriesQty.Text = "1";
 
@@ -357,24 +382,43 @@ namespace PotatoCornerSys
                 return;
             }
 
-            string flavor = "";
-            if (rbChickenSourCream.Checked) flavor = "Sour Cream";
-            else if (rbChickenBBQ.Checked) flavor = "BBQ";
-            else if (rbChickenCheese.Checked) flavor = "Cheese";
-            else if (rbChickenSalt.Checked) flavor = "Salt";
-            else
+            // Collect selected flavors
+            List<string> selectedFlavors = new List<string>();
+            if (cbChickenSourCream.Checked) selectedFlavors.Add("Sour Cream");
+            if (cbChickenBBQ.Checked) selectedFlavors.Add("BBQ");
+            if (cbChickenCheese.Checked) selectedFlavors.Add("Cheese");
+            if (cbChickenSalt.Checked) selectedFlavors.Add("Salt");
+            
+            if (selectedFlavors.Count == 0)
             {
-                lblErrorMsg.Text = "Please select a flavor for Chicken Pops.";
+                lblErrorMsg.Text = "Please select at least one flavor for Chicken Pops.";
+                lblErrorMsg.Visible = true;
+                return;
+            }
+            
+            // Check if Mega size allows 2 flavors
+            bool isMega = rbChickenMega.Checked;
+            if (!isMega && selectedFlavors.Count > 1)
+            {
+                lblErrorMsg.Text = "Only Mega Mix size can have 2 flavors.";
+                lblErrorMsg.Visible = true;
+                return;
+            }
+            
+            if (selectedFlavors.Count > 2)
+            {
+                lblErrorMsg.Text = "You can select a maximum of 2 flavors.";
                 lblErrorMsg.Visible = true;
                 return;
             }
 
+            string flavor = string.Join(" + ", selectedFlavors);
             int qty = int.Parse(hdnChickenQty.Value);
             Cart.Add(new CartItem { Product = "Chicken Pops", Size = size, Flavor = flavor, Qty = qty, UnitPrice = price });
 
             rbChickenSolo.Checked = rbChickenLarge.Checked = rbChickenMega.Checked = false;
-            rbChickenSourCream.Checked = rbChickenBBQ.Checked = rbChickenCheese.Checked = false;
-            rbChickenSalt.Checked = false;
+            cbChickenSourCream.Checked = cbChickenBBQ.Checked = cbChickenCheese.Checked = false;
+            cbChickenSalt.Checked = false;
             hdnChickenQty.Value = "1";
             lblChickenQty.Text = "1";
             lblErrorMsg.Visible = false;
@@ -396,24 +440,43 @@ namespace PotatoCornerSys
                 return;
             }
 
-            string flavor = "";
-            if (rbLoopysSourCream.Checked) flavor = "Sour Cream";
-            else if (rbLoopysBBQ.Checked) flavor = "BBQ";
-            else if (rbLoopysCheese.Checked) flavor = "Cheese";
-            else if (rbLoopysSalt.Checked) flavor = "Salt";
-            else
+            // Collect selected flavors
+            List<string> selectedFlavors = new List<string>();
+            if (cbLoopysSourCream.Checked) selectedFlavors.Add("Sour Cream");
+            if (cbLoopysBBQ.Checked) selectedFlavors.Add("BBQ");
+            if (cbLoopysCheese.Checked) selectedFlavors.Add("Cheese");
+            if (cbLoopysSalt.Checked) selectedFlavors.Add("Salt");
+            
+            if (selectedFlavors.Count == 0)
             {
-                lblErrorMsg.Text = "Please select a flavor for Loopys.";
+                lblErrorMsg.Text = "Please select at least one flavor for Loopys.";
+                lblErrorMsg.Visible = true;
+                return;
+            }
+            
+            // Check if Mega size allows 2 flavors
+            bool isMega = rbLoopysMega.Checked;
+            if (!isMega && selectedFlavors.Count > 1)
+            {
+                lblErrorMsg.Text = "Only Mega size can have 2 flavors.";
+                lblErrorMsg.Visible = true;
+                return;
+            }
+            
+            if (selectedFlavors.Count > 2)
+            {
+                lblErrorMsg.Text = "You can select a maximum of 2 flavors.";
                 lblErrorMsg.Visible = true;
                 return;
             }
 
+            string flavor = string.Join(" + ", selectedFlavors);
             int qty = int.Parse(hdnLoopysQty.Value);
             Cart.Add(new CartItem { Product = "Loopys", Size = size, Flavor = flavor, Qty = qty, UnitPrice = price });
 
             rbLoopysLarge.Checked = rbLoopysMega.Checked = false;
-            rbLoopysSourCream.Checked = rbLoopysBBQ.Checked = rbLoopysCheese.Checked = false;
-            rbLoopysSalt.Checked = false;
+            cbLoopysSourCream.Checked = cbLoopysBBQ.Checked = cbLoopysCheese.Checked = false;
+            cbLoopysSalt.Checked = false;
             hdnLoopysQty.Value = "1";
             lblLoopysQty.Text = "1";
             lblErrorMsg.Visible = false;
@@ -827,8 +890,18 @@ namespace PotatoCornerSys
                     {
                         int productID = GetProductID(conn, item.Product);
                         int? sizeID = GetSizeID(conn, productID, item.Size);
-                        int? flavorID = GetFlavorID(conn, productID, item.Flavor);
-
+                        
+                        // Handle multiple flavors - split and create entries for each
+                        List<string> flavors = item.GetFlavors();
+                        
+                        // For dual flavors, we'll create one OrderItem with the first flavor
+                        // and store the full flavor string in a custom way
+                        // OR we can just use the combined flavor string and let GetFlavorID handle it
+                        
+                        // Simple approach: Store combined flavor as-is (e.g., "BBQ + Cheese")
+                        // The database will store NULL for FlavorID if combination doesn't exist
+                        // But we'll store the flavor text in the order for display purposes
+                        
                         string itemQuery = @"
                             INSERT INTO OrderItems (OrderID, ProductID, SizeID, FlavorID, Quantity, UnitPrice, TotalPrice)
                             VALUES (@OrderID, @ProductID, @SizeID, @FlavorID, @Quantity, @UnitPrice, @TotalPrice)";
@@ -838,13 +911,41 @@ namespace PotatoCornerSys
                             cmd.Parameters.AddWithValue("@OrderID", orderID);
                             cmd.Parameters.AddWithValue("@ProductID", productID);
                             cmd.Parameters.AddWithValue("@SizeID", sizeID.HasValue ? (object)sizeID.Value : DBNull.Value);
+                            
+                            // For dual flavors, use the first flavor's ID
+                            // The full flavor combination is preserved in the cart/receipt display
+                            int? flavorID = GetFlavorID(conn, productID, flavors[0]);
                             cmd.Parameters.AddWithValue("@FlavorID", flavorID.HasValue ? (object)flavorID.Value : DBNull.Value);
+                            
                             cmd.Parameters.AddWithValue("@Quantity", item.Qty);
                             cmd.Parameters.AddWithValue("@UnitPrice", item.UnitPrice);
                             cmd.Parameters.AddWithValue("@TotalPrice", item.LineTotal);
                             cmd.ExecuteNonQuery();
                         }
+                        
+                        // If there's a second flavor, deduct stock for it too
+                        if (flavors.Count > 1)
+                        {
+                            // We'll handle dual flavor stock deduction in DeductStockForOrder
+                        }
                     }
+
+                    // Log order creation to Activity Log
+                    string customerNameForLog = customerName;
+                    if (Session["Username"] != null)
+                        customerNameForLog = Session["Username"].ToString();
+                    
+                    string orderSummary = $"Order #{orderID} placed by {customerNameForLog} - " +
+                                        $"{Cart.Count} item(s), Total: PHP {totalAmount:0.00}, " +
+                                        $"Payment: {hdnPaymentMethod.Value}, Delivery: {(hdnDeliveryType.Value == "Delivery" ? "Delivery" : "Walk-in")}";
+                    
+                    ActivityLog.LogActivity(
+                        activityType: "Order Placed",
+                        description: orderSummary,
+                        performedBy: customerNameForLog,
+                        targetEntity: $"Order #{orderID}",
+                        severity: "Info"
+                    );
 
                     return orderID;
                 }
@@ -980,7 +1081,7 @@ namespace PotatoCornerSys
                     {
                         int productID = GetProductID(conn, item.Product);
                         int? sizeID = GetSizeID(conn, productID, item.Size);
-                        int? flavorID = GetFlavorID(conn, productID, item.Flavor);
+                        List<string> flavors = item.GetFlavors();
 
                         // Deduct size stock (1:1 ratio - 1 order = 1 stock unit)
                         if (sizeID.HasValue)
@@ -1001,21 +1102,27 @@ namespace PotatoCornerSys
                         }
 
                         // Deduct flavor stock (1:10 ratio - 1 flavor unit serves 10 orders)
-                        if (flavorID.HasValue)
+                        // For dual flavors, deduct stock for each flavor
+                        foreach (string flavorName in flavors)
                         {
-                            int flavorUnitsNeeded = (int)Math.Ceiling(item.Qty / 10.0);
-
-                            string flavorStockQuery = @"
-                                UPDATE FlavorStock 
-                                SET StockQuantity = StockQuantity - @FlavorUnits,
-                                    LastUpdated = GETDATE()
-                                WHERE FlavorID = @FlavorID";
-
-                            using (SqlCommand cmd = new SqlCommand(flavorStockQuery, conn))
+                            int? flavorID = GetFlavorID(conn, productID, flavorName);
+                            
+                            if (flavorID.HasValue)
                             {
-                                cmd.Parameters.AddWithValue("@FlavorID", flavorID.Value);
-                                cmd.Parameters.AddWithValue("@FlavorUnits", flavorUnitsNeeded);
-                                cmd.ExecuteNonQuery();
+                                int flavorUnitsNeeded = (int)Math.Ceiling(item.Qty / 10.0);
+
+                                string flavorStockQuery = @"
+                                    UPDATE FlavorStock 
+                                    SET StockQuantity = StockQuantity - @FlavorUnits,
+                                        LastUpdated = GETDATE()
+                                    WHERE FlavorID = @FlavorID";
+
+                                using (SqlCommand cmd = new SqlCommand(flavorStockQuery, conn))
+                                {
+                                    cmd.Parameters.AddWithValue("@FlavorID", flavorID.Value);
+                                    cmd.Parameters.AddWithValue("@FlavorUnits", flavorUnitsNeeded);
+                                    cmd.ExecuteNonQuery();
+                                }
                             }
                         }
                     }

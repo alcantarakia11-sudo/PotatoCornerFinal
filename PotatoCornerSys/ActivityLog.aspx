@@ -416,6 +416,8 @@
                     <label>Activity Type</label>
                     <asp:DropDownList ID="ddlActivityType" runat="server">
                         <asp:ListItem Value="" Text="All Activities" Selected="True"></asp:ListItem>
+                        <asp:ListItem Value="Order Placed" Text="Order Placed"></asp:ListItem>
+                        <asp:ListItem Value="Order Cancelled" Text="Order Cancelled"></asp:ListItem>
                         <asp:ListItem Value="Order Status Change" Text="Order Status Change"></asp:ListItem>
                         <asp:ListItem Value="User Registration" Text="User Registration"></asp:ListItem>
                         <asp:ListItem Value="Admin Action" Text="Admin Action"></asp:ListItem>

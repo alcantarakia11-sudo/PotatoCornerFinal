@@ -103,7 +103,7 @@ namespace PotatoCornerSys
             {
                 System.Diagnostics.Debug.WriteLine("Error deleting account: " + ex.Message);
                 ClientScript.RegisterStartupScript(this.GetType(), "showError", 
-                    "alert('An error occurred while deleting your account. Please try again.');", true);
+                    "showAlertModal('❌', 'Error', 'An error occurred while deleting your account. Please try again.');", true);
             }
         }
 
@@ -771,6 +771,16 @@ namespace PotatoCornerSys
                                 ? "✓ Order #" + orderID + " has been cancelled successfully."
                                 : "✗ Failed to cancel order #" + orderID + ".";
                         }
+                        
+                        // Log order cancellation to Activity Log
+                        string customerName = Session["Username"]?.ToString() ?? "Customer";
+                        ActivityLog.LogActivity(
+                            activityType: "Order Cancelled",
+                            description: $"Order #{orderID} was cancelled by customer {customerName}",
+                            performedBy: customerName,
+                            targetEntity: $"Order #{orderID}",
+                            severity: "Warning"
+                        );
                     }
                     Response.Redirect(Request.RawUrl);
                 }
@@ -852,15 +862,27 @@ namespace PotatoCornerSys
             }
         }
 
+        protected string GetReorderButton(string orderStatus, string orderID)
+        {
+            // ✅ NEW RULE: Can only reorder if order is completed (Delivered or Picked Up)
+            // No reorder for Pending, Confirmed, Out for Delivery, Cancelled, or No Show
+            if (orderStatus == "Delivered" || orderStatus == "Picked Up")
+            {
+                return $"<button type='button' class='btn-reorder-new' onclick='reorderItems({orderID})'>Reorder</button>";
+            }
+            return "";
+        }
+
         protected string GetCancelButton(DateTime orderDate, string orderID, string orderStatus)
         {
-            // Hide if already cancelled, delivered, picked up, no show, or out for delivery
-            if (orderStatus == "Cancelled" || orderStatus == "Delivered" || orderStatus == "Picked Up" || orderStatus == "No Show" || orderStatus == "Out for Delivery")
+            // ✅ NEW RULE: Cannot cancel once admin confirms the order
+            // Can only cancel if status is "Pending" (before admin confirmation)
+            if (orderStatus != "Pending")
                 return "";
 
-            // Time restriction: can only cancel within 10 minutes and if Pending or Confirmed
+            // Time restriction: can only cancel within 10 minutes of placing order
             TimeSpan timeSinceOrder = DateTime.Now - orderDate;
-            if (timeSinceOrder.TotalMinutes <= 10 && (orderStatus == "Pending" || orderStatus == "Confirmed"))
+            if (timeSinceOrder.TotalMinutes <= 10)
                 return $"<button type='button' class='btn-cancel-new' onclick='cancelOrder({orderID})'>Cancel Order</button>";
 
             return "";
@@ -890,7 +912,7 @@ namespace PotatoCornerSys
 
                     string updateQuery = @"UPDATE Orders 
                                           SET OrderStatus = 'Delivered', 
-                                              DeliveryTime = GETDATE() 
+                                              DeliveredAt = GETDATE() 
                                           WHERE OrderID = @OrderID 
                                           AND DeliveryType = 'Delivery' 
                                           AND OrderStatus = 'Out for Delivery'";
@@ -995,12 +1017,79 @@ namespace PotatoCornerSys
                         cmd.Parameters.AddWithValue("@OrderID", int.Parse(orderID));
                         cmd.ExecuteNonQuery();
                     }
+                    
+                    // Log order cancellation to Activity Log
+                    string customerName = Session["Username"]?.ToString() ?? "Customer";
+                    ActivityLog.LogActivity(
+                        activityType: "Order Cancelled",
+                        description: $"Order #{orderID} was cancelled by customer {customerName}",
+                        performedBy: customerName,
+                        targetEntity: $"Order #{orderID}",
+                        severity: "Warning"
+                    );
                 }
                 LoadOrderHistory();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Error cancelling order: " + ex.Message);
+            }
+        }
+
+        protected void btnReorder_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string orderID = hdnReorderOrderID.Value;
+                if (string.IsNullOrEmpty(orderID)) return;
+
+                string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string query = @"
+                        SELECT oi.ProductID, p.ProductName, oi.SizeID, ps.SizeName,
+                               oi.FlavorID, pf.FlavorName, oi.Quantity,
+                               (p.BasePrice + ISNULL(ps.PriceModifier, 0)) AS CurrentPrice,
+                               oi.UnitPrice AS OriginalPrice
+                        FROM OrderItems oi
+                        INNER JOIN Products p ON oi.ProductID = p.ProductID
+                        LEFT JOIN ProductSizes ps ON oi.SizeID = ps.SizeID
+                        LEFT JOIN ProductFlavors pf ON oi.FlavorID = pf.FlavorID
+                        WHERE oi.OrderID = @OrderID
+                        ORDER BY oi.OrderItemID";
+
+                    List<Order.CartItem> cart = new List<Order.CartItem>();
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@OrderID", Convert.ToInt32(orderID));
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                cart.Add(new Order.CartItem
+                                {
+                                    Product = reader["ProductName"].ToString(),
+                                    Size = reader["SizeName"]?.ToString() ?? "Regular",
+                                    Flavor = reader["FlavorName"]?.ToString() ?? "Salt",
+                                    Qty = Convert.ToInt32(reader["Quantity"]),
+                                    UnitPrice = Convert.ToDecimal(reader["CurrentPrice"])
+                                });
+                            }
+                        }
+                    }
+
+                    if (cart.Count > 0)
+                    {
+                        Session["Cart"] = cart;
+                        Session["ReorderMessage"] = "✓ Previous order loaded! Review and confirm your order.";
+                        Response.Redirect("Order.aspx");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error reordering: " + ex.Message);
             }
         }
     }

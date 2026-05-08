@@ -28,6 +28,6 @@ namespace PotatoCornerSys
         protected global::System.Web.UI.WebControls.Label lblTotalRevenue;
         protected global::System.Web.UI.WebControls.Button btnBackToDashboard;
         protected global::System.Web.UI.WebControls.Button btnDatabaseBackup;
-        protected global::System.Web.UI.WebControls.Button btnLogout;
+        protected global::System.Web.UI.WebControls.Button btnConfirmLogout;
     }
 }

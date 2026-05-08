@@ -143,10 +143,19 @@
         ::-webkit-scrollbar-thumb { background: #119247; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #0d7336; }
         
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
         .modal-overlay.active { display: flex; }
         .modal-box { background: white; border-radius: 16px; padding: 32px; max-width: 450px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); animation: modalSlideIn 0.3s ease-out; }
         @keyframes modalSlideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        /* ALERT MODAL */
+        .alert-modal-box { background: white; border-radius: 20px; padding: 36px 32px; max-width: 420px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.25); animation: modalSlideIn 0.3s ease-out; }
+        .alert-modal-icon { font-size: 56px; text-align: center; margin-bottom: 16px; }
+        .alert-modal-head { font-family: 'Segoe UI', sans-serif; font-size: 24px; font-weight: 900; color: #1a1612; text-align: center; margin-bottom: 12px; letter-spacing: 0.5px; }
+        .alert-modal-msg { font-size: 14px; color: #666; text-align: center; margin-bottom: 24px; line-height: 1.6; }
+        .alert-modal-btn { width: 100%; padding: 12px; border: none; border-radius: 10px; background: #119247; color: white; font-family: 'Segoe UI', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+        .alert-modal-btn:hover { background: #0d7336; }
+        
         .modal-header { font-size: 22px; font-weight: 800; color: #119247; margin-bottom: 12px; text-align: center; }
         .modal-message { font-size: 14px; color: #666; margin-bottom: 24px; text-align: center; line-height: 1.6; }
         .time-slots { max-height: 300px; overflow-y: auto; margin-bottom: 24px; }
@@ -250,11 +259,11 @@
                                 <div class="size-option"><asp:RadioButton ID="rbFriesTerra" runat="server" GroupName="FriesSize" /><label for="<%= rbFriesTerra.ClientID %>">Terra - PHP 228</label></div>
                             </div>
                             <div class="flavors-section">
-                                <div class="section-label">Flavor</div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbFriesSourCream" runat="server" GroupName="FriesFlavor" /><label for="<%= rbFriesSourCream.ClientID %>">Sour Cream</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbFriesBBQ" runat="server" GroupName="FriesFlavor" /><label for="<%= rbFriesBBQ.ClientID %>">BBQ</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbFriesCheese" runat="server" GroupName="FriesFlavor" /><label for="<%= rbFriesCheese.ClientID %>">Cheese</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbFriesSalt" runat="server" GroupName="FriesFlavor" /><label for="<%= rbFriesSalt.ClientID %>">Salt</label></div>
+                                <div class="section-label">Flavor <span id="friesFlavorNote" style="font-size:10px; color:#e8401c; font-weight:600;"></span></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbFriesSourCream" runat="server" /><label for="<%= cbFriesSourCream.ClientID %>">Sour Cream</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbFriesBBQ" runat="server" /><label for="<%= cbFriesBBQ.ClientID %>">BBQ</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbFriesCheese" runat="server" /><label for="<%= cbFriesCheese.ClientID %>">Cheese</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbFriesSalt" runat="server" /><label for="<%= cbFriesSalt.ClientID %>">Chili BBQ</label></div>
                             </div>
                         </div>
                         <div class="qty-section">
@@ -286,11 +295,11 @@
                                 <div class="size-option"><asp:RadioButton ID="rbChickenMega" runat="server" GroupName="ChickenSize" /><label for="<%= rbChickenMega.ClientID %>">Mega Mix - PHP 199</label></div>
                             </div>
                             <div class="flavors-section">
-                                <div class="section-label">Flavor</div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbChickenSourCream" runat="server" GroupName="ChickenFlavor" /><label for="<%= rbChickenSourCream.ClientID %>">Sour Cream</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbChickenBBQ" runat="server" GroupName="ChickenFlavor" /><label for="<%= rbChickenBBQ.ClientID %>">BBQ</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbChickenCheese" runat="server" GroupName="ChickenFlavor" /><label for="<%= rbChickenCheese.ClientID %>">Cheese</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbChickenSalt" runat="server" GroupName="ChickenFlavor" /><label for="<%= rbChickenSalt.ClientID %>">Salt</label></div>
+                                <div class="section-label">Flavor <span id="chickenFlavorNote" style="font-size:10px; color:#e8401c; font-weight:600;"></span></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbChickenSourCream" runat="server" /><label for="<%= cbChickenSourCream.ClientID %>">Sour Cream</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbChickenBBQ" runat="server" /><label for="<%= cbChickenBBQ.ClientID %>">BBQ</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbChickenCheese" runat="server" /><label for="<%= cbChickenCheese.ClientID %>">Cheese</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbChickenSalt" runat="server" /><label for="<%= cbChickenSalt.ClientID %>">Chili BBQ</label></div>
                             </div>
                         </div>
                         <div class="qty-section">
@@ -321,11 +330,11 @@
                                 <div class="size-option"><asp:RadioButton ID="rbLoopysMega" runat="server" GroupName="LoopysSize" /><label for="<%= rbLoopysMega.ClientID %>">Mega - PHP 135</label></div>
                             </div>
                             <div class="flavors-section">
-                                <div class="section-label">Flavor</div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbLoopysSourCream" runat="server" GroupName="LoopysFlavor" /><label for="<%= rbLoopysSourCream.ClientID %>">Sour Cream</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbLoopysBBQ" runat="server" GroupName="LoopysFlavor" /><label for="<%= rbLoopysBBQ.ClientID %>">BBQ</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbLoopysCheese" runat="server" GroupName="LoopysFlavor" /><label for="<%= rbLoopysCheese.ClientID %>">Cheese</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbLoopysSalt" runat="server" GroupName="LoopysFlavor" /><label for="<%= rbLoopysSalt.ClientID %>">Salt</label></div>
+                                <div class="section-label">Flavor <span id="loopysFlavorNote" style="font-size:10px; color:#e8401c; font-weight:600;"></span></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbLoopysSourCream" runat="server" /><label for="<%= cbLoopysSourCream.ClientID %>">Sour Cream</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbLoopysBBQ" runat="server" /><label for="<%= cbLoopysBBQ.ClientID %>">BBQ</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbLoopysCheese" runat="server" /><label for="<%= cbLoopysCheese.ClientID %>">Cheese</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbLoopysSalt" runat="server" /><label for="<%= cbLoopysSalt.ClientID %>">Chili BBQ</label></div>
                             </div>
                         </div>
                         <div class="qty-section">
@@ -403,6 +412,16 @@
                         OnClick="btnConfirmPickupTime_Click"
                         CausesValidation="false" />
                 </div>
+            </div>
+        </div>
+
+        <!-- ALERT MODAL (Reusable) -->
+        <div id="alertModal" class="modal-overlay">
+            <div class="alert-modal-box">
+                <div class="alert-modal-icon" id="alertModalIcon">⚠️</div>
+                <div class="alert-modal-head" id="alertModalTitle">Alert</div>
+                <div class="alert-modal-msg" id="alertModalMessage">This is an alert message.</div>
+                <button type="button" class="alert-modal-btn" onclick="closeAlertModal()">OK</button>
             </div>
         </div>
 
@@ -556,6 +575,20 @@
         function hideLocationModal() {
             document.getElementById('locationModal').classList.remove('active');
         }
+        
+        // Alert Modal Function
+        function showAlertModal(icon, title, message) {
+            document.getElementById('alertModalIcon').textContent = icon;
+            document.getElementById('alertModalTitle').textContent = title;
+            document.getElementById('alertModalMessage').textContent = message;
+            document.getElementById('alertModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeAlertModal() {
+            document.getElementById('alertModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
         function removeCartItem(index) {
             if (confirm('Remove this item from cart?')) {
                 __doPostBack('RemoveCartItem', index);
@@ -599,6 +632,165 @@
             if (qrModalEl) {
                 qrModalEl.addEventListener('click', function (e) {
                     if (e.target === this) hideQRCodeModal();
+                });
+            }
+        });
+
+        // ── DUAL FLAVOR SELECTION LOGIC ──
+        // French Fries
+        var friesSizeRadios = [
+            document.getElementById('<%= rbFriesRegular.ClientID %>'),
+            document.getElementById('<%= rbFriesLarge.ClientID %>'),
+            document.getElementById('<%= rbFriesJumbo.ClientID %>'),
+            document.getElementById('<%= rbFriesMega.ClientID %>'),
+            document.getElementById('<%= rbFriesGiga.ClientID %>'),
+            document.getElementById('<%= rbFriesTerra.ClientID %>')
+        ];
+        var friesFlavorCheckboxes = [
+            document.getElementById('<%= cbFriesSourCream.ClientID %>'),
+            document.getElementById('<%= cbFriesBBQ.ClientID %>'),
+            document.getElementById('<%= cbFriesCheese.ClientID %>'),
+            document.getElementById('<%= cbFriesSalt.ClientID %>')
+        ];
+        var friesFlavorNote = document.getElementById('friesFlavorNote');
+        
+        function updateFriesFlavorMode() {
+            var isMegaOrAbove = friesSizeRadios[3].checked || friesSizeRadios[4].checked || friesSizeRadios[5].checked;
+            if (isMegaOrAbove) {
+                friesFlavorNote.textContent = '(Choose 1 or 2 flavors)';
+            } else {
+                friesFlavorNote.textContent = '';
+                // Uncheck all but first checked
+                var checkedCount = 0;
+                friesFlavorCheckboxes.forEach(function(cb) {
+                    if (cb.checked) {
+                        checkedCount++;
+                        if (checkedCount > 1) cb.checked = false;
+                    }
+                });
+            }
+        }
+        
+        friesSizeRadios.forEach(function(radio) {
+            if (radio) radio.addEventListener('change', updateFriesFlavorMode);
+        });
+        
+        friesFlavorCheckboxes.forEach(function(cb) {
+            if (cb) {
+                cb.addEventListener('change', function() {
+                    var isMegaOrAbove = friesSizeRadios[3].checked || friesSizeRadios[4].checked || friesSizeRadios[5].checked;
+                    var checkedCount = friesFlavorCheckboxes.filter(function(c) { return c.checked; }).length;
+                    
+                    if (!isMegaOrAbove && checkedCount > 1) {
+                        // For non-Mega sizes, only allow 1 flavor
+                        friesFlavorCheckboxes.forEach(function(c) {
+                            if (c !== cb) c.checked = false;
+                        });
+                    } else if (checkedCount > 2) {
+                        // Max 2 flavors for Mega+
+                        cb.checked = false;
+                    }
+                });
+            }
+        });
+        
+        // Chicken Pops
+        var chickenSizeRadios = [
+            document.getElementById('<%= rbChickenSolo.ClientID %>'),
+            document.getElementById('<%= rbChickenLarge.ClientID %>'),
+            document.getElementById('<%= rbChickenMega.ClientID %>')
+        ];
+        var chickenFlavorCheckboxes = [
+            document.getElementById('<%= cbChickenSourCream.ClientID %>'),
+            document.getElementById('<%= cbChickenBBQ.ClientID %>'),
+            document.getElementById('<%= cbChickenCheese.ClientID %>'),
+            document.getElementById('<%= cbChickenSalt.ClientID %>')
+        ];
+        var chickenFlavorNote = document.getElementById('chickenFlavorNote');
+        
+        function updateChickenFlavorMode() {
+            var isMega = chickenSizeRadios[2].checked;
+            if (isMega) {
+                chickenFlavorNote.textContent = '(Choose 1 or 2 flavors)';
+            } else {
+                chickenFlavorNote.textContent = '';
+                var checkedCount = 0;
+                chickenFlavorCheckboxes.forEach(function(cb) {
+                    if (cb.checked) {
+                        checkedCount++;
+                        if (checkedCount > 1) cb.checked = false;
+                    }
+                });
+            }
+        }
+        
+        chickenSizeRadios.forEach(function(radio) {
+            if (radio) radio.addEventListener('change', updateChickenFlavorMode);
+        });
+        
+        chickenFlavorCheckboxes.forEach(function(cb) {
+            if (cb) {
+                cb.addEventListener('change', function() {
+                    var isMega = chickenSizeRadios[2].checked;
+                    var checkedCount = chickenFlavorCheckboxes.filter(function(c) { return c.checked; }).length;
+                    
+                    if (!isMega && checkedCount > 1) {
+                        chickenFlavorCheckboxes.forEach(function(c) {
+                            if (c !== cb) c.checked = false;
+                        });
+                    } else if (checkedCount > 2) {
+                        cb.checked = false;
+                    }
+                });
+            }
+        });
+        
+        // Loopys
+        var loopysSizeRadios = [
+            document.getElementById('<%= rbLoopysLarge.ClientID %>'),
+            document.getElementById('<%= rbLoopysMega.ClientID %>')
+        ];
+        var loopysFlavorCheckboxes = [
+            document.getElementById('<%= cbLoopysSourCream.ClientID %>'),
+            document.getElementById('<%= cbLoopysBBQ.ClientID %>'),
+            document.getElementById('<%= cbLoopysCheese.ClientID %>'),
+            document.getElementById('<%= cbLoopysSalt.ClientID %>')
+        ];
+        var loopysFlavorNote = document.getElementById('loopysFlavorNote');
+        
+        function updateLoopysFlavorMode() {
+            var isMega = loopysSizeRadios[1].checked;
+            if (isMega) {
+                loopysFlavorNote.textContent = '(Choose 1 or 2 flavors)';
+            } else {
+                loopysFlavorNote.textContent = '';
+                var checkedCount = 0;
+                loopysFlavorCheckboxes.forEach(function(cb) {
+                    if (cb.checked) {
+                        checkedCount++;
+                        if (checkedCount > 1) cb.checked = false;
+                    }
+                });
+            }
+        }
+        
+        loopysSizeRadios.forEach(function(radio) {
+            if (radio) radio.addEventListener('change', updateLoopysFlavorMode);
+        });
+        
+        loopysFlavorCheckboxes.forEach(function(cb) {
+            if (cb) {
+                cb.addEventListener('change', function() {
+                    var isMega = loopysSizeRadios[1].checked;
+                    var checkedCount = loopysFlavorCheckboxes.filter(function(c) { return c.checked; }).length;
+                    
+                    if (!isMega && checkedCount > 1) {
+                        loopysFlavorCheckboxes.forEach(function(c) {
+                            if (c !== cb) c.checked = false;
+                        });
+                    } else if (checkedCount > 2) {
+                        cb.checked = false;
+                    }
                 });
             }
         });
@@ -745,13 +937,13 @@
             // CHECK IF CART IS EMPTY
             var cartCountElement = document.getElementById('<%= lblTotal.ClientID %>');
             if (!cartCountElement || cartCountElement.textContent === '0.00') {
-                alert('Your cart is empty! Please add items before checking out.');
+                showAlertModal('🛒', 'Cart Empty', 'Your cart is empty! Please add items before checking out.');
                 hasError = true;
             }
             
             // CHECK PAYMENT METHOD
             if (!paymentMethod) {
-                alert('Please select a payment method.');
+                showAlertModal('💳', 'Payment Method Required', 'Please select a payment method.');
                 hasError = true;
             }
 

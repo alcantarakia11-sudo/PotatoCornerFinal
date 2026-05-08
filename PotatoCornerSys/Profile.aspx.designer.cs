@@ -60,6 +60,24 @@ namespace PotatoCornerSys
         protected global::System.Web.UI.WebControls.Button btnMarkDeliveredHidden;
 
         /// <summary>
+        /// hdnReorderOrderID control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnReorderOrderID;
+
+        /// <summary>
+        /// btnReorderHidden control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnReorderHidden;
+
+        /// <summary>
         /// imgProfilePic control.
         /// </summary>
         /// <remarks>

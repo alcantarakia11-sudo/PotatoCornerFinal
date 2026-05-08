@@ -931,6 +931,56 @@
             backdrop-filter: blur(4px);
         }
         .modal-overlay.active { display: flex; }
+        
+        /* ALERT MODAL */
+        .alert-modal-box {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 36px 32px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            animation: modalIn 0.25s ease-out;
+        }
+        .alert-modal-icon {
+            font-size: 56px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .alert-modal-head {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--ink);
+            text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+        .alert-modal-msg {
+            font-size: 14px;
+            color: var(--grey-mid);
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        .alert-modal-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: var(--green);
+            color: var(--white);
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .alert-modal-btn:hover {
+            background: var(--green-dark);
+        }
         .modal-box {
             background: var(--white);
             border-radius: 20px;
@@ -943,11 +993,6 @@
         @keyframes modalIn {
             from { transform: translateY(-24px) scale(0.97); opacity: 0; }
             to   { transform: translateY(0) scale(1); opacity: 1; }
-        }
-        .modal-icon {
-            font-size: 50px;
-            text-align: center;
-            margin-bottom: 16px;
         }
         .modal-head {
             font-family: 'Segoe UI', sans-serif;
@@ -1273,6 +1318,10 @@
                 document.getElementById('<%= btnMarkDeliveredHidden.ClientID %>').click();
             }
         }
+        function reorderItems(orderID) {
+            document.getElementById('<%= hdnReorderOrderID.ClientID %>').value = orderID;
+            document.getElementById('<%= btnReorderHidden.ClientID %>').click();
+        }
         
         // Delete Account Modal
         function showDeleteAccountModal() {
@@ -1288,10 +1337,23 @@
         function confirmDelete() {
             var password = document.getElementById('<%= txtDeletePassword.ClientID %>').value;
             if (!password) {
-                alert('Please enter your password');
+                showAlertModal('⚠️', 'Password Required', 'Please enter your password to delete your account.');
                 return false;
             }
             return true;
+        }
+        
+        // Alert Modal Function
+        function showAlertModal(icon, title, message) {
+            document.getElementById('alertModalIcon').textContent = icon;
+            document.getElementById('alertModalTitle').textContent = title;
+            document.getElementById('alertModalMessage').textContent = message;
+            document.getElementById('alertModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeAlertModal() {
+            document.getElementById('alertModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
         }
         
         // Security: Protect password fields
@@ -1351,6 +1413,8 @@
     <asp:Button ID="btnCancelOrderHidden" runat="server" style="display:none;" OnClick="btnCancelOrder_Click" />
     <asp:HiddenField ID="hdnMarkDeliveredOrderID" runat="server" />
     <asp:Button ID="btnMarkDeliveredHidden" runat="server" style="display:none;" OnClick="btnMarkDelivered_Click" />
+    <asp:HiddenField ID="hdnReorderOrderID" runat="server" />
+    <asp:Button ID="btnReorderHidden" runat="server" style="display:none;" OnClick="btnReorder_Click" />
 
     <!-- NAVBAR -->
     <nav class="navbar">
@@ -1594,11 +1658,7 @@
                                         </td>
                                         <td>
                                             <div class="action-grp">
-                                                <asp:Button runat="server"
-                                                    Text="Reorder"
-                                                    CssClass="btn-reorder-new"
-                                                    CommandName="Reorder"
-                                                    CommandArgument='<%# Eval("OrderID") %>' />
+                                                <%# GetReorderButton(Eval("OrderStatus").ToString(), Eval("OrderID").ToString()) %>
                                                 <%# GetMarkDeliveredButton(Eval("DeliveryType").ToString(), Eval("OrderID").ToString(), Eval("OrderStatus").ToString()) %>
                                                 <%# GetCancelButton((DateTime)Eval("OrderDate"), Eval("OrderID").ToString(), Eval("OrderStatus").ToString()) %>
                                             </div>
@@ -1637,6 +1697,16 @@
                     CssClass="modal-btn-confirm-style"
                     OnClick="btnLogout_Click" />
             </div>
+        </div>
+    </div>
+
+    <!-- ALERT MODAL (Reusable) -->
+    <div id="alertModal" class="modal-overlay">
+        <div class="alert-modal-box">
+            <div class="alert-modal-icon" id="alertModalIcon">⚠️</div>
+            <div class="alert-modal-head" id="alertModalTitle">Alert</div>
+            <div class="alert-modal-msg" id="alertModalMessage">This is an alert message.</div>
+            <button type="button" class="alert-modal-btn" onclick="closeAlertModal()">OK</button>
         </div>
     </div>
 
