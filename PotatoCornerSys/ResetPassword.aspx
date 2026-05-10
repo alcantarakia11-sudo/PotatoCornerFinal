@@ -26,11 +26,9 @@
             color: var(--text-dark);
             line-height: 1.6;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
         }
 
-        /* MODERN NAVBAR */
+        /* NAVBAR */
         .navbar {
             background: linear-gradient(135deg, #119247 0%, #0d7336 100%);
             padding: 15px 50px;
@@ -39,15 +37,13 @@
             justify-content: space-between;
             border-bottom: 5px solid #f5c800;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            position: fixed;
+            position: sticky;
             top: 0;
-            left: 0;
-            right: 0;
             z-index: 1000;
         }
 
         .navbar-logo img {
-            height: 65px;
+            height: 85px;
             filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
             transition: transform 0.3s;
         }
@@ -70,16 +66,33 @@
             font-weight: 700;
             letter-spacing: 0.5px;
             transition: all 0.3s;
+            position: relative;
         }
 
         .navbar-links a:hover {
             color: #f5c800;
+            transform: translateY(-2px);
+        }
+
+        .navbar-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: #f5c800;
+            transition: width 0.3s;
+        }
+
+        .navbar-links a:hover::after {
+            width: 100%;
         }
 
         /* MAIN CONTAINER */
         .reset-container {
             max-width: 550px;
-            margin: 120px auto 50px;
+            margin: 50px auto 50px;
             padding: 0 40px;
             width: 100%;
         }
@@ -271,8 +284,8 @@
             background: linear-gradient(135deg, #119247 0%, #0d7336 100%);
             color: white;
             text-align: center;
-            padding: 40px 40px;
-            font-size: 14px;
+            padding: 60px 40px;
+            font-size: 15px;
             border-top: 5px solid #f5c800;
             margin-top: 80px;
         }
@@ -281,26 +294,39 @@
             color: #f5c800;
             text-decoration: none;
             margin: 0 15px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(245,200,0,0.5);
         }
 
         .footer-copy {
             margin-top: 20px;
-            font-size: 12px;
+            font-size: 14px;
             color: #ccc;
         }
 
         @media (max-width: 768px) {
             .navbar {
-                padding: 12px 20px;
+                padding: 14px 18px;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            .navbar-logo img {
+                height: 60px;
             }
             .navbar-links {
-                gap: 20px;
+                gap: 18px;
+                width: 100%;
+                justify-content: center;
             }
             .reset-container {
                 padding: 0 20px;
-                margin: 100px auto 30px;
+                margin: 30px auto;
             }
             .card-body {
                 padding: 30px 20px;
@@ -316,7 +342,7 @@
         
         <div class="navbar">
             <div class="navbar-logo">
-                <img src="logopotcor.png" alt="Potato Corner" />
+                <img src="potato.png" alt="Potato Corner" />
             </div>
             <ul class="navbar-links">
                 <li><a href="Login.aspx">Login</a></li>

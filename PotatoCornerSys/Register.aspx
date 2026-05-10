@@ -132,7 +132,7 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <asp:Image ID="imgLogo" runat="server" ImageUrl="~/logopotcor.png" CssClass="logo" />
+        <asp:Image ID="imgLogo" runat="server" ImageUrl="~/potato.png" CssClass="logo" />
         <div class="register-container">
 
             <div class="field-group">

@@ -5,6 +5,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using System.Web.Script.Services;
+using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -20,7 +22,7 @@ namespace PotatoCornerSys
             {
                 if (Session["UserName"] == null || Session["MembershipLevel"]?.ToString() != "Admin")
                 {
-                    Response.Redirect("~/Login.aspx");
+                    Response.Redirect("~/AdminLogin.aspx");
                 }
                 LoadSalesData();
             }
@@ -285,6 +287,14 @@ namespace PotatoCornerSys
 
                 conn.Open();
                 cmd.ExecuteNonQuery();
+                
+                // Log activity
+                string adminUser = Session["UserName"]?.ToString() ?? "Admin";
+                ActivityLogHelper.LogActivity("Order Status Change", 
+                    $"Order #{orderID} status changed from Pending to Confirmed", 
+                    adminUser, 
+                    $"Order #{orderID}", 
+                    "Info");
             }
         }
 
@@ -299,6 +309,14 @@ namespace PotatoCornerSys
 
                 conn.Open();
                 cmd.ExecuteNonQuery();
+                
+                // Log activity
+                string adminUser = Session["UserName"]?.ToString() ?? "Admin";
+                ActivityLogHelper.LogActivity("Order Status Change",
+                    $"Order #{orderID} status changed to {status}", 
+                    adminUser, 
+                    $"Order #{orderID}", 
+                    "Info");
             }
         }
 
@@ -308,7 +326,7 @@ namespace PotatoCornerSys
             {
                 string status = DataBinder.Eval(e.Row.DataItem, "OrderStatus").ToString();
                 Label lblStatus = (Label)e.Row.FindControl("lblStatus");
-                
+
                 if (lblStatus != null)
                 {
                     switch (status)
@@ -341,16 +359,98 @@ namespace PotatoCornerSys
                             break;
                     }
                 }
-                
-                if (status == "Cancelled")
+
+                // Load inline order items summary
+                int orderID = Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "OrderID"));
+                Label lblOrderItems = (Label)e.Row.FindControl("lblOrderItems");
+                if (lblOrderItems != null)
                 {
-                    e.Row.CssClass = "cancelled";
+                    lblOrderItems.Text = GetOrderItemsSummary(orderID);
                 }
+
+                if (status == "Cancelled")
+                    e.Row.CssClass = "cancelled";
                 else if (status == "No Show")
-                {
                     e.Row.CssClass = "no-show";
+            }
+        }
+
+        private string GetOrderItemsSummary(int orderID)
+        {
+            var lines = new System.Text.StringBuilder();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string query = @"SELECT p.ProductName, ps.SizeName, pf.FlavorName, oi.Quantity
+                                     FROM OrderItems oi
+                                     INNER JOIN Products p ON oi.ProductID = p.ProductID
+                                     LEFT JOIN ProductSizes ps ON oi.SizeID = ps.SizeID AND ps.ProductID = oi.ProductID
+                                     LEFT JOIN ProductFlavors pf ON oi.FlavorID = pf.FlavorID
+                                     WHERE oi.OrderID = @OrderID";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@OrderID", orderID);
+                    conn.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string product = reader["ProductName"].ToString();
+                            string size = reader["SizeName"] == DBNull.Value ? "" : " " + reader["SizeName"].ToString();
+                            string flavor = reader["FlavorName"] == DBNull.Value ? "" : " (" + reader["FlavorName"].ToString() + ")";
+                            int qty = Convert.ToInt32(reader["Quantity"]);
+                            lines.Append($"<div class='item-line'><span class='item-qty'>{qty}×</span> {product}{size}{flavor}</div>");
+                        }
+                    }
                 }
             }
+            catch { }
+            return lines.Length > 0 ? lines.ToString() : "<span style='color:#aaa;font-size:12px;'>—</span>";
+        }
+
+        [WebMethod]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public static List<OrderItemDto> GetOrderItems(int orderID)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
+            var items = new List<OrderItemDto>();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"SELECT p.ProductName, ps.SizeName, pf.FlavorName, oi.Quantity,
+                                        (p.BasePrice + ISNULL(ps.PriceModifier, 0)) AS UnitPrice
+                                 FROM OrderItems oi
+                                 INNER JOIN Products p ON oi.ProductID = p.ProductID
+                                 LEFT JOIN ProductSizes ps ON oi.SizeID = ps.SizeID AND ps.ProductID = oi.ProductID
+                                 LEFT JOIN ProductFlavors pf ON oi.FlavorID = pf.FlavorID
+                                 WHERE oi.OrderID = @OrderID";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@OrderID", orderID);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        items.Add(new OrderItemDto
+                        {
+                            ProductName = reader["ProductName"].ToString(),
+                            SizeName = reader["SizeName"] == DBNull.Value ? null : reader["SizeName"].ToString(),
+                            FlavorName = reader["FlavorName"] == DBNull.Value ? null : reader["FlavorName"].ToString(),
+                            Quantity = Convert.ToInt32(reader["Quantity"]),
+                            UnitPrice = Convert.ToDecimal(reader["UnitPrice"])
+                        });
+                    }
+                }
+            }
+            return items;
+        }
+
+        public class OrderItemDto
+        {
+            public string ProductName { get; set; }
+            public string SizeName { get; set; }
+            public string FlavorName { get; set; }
+            public int Quantity { get; set; }
+            public decimal UnitPrice { get; set; }
         }
 
         protected void lnkSales_Click(object sender, EventArgs e)
@@ -365,7 +465,12 @@ namespace PotatoCornerSys
 
         protected void lnkProfile_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/ProfileAdmin.aspx");
+            Response.Redirect("~/AccountAdmin.aspx");
+        }
+
+        protected void lnkActivityLog_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("~/ActivityLog.aspx");
         }
 
         protected void ddlStatusFilter_SelectedIndexChanged(object sender, EventArgs e)
@@ -388,6 +493,10 @@ namespace PotatoCornerSys
                 ApproveMembershipRequest(requestID);
                 LoadPendingMembershipRequests();
             }
+        }
+        protected void lnkHome_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("~/Admin.aspx");
         }
 
         private void ApproveMembershipRequest(int requestID)

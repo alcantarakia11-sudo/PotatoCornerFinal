@@ -358,6 +358,95 @@
             box-shadow: 0 6px 20px rgba(232, 64, 28, 0.4);
         }
 
+        /* LOGOUT MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active { display: flex; }
+        
+        .modal-box {
+            background: white;
+            border-radius: 20px;
+            padding: 36px 32px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            animation: modalIn 0.25s ease-out;
+        }
+        @keyframes modalIn {
+            from { transform: translateY(-24px) scale(0.97); opacity: 0; }
+            to   { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .modal-icon {
+            font-size: 56px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .modal-head {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: #1a1612;
+            text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+        .modal-msg {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        .modal-btns {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-btn-cancel-style {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: transparent;
+            color: #666;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .modal-btn-cancel-style:hover {
+            background: #f0f0f0;
+            border-color: #999;
+        }
+        .modal-btn-confirm-style {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: #e8401c;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .modal-btn-confirm-style:hover {
+            background: #c73516;
+        }
+
         /* FOOTER */
         .footer {
             background: linear-gradient(135deg, #119247 0%, #0d7336 100%);
@@ -427,6 +516,7 @@
             <ul class="navbar-links">
                 <li><asp:LinkButton ID="lnkSales" runat="server" OnClick="lnkSales_Click" Text="Sales"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="lnkUpdate" runat="server" OnClick="lnkUpdate_Click" Text="Update"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="lnkActivityLog" runat="server" OnClick="lnkActivityLog_Click" Text="Activity Log"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="lnkProfile" runat="server" OnClick="lnkProfile_Click" Text="Profile"></asp:LinkButton></li>
             </ul>
         </div>
@@ -510,7 +600,22 @@
             <div class="action-buttons">
                 <asp:Button ID="btnBackToDashboard" runat="server" Text="Back to Dashboard" CssClass="btn-primary" OnClick="btnBackToDashboard_Click" />
                 <asp:Button ID="btnDatabaseBackup" runat="server" Text="Database Backup" CssClass="btn-primary" OnClick="btnDatabaseBackup_Click" />
-                <asp:Button ID="btnLogout" runat="server" Text="Logout" CssClass="btn-logout" OnClick="btnLogout_Click" />
+                <button type="button" class="btn-logout" onclick="showLogoutModal()">Logout</button>
+            </div>
+        </div>
+
+        <!-- LOGOUT MODAL -->
+        <div id="logoutModal" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-head">Logging Out</div>
+                <div class="modal-msg">Are you sure you want to log out of your admin account?</div>
+                <div class="modal-btns">
+                    <button type="button" class="modal-btn-cancel-style" onclick="hideLogoutModal()">Cancel</button>
+                    <asp:Button ID="btnConfirmLogout" runat="server"
+                        Text="Log Out"
+                        CssClass="modal-btn-confirm-style"
+                        OnClick="btnLogout_Click" />
+                </div>
             </div>
         </div>
 
@@ -523,5 +628,29 @@
         </div>
 
     </form>
+    
+    <script type="text/javascript">
+        function showLogoutModal() {
+            document.getElementById('logoutModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function hideLogoutModal() {
+            document.getElementById('logoutModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('DOMContentLoaded', function() {
+            var modal = document.getElementById('logoutModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        hideLogoutModal();
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -22,7 +22,9 @@ namespace PotatoCornerSys
 
                 // Customer details
                 lblName.Text = Session["OrderName"].ToString();
-                lblAddress.Text = Session["OrderAddress"].ToString();
+                string address = Session["OrderAddress"]?.ToString();
+                lblAddress.Text = address;
+                pnlAddress.Visible = !string.IsNullOrEmpty(address);
                 lblContact.Text = Session["OrderContact"].ToString();
                 lblDelivery.Text = Session["OrderDelivery"].ToString();
                 lblOrderDate.Text = DateTime.Now.ToString("MMMM dd, yyyy hh:mm tt");

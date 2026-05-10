@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+    <meta charset="utf-8" />
     <title>Sales Dashboard - Potato Corner</title>
     <style type="text/css">
         :root {
@@ -705,6 +706,171 @@
             box-shadow: 0 4px 12px rgba(17,146,71,0.4);
         }
 
+        /* ORDER ITEMS SUMMARY */
+        .order-items-summary {
+            font-size: 12px;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+
+        .order-items-summary .item-line {
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .item-qty {
+            font-weight: 800;
+            color: #119247;
+            font-size: 13px;
+        }
+
+        .btn-view-items {
+            background: linear-gradient(135deg, #119247 0%, #0d7336 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-view-items:hover {
+            background: linear-gradient(135deg, #0d7336 0%, #0a5a2a 100%);
+            transform: translateY(-1px);
+        }
+
+        /* ORDER ITEMS MODAL */
+        .items-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .items-modal-overlay.active {
+            display: flex;
+        }
+
+        .items-modal-box {
+            background: white;
+            border-radius: 16px;
+            padding: 0;
+            max-width: 560px;
+            width: 92%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.25s ease-out;
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .items-modal-header {
+            background: linear-gradient(135deg, #119247 0%, #0d7336 100%);
+            border-bottom: 4px solid #f5c800;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .items-modal-header h3 {
+            color: white;
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .items-modal-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 20px;
+            font-weight: 900;
+            cursor: pointer;
+            border-radius: 6px;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .items-modal-close:hover { background: rgba(255,255,255,0.35); }
+
+        .items-modal-body {
+            padding: 20px 24px;
+            overflow-y: auto;
+        }
+
+        .items-modal-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .items-modal-table th {
+            background: #f4faf7;
+            color: #119247;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .items-modal-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .items-modal-table tbody tr:last-child td { border-bottom: none; }
+        .items-modal-table tbody tr:hover { background: #f7fbf9; }
+
+        .items-modal-footer {
+            padding: 14px 24px;
+            border-top: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fffe;
+        }
+
+        .items-modal-total {
+            font-size: 16px;
+            font-weight: 800;
+            color: #119247;
+        }
+
+        .items-modal-btn-close {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #e8e8e8;
+            color: #555;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background 0.2s;
+        }
+
+        .items-modal-btn-close:hover { background: #d0d0d0; }
+
         /* PAGINATION STYLING */
         .pager-style {
             border-radius: 0 0 20px 20px;
@@ -858,15 +1024,17 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
+        <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
         
         <div class="navbar">
             <div class="navbar-logo">
-                <img src="logopotcor.png" alt="Potato Corner" />
+                <img src="potato.png" alt="Potato Corner" />
             </div>
             <ul class="navbar-links">
+                <li><asp:LinkButton ID="lnkHome" runat="server" OnClick="lnkHome_Click" Text="Home"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="lnkSales" runat="server" OnClick="lnkSales_Click" Text="Sales" CssClass="active"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="lnkUpdate" runat="server" OnClick="lnkUpdate_Click" Text="Update"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="lnkActivityLog" runat="server" OnClick="lnkActivityLog_Click" Text="Activity Log"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="lnkProfile" runat="server" OnClick="lnkProfile_Click" Text="Profile"></asp:LinkButton></li>
             </ul>
         </div>
@@ -967,14 +1135,20 @@
                                 </ItemTemplate>
                             </asp:TemplateField>
                             
-                            <asp:TemplateField HeaderText="Payment Reference">
+                            
+                            
+                            <asp:TemplateField HeaderText="Items Ordered">
                                 <ItemTemplate>
-                                    <div class="payment-ref">
-                                        <%# string.IsNullOrEmpty(Eval("PaymentReference") as string) ? "-" : Eval("PaymentReference") %>
+                                    <div class="order-items-summary">
+                                        <asp:Label ID="lblOrderItems" runat="server"></asp:Label>
                                     </div>
+                                    <button type="button" class="btn-view-items"
+                                        onclick="showItemsModal(<%# Eval("OrderID") %>, 'PHP <%# Eval("TotalAmount", "{0:N2}") %>')">
+                                        View Details
+                                    </button>
                                 </ItemTemplate>
                             </asp:TemplateField>
-                            
+
                             <asp:TemplateField HeaderText="Status">
                                 <ItemTemplate>
                                     <asp:Label ID="lblStatus" runat="server"></asp:Label>
@@ -1069,6 +1243,78 @@
             </div>
             <div class="footer-copy">(c) 2026 Potato Corner. All rights reserved.</div>
         </div>
+
+        <!-- ORDER ITEMS MODAL -->
+        <div id="itemsModal" class="items-modal-overlay">
+            <div class="items-modal-box">
+                <div class="items-modal-header">
+                    <h3 id="itemsModalTitle">Order Items</h3>
+                    <button type="button" class="items-modal-close" onclick="closeItemsModal()">X</button>
+                </div>
+                <div class="items-modal-body">
+                    <table class="items-modal-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Size</th>
+                                <th>Flavor</th>
+                                <th>Qty</th>
+                                <th>Unit Price</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsModalBody">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="items-modal-footer">
+                    <div class="items-modal-total" id="itemsModalTotal"></div>
+                    <button type="button" class="items-modal-btn-close" onclick="closeItemsModal()">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            function showItemsModal(orderID, total) {
+                document.getElementById('itemsModalTitle').innerText = 'Order #PC-' + orderID + ' - Items';
+                document.getElementById('itemsModalTotal').innerText = 'Total: ' + total;
+                document.getElementById('itemsModalBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#888;">Loading...</td></tr>';
+                document.getElementById('itemsModal').classList.add('active');
+
+                // Fetch order items via PageMethod
+                PageMethods.GetOrderItems(orderID, function (result) {
+                    var rows = '';
+                    if (!result || result.length === 0) {
+                        rows = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#888;">No items found.</td></tr>';
+                    } else {
+                        result.forEach(function (item) {
+                            var subtotal = (item.UnitPrice * item.Quantity).toFixed(2);
+                            rows += '<tr>' +
+                                '<td><strong>' + item.ProductName + '</strong></td>' +
+                                '<td>' + (item.SizeName || '—') + '</td>' +
+                                '<td>' + (item.FlavorName || '—') + '</td>' +
+                                '<td style="font-weight:800;color:#119247;">' + item.Quantity + '</td>' +
+                                '<td>PHP ' + item.UnitPrice.toFixed(2) + '</td>' +
+                                '<td style="font-weight:700;">PHP ' + subtotal + '</td>' +
+                                '</tr>';
+                        });
+                    }
+                    document.getElementById('itemsModalBody').innerHTML = rows;
+                }, function (err) {
+                    document.getElementById('itemsModalBody').innerHTML =
+                        '<tr><td colspan="6" style="text-align:center;padding:20px;color:#e8401c;">Error loading items.</td></tr>';
+                });
+            }
+
+            function closeItemsModal() {
+                document.getElementById('itemsModal').classList.remove('active');
+            }
+
+            // Close on backdrop click
+            document.getElementById('itemsModal').addEventListener('click', function (e) {
+                if (e.target === this) closeItemsModal();
+            });
+        </script>
 
     </form>
 </body>

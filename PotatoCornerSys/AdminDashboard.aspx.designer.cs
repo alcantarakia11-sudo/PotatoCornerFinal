@@ -7,11 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PotatoCornerSys
+namespace PotatoCorner
 {
 
 
-    public partial class RegisterForm
+    public partial class AdminDashboard
     {
 
         /// <summary>
@@ -24,102 +24,111 @@ namespace PotatoCornerSys
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// lblMessage control.
+        /// hfDailyData control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblMessage;
+        protected global::System.Web.UI.WebControls.HiddenField hfDailyData;
 
         /// <summary>
-        /// txtFullName control.
+        /// hfWeeklyData control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtFullName;
+        protected global::System.Web.UI.WebControls.HiddenField hfWeeklyData;
 
         /// <summary>
-        /// txtEmail control.
+        /// btnRefresh control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtEmail;
+        protected global::System.Web.UI.WebControls.Button btnRefresh;
 
         /// <summary>
-        /// txtContact control.
+        /// lblOrdersToday control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtContact;
+        protected global::System.Web.UI.WebControls.Label lblOrdersToday;
 
         /// <summary>
-        /// fileUploadPicture control.
+        /// lblOrdersTrend control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.FileUpload fileUploadPicture;
+        protected global::System.Web.UI.WebControls.Label lblOrdersTrend;
 
         /// <summary>
-        /// hdnPaymentMethod control.
+        /// lblSalesToday control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdnPaymentMethod;
+        protected global::System.Web.UI.WebControls.Label lblSalesToday;
 
         /// <summary>
-        /// hdnGeneratedReference control.
+        /// lblPendingOrders control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdnGeneratedReference;
+        protected global::System.Web.UI.WebControls.Label lblPendingOrders;
 
         /// <summary>
-        /// txtAmountPaid control.
+        /// lblReadyPickup control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtAmountPaid;
+        protected global::System.Web.UI.WebControls.Label lblReadyPickup;
 
         /// <summary>
-        /// btnRegister control.
+        /// gvRecentOrders control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRegister;
+        protected global::System.Web.UI.WebControls.GridView gvRecentOrders;
 
         /// <summary>
-        /// txtPaymentReferenceModal control.
+        /// lblNoAlerts control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPaymentReferenceModal;
+        protected global::System.Web.UI.WebControls.Label lblNoAlerts;
 
         /// <summary>
-        /// btnSubmitPaymentModal control.
+        /// rptLowStock control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSubmitPaymentModal;
+        protected global::System.Web.UI.WebControls.Repeater rptLowStock;
+
+        /// <summary>
+        /// rptActivityLog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptActivityLog;
     }
 }

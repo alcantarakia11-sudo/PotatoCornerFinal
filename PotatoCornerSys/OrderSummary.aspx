@@ -253,7 +253,7 @@
     <form id="form1" runat="server">
         <div class="navbar">
             <div class="navbar-logo">
-                <img src="logopotcor.png" alt="Potato Corner" />
+                <img src="potato.png" alt="Potato Corner" />
             </div>
             <ul class="navbar-links">
                 <li><a href="Default.aspx">Home</a></li>

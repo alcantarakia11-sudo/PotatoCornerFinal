@@ -201,7 +201,7 @@
         <div class="container">
             <div class="receipt-card">
                 <div class="header">
-                    <img src="logopotcor.png" alt="Potato Corner" />
+                    <img src="potato.png" alt="Potato Corner" />
                     <h1>Membership Receipt</h1>
                     <p>Thank you for joining our Royalty Program!</p>
                 </div>

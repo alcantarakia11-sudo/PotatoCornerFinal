@@ -26,6 +26,62 @@ namespace PotatoCornerSys
                     ClientScript.RegisterStartupScript(this.GetType(), "AlreadyMember", script, true);
                     return;
                 }
+
+                // Pre-fill from session if available, otherwise load from DB
+                string fullName = Session["Name"]?.ToString()
+                               ?? Session["Fullname"]?.ToString();
+                string email    = Session["Email"]?.ToString();
+                string phone    = Session["Phone"]?.ToString();
+
+                if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(email))
+                {
+                    LoadUserDataFromDb(out fullName, out email, out phone);
+                }
+
+                txtFullName.Text = fullName ?? "";
+                txtEmail.Text    = email    ?? "";
+                txtContact.Text  = phone    ?? "";
+            }
+
+            // Keep read-only on every load/postback
+            txtFullName.ReadOnly = true;
+            txtEmail.ReadOnly    = true;
+            txtContact.ReadOnly  = true;
+        }
+
+        private void LoadUserDataFromDb(out string fullName, out string email, out string phone)
+        {
+            fullName = email = phone = "";
+            try
+            {
+                int customerID = 0;
+                if (Session["CustomerID"] != null)
+                    int.TryParse(Session["CustomerID"].ToString(), out customerID);
+                if (customerID == 0) return;
+
+                string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string query = "SELECT Fullname, Email, PhoneNumber FROM USERS WHERE CustomerID = @CustomerID";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@CustomerID", customerID);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                fullName = reader["Fullname"]?.ToString() ?? "";
+                                email    = reader["Email"]?.ToString()    ?? "";
+                                phone    = reader["PhoneNumber"]?.ToString() ?? "";
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error loading user data: " + ex.Message);
             }
         }
 
@@ -33,9 +89,6 @@ namespace PotatoCornerSys
         {
             try
             {
-                if (Session["HasRoyaltyMembership"] != null && (bool)Session["HasRoyaltyMembership"])
-                    return true;
-
                 string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -48,11 +101,12 @@ namespace PotatoCornerSys
 
                     if (customerID == 0) return false;
 
+                    // Block re-submission if already confirmed OR still pending
                     string query = @"
                         SELECT COUNT(*) 
-                        FROM Membership m
-                        INNER JOIN USERS u ON m.CustomerID = u.CustomerID
-                        WHERE m.CustomerID = @CustomerID AND u.MembershipLevel = 'Royalty'";
+                        FROM Membership
+                        WHERE CustomerID = @CustomerID
+                          AND RequestStatus IN ('Confirmed', 'Pending')";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -69,38 +123,33 @@ namespace PotatoCornerSys
             }
         }
 
-        protected void btnPaymentMethod_Click(object sender, EventArgs e)
-        {
-            Button btn = (Button)sender;
-            btnGoTyme.CssClass = "payment-btn";
-            btnMayaBank.CssClass = "payment-btn";
-            btnGCash.CssClass = "payment-btn";
-            btnPoints.CssClass = "payment-btn";
-            btn.CssClass = "payment-btn selected";
 
-            hdnPaymentMethod.Value = btn.Text;
-        }
 
+        // ── STEP 1: Validate fields, then route to correct payment flow ────────
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            try
+            // Field validation
+            if (string.IsNullOrWhiteSpace(txtFullName.Text) ||
+                string.IsNullOrWhiteSpace(txtEmail.Text) ||
+                string.IsNullOrWhiteSpace(txtContact.Text))
             {
-                // Basic validation
-                if (string.IsNullOrWhiteSpace(txtFullName.Text) ||
-                    string.IsNullOrWhiteSpace(txtEmail.Text) ||
-                    string.IsNullOrWhiteSpace(txtContact.Text))
-                {
-                    ShowMessage("Please fill in all required fields.", false);
-                    return;
-                }
+                ShowMessage("Please fill in all required fields.", false);
+                return;
+            }
 
-                if (!fileUploadPicture.HasFile)
-                {
-                    ShowMessage("Please upload your profile picture.", false);
-                    return;
-                }
+            // ✅ FIX: Only require a new upload if nothing is saved in Session yet
+            bool hasNewFile = fileUploadPicture.HasFile;
+            bool hasSessionFile = Session["UploadedFileBytes"] != null;
 
-                // Validate image file type
+            if (!hasNewFile && !hasSessionFile)
+            {
+                ShowMessage("Please upload your profile picture.", false);
+                return;
+            }
+
+            // ✅ FIX: Validate and save file to Session immediately on first postback
+            if (hasNewFile)
+            {
                 string fileExtension = Path.GetExtension(fileUploadPicture.FileName).ToLower();
                 string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
                 if (!allowedExtensions.Contains(fileExtension))
@@ -109,36 +158,110 @@ namespace PotatoCornerSys
                     return;
                 }
 
-                if (string.IsNullOrEmpty(hdnPaymentMethod.Value))
+                // Save to Session so it survives subsequent postbacks
+                Session["UploadedFileBytes"] = fileUploadPicture.FileBytes;
+                Session["UploadedFileExtension"] = fileExtension;
+            }
+
+            if (string.IsNullOrEmpty(hdnPaymentMethod.Value))
+            {
+                ShowMessage("Please select a payment method.", false);
+                return;
+            }
+
+            // Route: QR-based payment — show modal
+            ScriptManager.RegisterStartupScript(this, GetType(), "showQR",
+                $"showQRCodeModal('{hdnPaymentMethod.Value}', '100.00');", true);
+        }
+
+        // ── STEP 2A: QR payment confirmed (GoTyme, Maya, GCash) ───────────────
+        protected void btnSubmitPaymentModal_Click(object sender, EventArgs e)
+        {
+            string enteredReference = txtPaymentReferenceModal.Text.Trim().ToUpper();
+            string generatedReference = hdnGeneratedReference.Value;
+
+            // Validate format
+            if (!enteredReference.StartsWith("REF-") || enteredReference.Length < 15)
+            {
+                ShowMessage("Invalid reference number format. Please scan the QR code and enter the correct reference.", false);
+                ScriptManager.RegisterStartupScript(this, GetType(), "showModal",
+                    $"showQRCodeModal('{hdnPaymentMethod.Value}', '100.00');", true);
+                return;
+            }
+
+            // Validate it matches the generated reference
+            if (enteredReference != generatedReference)
+            {
+                ShowMessage("Reference number does not match. Please scan the QR code and enter the correct reference.", false);
+                ScriptManager.RegisterStartupScript(this, GetType(), "showModal",
+                    $"showQRCodeModal('{hdnPaymentMethod.Value}', '100.00');", true);
+                return;
+            }
+
+            // Check DB for duplicate reference
+            try
+            {
+                string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    ShowMessage("Please select a payment method.", false);
+                    conn.Open();
+                    string checkQuery = "SELECT COUNT(*) FROM Membership WHERE PaymentReference = @Reference";
+                    using (SqlCommand cmd = new SqlCommand(checkQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Reference", enteredReference);
+                        int count = (int)cmd.ExecuteScalar();
+
+                        if (count > 0)
+                        {
+                            ShowMessage("This reference number has already been used. Please generate a new QR code.", false);
+                            ScriptManager.RegisterStartupScript(this, GetType(), "showModal",
+                                $"showQRCodeModal('{hdnPaymentMethod.Value}', '100.00');", true);
+                            return;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("Error validating reference: " + ex.Message, false);
+                return;
+            }
+
+            // All checks passed — process registration with reference
+            ProcessRegistration(enteredReference);
+        }
+
+        // ── STEP 3: Save everything to DB ─────────────────────────────────────
+        private void ProcessRegistration(string paymentReference)
+        {
+            try
+            {
+                decimal amountPaid = 100.00m;
+                decimal change = 0;
+
+                // ✅ FIX: Read file bytes from Session instead of the file upload control
+                byte[] imageBytes = Session["UploadedFileBytes"] as byte[];
+                string fileExtension = Session["UploadedFileExtension"]?.ToString() ?? ".jpg";
+
+                if (imageBytes == null || imageBytes.Length == 0)
+                {
+                    ShowMessage("Profile picture was lost. Please re-upload your picture and try again.", false);
                     return;
                 }
 
-                decimal amountPaid;
-                if (!decimal.TryParse(txtAmountPaid.Text.Trim(), out amountPaid) || amountPaid < 100)
-                {
-                    ShowMessage("Please enter at least PHP 100 for registration fee.", false);
-                    return;
-                }
-
-                // Generate royalty number
+                // Generate unique royalty number
                 Random random = new Random();
                 string royaltyNumber = "PC" + random.Next(10000, 99999).ToString();
 
-                // ✅ Read image as bytes (for DB storage)
-                byte[] imageBytes = fileUploadPicture.FileBytes;
                 string fileName = royaltyNumber + fileExtension;
 
-                // Also save to Uploads folder (optional but good for backup)
                 string uploadsFolder = Server.MapPath("~/Uploads/");
                 if (!Directory.Exists(uploadsFolder))
                     Directory.CreateDirectory(uploadsFolder);
 
-                string filePath = Path.Combine(uploadsFolder, fileName);
-                fileUploadPicture.SaveAs(filePath);
+                // ✅ FIX: Write bytes from Session instead of using SaveAs (which requires HasFile)
+                File.WriteAllBytes(Path.Combine(uploadsFolder, fileName), imageBytes);
 
-                // Database operation
                 string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
@@ -150,7 +273,6 @@ namespace PotatoCornerSys
 
                     if (customerID == 0)
                     {
-                        // Create guest customer
                         string insertGuestQuery = @"
                             INSERT INTO USERS (UserName, Fullname, [Address], Email, PhoneNumber, [Password], Points, MembershipLevel)
                             VALUES (@UserName, @Fullname, @Address, @Email, @Phone, @Password, 0, 'Guest');
@@ -164,16 +286,21 @@ namespace PotatoCornerSys
                             guestCmd.Parameters.AddWithValue("@Email", txtEmail.Text.Trim());
                             guestCmd.Parameters.AddWithValue("@Phone", txtContact.Text.Trim());
                             guestCmd.Parameters.AddWithValue("@Password", "member123");
-
                             customerID = Convert.ToInt32(guestCmd.ExecuteScalar());
                             Session["CustomerID"] = customerID.ToString();
                         }
                     }
 
-                    // ✅ INSERT including ProfilePicture (binary) and PictureFileName
+                    // Insert membership record with Pending status — admin must confirm via Sales.aspx
                     string insertQuery = @"
-                        INSERT INTO Membership (CustomerID, MembershipNumber, Points, RegistrationDate, ProfilePicture, PictureFileName)
-                        VALUES (@CustomerID, @MembershipNumber, @Points, @RegistrationDate, @ProfilePicture, @PictureFileName)";
+                        INSERT INTO Membership 
+                            (CustomerID, MembershipNumber, Points, RegistrationDate, 
+                             ProfilePicture, PictureFileName, PaymentMethod, PaymentReference,
+                             RequestStatus, RequestedDate)
+                        VALUES 
+                            (@CustomerID, @MembershipNumber, @Points, @RegistrationDate, 
+                             @ProfilePicture, @PictureFileName, @PaymentMethod, @PaymentReference,
+                             'Pending', GETDATE())";
 
                     using (SqlCommand cmd = new SqlCommand(insertQuery, conn))
                     {
@@ -181,22 +308,24 @@ namespace PotatoCornerSys
                         cmd.Parameters.AddWithValue("@MembershipNumber", royaltyNumber);
                         cmd.Parameters.AddWithValue("@Points", 0);
                         cmd.Parameters.AddWithValue("@RegistrationDate", DateTime.Now);
-                        cmd.Parameters.Add("@ProfilePicture", System.Data.SqlDbType.VarBinary).Value = imageBytes; // ✅ Binary image
-                        cmd.Parameters.AddWithValue("@PictureFileName", "PotatoCornerSys/Uploads/" + fileName);// ✅ File name
+                        cmd.Parameters.Add("@ProfilePicture", System.Data.SqlDbType.VarBinary).Value = imageBytes;
+                        cmd.Parameters.AddWithValue("@PictureFileName", "PotatoCornerSys/Uploads/" + fileName);
+                        cmd.Parameters.AddWithValue("@PaymentMethod", hdnPaymentMethod.Value);
+                        cmd.Parameters.AddWithValue("@PaymentReference",
+                            !string.IsNullOrEmpty(paymentReference) ? (object)paymentReference : DBNull.Value);
 
                         int rowsAffected = cmd.ExecuteNonQuery();
 
                         if (rowsAffected > 0)
                         {
-                            // Update user to Royalty
-                            string updateQuery = "UPDATE USERS SET MembershipLevel = 'Royalty' WHERE CustomerID = @CustomerID";
-                            using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
-                            {
-                                updateCmd.Parameters.AddWithValue("@CustomerID", customerID);
-                                updateCmd.ExecuteNonQuery();
-                            }
+                            // DO NOT upgrade to Royalty yet — admin must confirm via Sales.aspx
+                            // MembershipLevel stays as-is until ApproveMembershipRequest is called
 
-                            // Store session data
+                            // Clean up file bytes from Session after successful registration
+                            Session.Remove("UploadedFileBytes");
+                            Session.Remove("UploadedFileExtension");
+
+                            // Store session — pending state
                             Session["RoyaltyNumber"] = royaltyNumber;
                             Session["MemberFullName"] = txtFullName.Text.Trim();
                             Session["MemberEmail"] = txtEmail.Text.Trim();
@@ -206,12 +335,22 @@ namespace PotatoCornerSys
                             Session["RegistrationFee"] = "100.00";
                             Session["PaymentMethod"] = hdnPaymentMethod.Value;
                             Session["AmountPaid"] = amountPaid.ToString("0.00");
-                            Session["ChangeAmount"] = (amountPaid - 100).ToString("0.00");
-                            Session["HasRoyaltyMembership"] = true;
-                            Session["MembershipLevel"] = "Royalty";
+                            Session["ChangeAmount"] = change.ToString("0.00");
+                            Session["HasRoyaltyMembership"] = false;
+                            Session["MembershipRequestPending"] = true;
 
-                            ShowMessage("Registration successful! Your membership number is: " + royaltyNumber, true);
-                            Response.AddHeader("REFRESH", "2;URL=MembershipReceipt.aspx");
+                            // Add activity log
+                            string fullName = txtFullName.Text.Trim();
+                            ActivityLogHelper.LogActivity(
+                                "Membership Registration",
+                                "Membership registration submitted (pending admin approval): " + fullName + " (Card #" + royaltyNumber + ")",
+                                fullName,
+                                "Royalty Membership",
+                                "Info"
+                            );
+
+                            ShowMessage("Registration submitted! Your application is pending admin confirmation. You will be notified once approved.", true);
+                            Response.AddHeader("REFRESH", "3;URL=Profile.aspx");
                         }
                         else
                         {

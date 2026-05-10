@@ -27,29 +27,9 @@
         .navbar-links a:hover { color: #f5c800; transform: translateY(-2px); }
         .navbar-links a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 3px; background: #f5c800; transition: width 0.3s; }
         .navbar-links a:hover::after { width: 100%; }
-
-        .navbar-links .btn-order-nav {
-            background: linear-gradient(135deg, #e8401c 0%, #c73516 100%);
-            color: white;
-            padding: 12px 28px;
-            border-radius: 8px;
-            font-weight: 800;
-            font-size: 15px;
-            text-transform: uppercase;
-            box-shadow: 0 4px 12px rgba(232,64,28,0.3);
-            transition: all 0.3s;
-        }
-
-        .navbar-links .btn-order-nav::after {
-            display: none;
-        }
-
-        .navbar-links .btn-order-nav:hover {
-           background: linear-gradient(135deg, #c73516 0%, #a82a12 100%);
-           color: white;
-           transform: translateY(-3px);
-           box-shadow: 0 6px 16px rgba(232,64,28,0.4);
-        }
+        .navbar-links .btn-order-nav { background: linear-gradient(135deg, #e8401c 0%, #c73516 100%); color: white; padding: 12px 28px; border-radius: 8px; font-weight: 800; font-size: 15px; text-transform: uppercase; box-shadow: 0 4px 12px rgba(232,64,28,0.3); transition: all 0.3s; }
+        .navbar-links .btn-order-nav::after { display: none; }
+        .navbar-links .btn-order-nav:hover { background: linear-gradient(135deg, #c73516 0%, #a82a12 100%); color: white; transform: translateY(-3px); box-shadow: 0 6px 16px rgba(232,64,28,0.4); }
         
         .pos-container { display: grid; grid-template-columns: 300px 1fr 380px; gap: 20px; padding: 20px; height: calc(100vh - 110px); overflow: hidden; }
         
@@ -60,17 +40,13 @@
         .input-group input, .input-group select { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; transition: all 0.3s; }
         .input-group input:focus, .input-group select:focus { border-color: #119247; outline: none; box-shadow: 0 0 0 3px rgba(17,146,71,0.1); }
         .input-group input.readonly-field { background: #f5f5f5; color: #666; cursor: not-allowed; }
-
-        /* VALIDATION STYLES */
         .field-error { display: block; color: #dc3545; font-size: 11px; font-weight: 600; margin-top: 5px; min-height: 16px; transition: all 0.2s; }
         .input-group input.invalid { border-color: #dc3545 !important; box-shadow: 0 0 0 3px rgba(220,53,69,0.15) !important; }
         .input-group input.valid { border-color: #28a745 !important; box-shadow: 0 0 0 3px rgba(40,167,69,0.15) !important; }
-
         .royalty-row { display: flex; gap: 10px; align-items: flex-end; }
         .royalty-row input { flex: 1; }
         .btn-validate { background: linear-gradient(135deg, #119247 0%, #0d7336 100%); color: white; border: none; padding: 12px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; transition: all 0.3s; box-shadow: 0 2px 8px rgba(17,146,71,0.3); }
         .btn-validate:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(17,146,71,0.4); }
-        .btn-validate:active { transform: translateY(0); }
         .status-msg { font-size: 12px; margin-top: 8px; padding: 8px 12px; border-radius: 6px; font-weight: 600; }
         .status-success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
         .status-error { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
@@ -95,22 +71,20 @@
         .qty-label { font-size: 14px; font-weight: 800; color: #119247; text-transform: uppercase; }
         .qty-controls { display: flex; align-items: center; gap: 12px; }
         .qty-btn { background: linear-gradient(135deg, #119247 0%, #0d7336 100%); color: white; border: none; width: 36px; height: 36px; border-radius: 8px; font-size: 20px; font-weight: 700; cursor: pointer; transition: all 0.3s; box-shadow: 0 2px 6px rgba(17,146,71,0.3); }
-        .qty-btn:hover { transform: scale(1.1); box-shadow: 0 4px 10px rgba(17,146,71,0.4); }
+        .qty-btn:hover { transform: scale(1.1); }
         .qty-btn:active { transform: scale(0.95); }
         .qty-display { font-size: 20px; font-weight: 900; min-width: 35px; text-align: center; color: #119247; }
         .btn-add { width: 100%; background: linear-gradient(135deg, #e8401c 0%, #c73516 100%); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 20px; text-transform: uppercase; transition: all 0.3s; box-shadow: 0 4px 12px rgba(232,64,28,0.3); letter-spacing: 0.5px; }
         .btn-add:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(232,64,28,0.4); }
-        .btn-add:active { transform: translateY(0); }
         
         .right-panel { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow-y: auto; display: flex; flex-direction: column; border: 1px solid rgba(17,146,71,0.1); }
         .cart-section { flex: 1; overflow-y: auto; margin-bottom: 18px; min-height: 180px; }
-        .cart-empty { text-align: center; color: #aaa; padding: 60px 20px; font-size: 16px; font-weight: 600; }
         .cart-item { background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 16px; border-radius: 12px; margin-bottom: 12px; font-size: 14px; border: 2px solid #e8f5ee; transition: all 0.3s; }
         .cart-item:hover { border-color: #119247; box-shadow: 0 2px 8px rgba(17,146,71,0.1); }
         .cart-item-header { display: flex; justify-content: space-between; align-items: center; font-weight: 800; color: #119247; margin-bottom: 8px; font-size: 15px; }
         .cart-item-details { color: #555; font-size: 13px; line-height: 1.8; }
         .btn-remove { background: linear-gradient(135deg, #e8401c 0%, #c73516 100%); color: white; border: none; padding: 7px 16px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 700; transition: all 0.3s; white-space: nowrap; }
-        .btn-remove:hover { transform: scale(1.05); box-shadow: 0 2px 6px rgba(232,64,28,0.4); }
+        .btn-remove:hover { transform: scale(1.05); }
         .cart-totals { border-top: 3px solid #f5c800; padding: 16px; margin-top: 14px; background: #fffbf0; border-radius: 8px; }
         .total-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 15px; font-weight: 600; }
         .total-row.grand { font-size: 22px; font-weight: 900; color: #119247; margin-top: 12px; padding-top: 12px; border-top: 2px dashed #119247; }
@@ -121,53 +95,94 @@
         .option-btn.selected { border-color: #119247; background: linear-gradient(135deg, #e8f5ee 0%, #d4edda 100%); color: #119247; box-shadow: 0 2px 8px rgba(17,146,71,0.2); }
         .btn-confirm { width: 100%; background: linear-gradient(135deg, #119247 0%, #0d7336 100%); color: white; border: none; padding: 18px; border-radius: 10px; font-size: 17px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-top: 18px; transition: all 0.3s; box-shadow: 0 4px 16px rgba(17,146,71,0.3); letter-spacing: 1px; }
         .btn-confirm:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(17,146,71,0.4); }
-        .btn-confirm:active { transform: translateY(0); }
         
-        /* FILE UPLOAD STYLING */
-        .file-upload-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .file-upload-input:hover {
-            border-color: #119247;
-            background: #f8f9fa;
-        }
+        .file-upload-input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; cursor: pointer; transition: all 0.3s; }
+        .file-upload-input:hover { border-color: #119247; background: #f8f9fa; }
         
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #119247; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #0d7336; }
         
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; }
+        /* ── MODALS ── */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
         .modal-overlay.active { display: flex; }
         .modal-box { background: white; border-radius: 16px; padding: 32px; max-width: 450px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); animation: modalSlideIn 0.3s ease-out; }
         @keyframes modalSlideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .modal-header { font-size: 22px; font-weight: 800; color: #119247; margin-bottom: 12px; text-align: center; }
-        .modal-message { font-size: 14px; color: #666; margin-bottom: 24px; text-align: center; line-height: 1.6; }
-        .time-slots { max-height: 300px; overflow-y: auto; margin-bottom: 24px; }
-        .time-slot-list { list-style: none; }
-        .time-slot-list label { display: block; padding: 14px 18px; margin-bottom: 10px; background: #f8f9fa; border: 2px solid #e0e0e0; border-radius: 10px; cursor: pointer; transition: all 0.3s; font-size: 14px; font-weight: 600; }
-        .time-slot-list label:hover { border-color: #119247; background: #e8f5ee; }
-        .time-slot-list input[type="radio"]:checked + label { border-color: #119247; background: linear-gradient(135deg, #e8f5ee 0%, #d4edda 100%); color: #119247; box-shadow: 0 2px 8px rgba(17,146,71,0.2); }
+        .alert-modal-box { background: white; border-radius: 20px; padding: 36px 32px; max-width: 420px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.25); animation: modalSlideIn 0.3s ease-out; }
+        .alert-modal-icon { font-size: 56px; text-align: center; margin-bottom: 16px; }
+        .alert-modal-head { font-family: 'Segoe UI', sans-serif; font-size: 24px; font-weight: 900; color: #1a1612; text-align: center; margin-bottom: 12px; }
+        .alert-modal-msg { font-size: 14px; color: #666; text-align: center; margin-bottom: 24px; line-height: 1.6; }
+        .alert-modal-btn { width: 100%; padding: 12px; border: none; border-radius: 10px; background: #119247; color: white; font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+        .alert-modal-btn:hover { background: #0d7336; }
+        .modal-header { font-size: 22px; font-weight: 800; color: #119247; margin-bottom: 8px; text-align: center; }
+        .modal-message { font-size: 14px; color: #666; margin-bottom: 20px; text-align: center; line-height: 1.6; }
         .modal-buttons { display: flex; gap: 12px; }
         .modal-btn { flex: 1; padding: 12px 24px; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.5px; }
         .modal-btn-cancel { background: #e8e8e8; color: #666; }
         .modal-btn-cancel:hover { background: #d0d0d0; }
         .modal-btn-confirm { background: linear-gradient(135deg, #119247 0%, #0d7336 100%); color: white; }
         .modal-btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(17,146,71,0.4); }
+
+        /* ── PICKUP TIME MODAL ── */
+        .prep-banner { background: linear-gradient(135deg, #fffbf0 0%, #fff8e1 100%); border: 2px solid #f5c800; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+        .prep-banner-icon { font-size: 28px; flex-shrink: 0; }
+        .prep-banner-text { font-size: 13px; color: #555; line-height: 1.5; }
+        .prep-banner-text strong { color: #119247; font-size: 14px; }
+        .pickup-slots { display: grid; gap: 12px; margin-bottom: 20px; }
+        .pickup-slot-card { display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: white; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; transition: all 0.3s; position: relative; }
+        .pickup-slot-card:hover { border-color: #119247; background: #f0faf4; transform: translateX(4px); }
+        .pickup-slot-card.recommended { border-color: #f5c800; background: #fffbf0; }
+        .pickup-slot-card.recommended::before { content: '⭐ Recommended'; position: absolute; top: -10px; left: 14px; background: #f5c800; color: #1a1a1a; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.3px; }
+        .pickup-slot-card input[type="radio"] { display: none; }
+        .pickup-slot-card:has(input:checked) { border-color: #119247; background: linear-gradient(135deg, #e8f5ee 0%, #d4edda 100%); box-shadow: 0 4px 12px rgba(17,146,71,0.2); }
+        .slot-radio-indicator { width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .pickup-slot-card:has(input:checked) .slot-radio-indicator { border-color: #119247; background: #119247; }
+        .pickup-slot-card:has(input:checked) .slot-radio-indicator::after { content: ''; width: 8px; height: 8px; background: white; border-radius: 50%; }
+        .slot-info { flex: 1; }
+        .slot-time { font-size: 17px; font-weight: 900; color: #119247; }
+        .slot-detail { font-size: 12px; color: #888; margin-top: 2px; }
+        .slot-wait-badge { background: #e8f5ee; color: #119247; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
+        .pickup-slot-card:has(input:checked) .slot-wait-badge { background: #119247; color: white; }
+
+        /* LOGIN MODAL */
+        .login-modal-overlay { display: none !important; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 99999; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+        .login-modal-overlay.active { display: flex !important; }
+        .login-modal-box { background: white; border-radius: 20px; padding: 40px 36px; max-width: 440px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.25); text-align: center; animation: loginModalIn 0.25s ease-out; }
+        @keyframes loginModalIn { from { transform: translateY(-24px) scale(0.97); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        .login-modal-icon { font-size: 56px; margin-bottom: 16px; display: block; }
+        .login-modal-head { font-size: 28px; font-weight: 900; color: #119247; margin-bottom: 12px; }
+        .login-modal-msg { font-size: 15px; color: #666; margin-bottom: 28px; line-height: 1.7; }
+        .login-modal-btn-group { display: flex; gap: 12px; margin-bottom: 16px; }
+        .btn-login-modal { flex: 1; padding: 15px; border: none; border-radius: 12px; background: linear-gradient(135deg, #119247 0%, #0d7336 100%); color: white; font-size: 15px; font-weight: 800; text-transform: uppercase; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; transition: all 0.3s; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(17,146,71,0.3); }
+        .btn-login-modal:hover { transform: translateY(-2px); color: white; text-decoration: none; }
+        .btn-create-modal { flex: 1; padding: 15px; border: none; border-radius: 12px; background: linear-gradient(135deg, #e8401c 0%, #c73516 100%); color: white; font-size: 15px; font-weight: 800; text-transform: uppercase; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; transition: all 0.3s; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(232,64,28,0.3); }
+        .btn-create-modal:hover { transform: translateY(-2px); color: white; text-decoration: none; }
+        .btn-browse-modal { background: none; border: none; color: #aaa; font-size: 13px; cursor: pointer; text-decoration: underline; padding: 8px; transition: color 0.2s; width: 100%; }
+        .btn-browse-modal:hover { color: #666; }
+
+        /* ── DELIVERY TYPE INFO BANNER ── */
+        .delivery-info-banner {
+            display: none;
+            background: linear-gradient(135deg, #e8f5ee 0%, #d4edda 100%);
+            border: 2px solid #119247;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #155724;
+            font-weight: 600;
+        }
+        .delivery-info-banner.visible { display: block; }
     </style>
 </head>
 <body>
     <form id="form1" runat="server">
         <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true"></asp:ScriptManager>
+
         <div class="navbar">
             <div class="navbar-logo">
-                <img src="logopotcor.png" alt="Potato Corner" />
+                <img src="potato.png" alt="Potato Corner" />
             </div>
             <ul class="navbar-links">
                 <li><a href="Default.aspx">Home</a></li>
@@ -180,26 +195,28 @@
         </div>
 
         <div class="pos-container">
+
             <!-- LEFT PANEL -->
             <div class="left-panel">
                 <div class="panel-title">Customer Info</div>
-
                 <div class="input-group">
                     <label>Name</label>
                     <asp:TextBox ID="txtName" runat="server" placeholder="Your name" ReadOnly="true" CssClass="readonly-field"></asp:TextBox>
                     <span id="errName" class="field-error"></span>
                 </div>
-                <div class="input-group">
+
+                <%-- Location group — hidden for Walk-in, shown for Delivery --%>
+                <div class="input-group" id="locationGroup" style="display:none;">
                     <label>Location</label>
-                    <asp:DropDownList ID="ddlLocation" runat="server" CssClass="input-group input" onchange="checkLocationAvailability()">
+                    <asp:DropDownList ID="ddlLocation" runat="server" onchange="checkLocationAvailability()">
                         <asp:ListItem Value="" Text="-- Select Location --"></asp:ListItem>
-                        <asp:ListItem Value="Balisong|Delivery" Text="Balisong (Delivery)"></asp:ListItem>
-                        <asp:ListItem Value="Talo-ot|Delivery" Text="Talo-ot (Delivery)"></asp:ListItem>
-                        <asp:ListItem Value="Tulic|Delivery" Text="Tulic (Delivery)"></asp:ListItem>
-                        <asp:ListItem Value="Talaga|Delivery" Text="Talaga (Delivery)"></asp:ListItem>
-                        <asp:ListItem Value="Bogo|Delivery" Text="Bogo (Delivery)"></asp:ListItem>
-                        <asp:ListItem Value="Binlod|Delivery" Text="Binlod (Delivery)"></asp:ListItem>
-                        <asp:ListItem Value="Bulasa|Delivery" Text="Bulasa (Delivery)"></asp:ListItem>
+                        <asp:ListItem Value="Balisong|Delivery" Text="Balisong"></asp:ListItem>
+                        <asp:ListItem Value="Talo-ot|Delivery" Text="Talo-ot"></asp:ListItem>
+                        <asp:ListItem Value="Tulic|Delivery" Text="Tulic"></asp:ListItem>
+                        <asp:ListItem Value="Talaga|Delivery" Text="Talaga"></asp:ListItem>
+                        <asp:ListItem Value="Bogo|Delivery" Text="Bogo"></asp:ListItem>
+                        <asp:ListItem Value="Binlod|Delivery" Text="Binlod"></asp:ListItem>
+                        <asp:ListItem Value="Bulasa|Delivery" Text="Bulasa "></asp:ListItem>
                         <asp:ListItem Value="Poblacion|Both" Text="Poblacion"></asp:ListItem>
                         <asp:ListItem Value="Lamacan|Both" Text="Lamacan"></asp:ListItem>
                         <asp:ListItem Value="Langtad|Both" Text="Langtad"></asp:ListItem>
@@ -207,11 +224,14 @@
                     </asp:DropDownList>
                     <span id="errLocation" class="field-error"></span>
                 </div>
-                <div class="input-group">
+
+                <%-- Street group — hidden for Walk-in, shown for Delivery --%>
+                <div class="input-group" id="streetGroup" style="display:none;">
                     <label>Street Address</label>
                     <asp:TextBox ID="txtStreet" runat="server" placeholder="Enter street address"></asp:TextBox>
                     <span id="errStreet" class="field-error"></span>
                 </div>
+
                 <div class="input-group">
                     <label>Contact</label>
                     <asp:TextBox ID="txtContact" runat="server" placeholder="e.g. 09123456789" MaxLength="11"></asp:TextBox>
@@ -234,6 +254,7 @@
             <div class="center-panel">
                 <div class="panel-title">Menu</div>
                 <div class="product-grid">
+
                     <!-- French Fries -->
                     <div class="product-card">
                         <div class="product-header">
@@ -250,11 +271,11 @@
                                 <div class="size-option"><asp:RadioButton ID="rbFriesTerra" runat="server" GroupName="FriesSize" /><label for="<%= rbFriesTerra.ClientID %>">Terra - PHP 228</label></div>
                             </div>
                             <div class="flavors-section">
-                                <div class="section-label">Flavor</div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbFriesSourCream" runat="server" GroupName="FriesFlavor" /><label for="<%= rbFriesSourCream.ClientID %>">Sour Cream</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbFriesBBQ" runat="server" GroupName="FriesFlavor" /><label for="<%= rbFriesBBQ.ClientID %>">BBQ</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbFriesCheese" runat="server" GroupName="FriesFlavor" /><label for="<%= rbFriesCheese.ClientID %>">Cheese</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbFriesSalt" runat="server" GroupName="FriesFlavor" /><label for="<%= rbFriesSalt.ClientID %>">Salt</label></div>
+                                <div class="section-label">Flavor <span id="friesFlavorNote" style="font-size:10px; color:#e8401c; font-weight:600;"></span></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbFriesSourCream" runat="server" /><label for="<%= cbFriesSourCream.ClientID %>">Sour Cream</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbFriesBBQ" runat="server" /><label for="<%= cbFriesBBQ.ClientID %>">BBQ</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbFriesCheese" runat="server" /><label for="<%= cbFriesCheese.ClientID %>">Cheese</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbFriesSalt" runat="server" /><label for="<%= cbFriesSalt.ClientID %>">Chili BBQ</label></div>
                             </div>
                         </div>
                         <div class="qty-section">
@@ -286,11 +307,11 @@
                                 <div class="size-option"><asp:RadioButton ID="rbChickenMega" runat="server" GroupName="ChickenSize" /><label for="<%= rbChickenMega.ClientID %>">Mega Mix - PHP 199</label></div>
                             </div>
                             <div class="flavors-section">
-                                <div class="section-label">Flavor</div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbChickenSourCream" runat="server" GroupName="ChickenFlavor" /><label for="<%= rbChickenSourCream.ClientID %>">Sour Cream</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbChickenBBQ" runat="server" GroupName="ChickenFlavor" /><label for="<%= rbChickenBBQ.ClientID %>">BBQ</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbChickenCheese" runat="server" GroupName="ChickenFlavor" /><label for="<%= rbChickenCheese.ClientID %>">Cheese</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbChickenSalt" runat="server" GroupName="ChickenFlavor" /><label for="<%= rbChickenSalt.ClientID %>">Salt</label></div>
+                                <div class="section-label">Flavor <span id="chickenFlavorNote" style="font-size:10px; color:#e8401c; font-weight:600;"></span></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbChickenSourCream" runat="server" /><label for="<%= cbChickenSourCream.ClientID %>">Sour Cream</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbChickenBBQ" runat="server" /><label for="<%= cbChickenBBQ.ClientID %>">BBQ</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbChickenCheese" runat="server" /><label for="<%= cbChickenCheese.ClientID %>">Cheese</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbChickenSalt" runat="server" /><label for="<%= cbChickenSalt.ClientID %>">Chili BBQ</label></div>
                             </div>
                         </div>
                         <div class="qty-section">
@@ -321,11 +342,11 @@
                                 <div class="size-option"><asp:RadioButton ID="rbLoopysMega" runat="server" GroupName="LoopysSize" /><label for="<%= rbLoopysMega.ClientID %>">Mega - PHP 135</label></div>
                             </div>
                             <div class="flavors-section">
-                                <div class="section-label">Flavor</div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbLoopysSourCream" runat="server" GroupName="LoopysFlavor" /><label for="<%= rbLoopysSourCream.ClientID %>">Sour Cream</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbLoopysBBQ" runat="server" GroupName="LoopysFlavor" /><label for="<%= rbLoopysBBQ.ClientID %>">BBQ</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbLoopysCheese" runat="server" GroupName="LoopysFlavor" /><label for="<%= rbLoopysCheese.ClientID %>">Cheese</label></div>
-                                <div class="flavor-option"><asp:RadioButton ID="rbLoopysSalt" runat="server" GroupName="LoopysFlavor" /><label for="<%= rbLoopysSalt.ClientID %>">Salt</label></div>
+                                <div class="section-label">Flavor <span id="loopysFlavorNote" style="font-size:10px; color:#e8401c; font-weight:600;"></span></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbLoopysSourCream" runat="server" /><label for="<%= cbLoopysSourCream.ClientID %>">Sour Cream</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbLoopysBBQ" runat="server" /><label for="<%= cbLoopysBBQ.ClientID %>">BBQ</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbLoopysCheese" runat="server" /><label for="<%= cbLoopysCheese.ClientID %>">Cheese</label></div>
+                                <div class="flavor-option"><asp:CheckBox ID="cbLoopysSalt" runat="server" /><label for="<%= cbLoopysSalt.ClientID %>">Chili BBQ</label></div>
                             </div>
                         </div>
                         <div class="qty-section">
@@ -360,8 +381,13 @@
                 <div class="delivery-section">
                     <div class="section-label">Delivery Type</div>
                     <div class="option-grid">
-                        <asp:Button ID="btnWalkIn" runat="server" Text="Walk-in" CssClass="option-btn selected" OnClientClick="showPickupTimeModal(); return false;" CausesValidation="false" />
-                        <asp:Button ID="btnDelivery" runat="server" Text="Delivery +PHP 50" CssClass="option-btn" OnClick="btnDeliveryType_Click" CausesValidation="false" />
+                        <%-- Walk-in: opens pickup modal AND hides location/street --%>
+                        <asp:Button ID="btnWalkIn" runat="server" Text="Walk-in" CssClass="option-btn selected"
+                            OnClientClick="selectWalkIn(); return false;" CausesValidation="false" />
+                        <%-- Delivery: shows location/street then does postback --%>
+                        <asp:Button ID="btnDelivery" runat="server" Text="Delivery +PHP 50" CssClass="option-btn"
+                            OnClientClick="selectDelivery();"
+                            OnClick="btnDeliveryType_Click" CausesValidation="false" />
                     </div>
                     <asp:HiddenField ID="hdnDeliveryType" runat="server" Value="WalkIn" />
                     <asp:HiddenField ID="hdnPickupTime" runat="server" Value="" />
@@ -389,399 +415,527 @@
 
         <!-- PICKUP TIME MODAL -->
         <div id="pickupTimeModal" class="modal-overlay">
-            <div class="modal-box">
-                <div class="modal-header">Select Pickup Time</div>
-                <div class="modal-message">Choose when you'd like to pick up your order</div>
-                <div class="time-slots">
-                    <asp:RadioButtonList ID="rblPickupTime" runat="server" CssClass="time-slot-list"></asp:RadioButtonList>
+            <div class="modal-box" style="max-width:500px;">
+                <div class="modal-header">Choose Pickup Time 🕐</div>
+                <div class="prep-banner">
+                    <div class="prep-banner-icon">🍟</div>
+                    <div class="prep-banner-text" id="prepBannerText">
+                        Your order will be ready in approximately <strong id="prepMinLabel">10</strong> minutes.
+                        Pick a time that works best for you!
+                    </div>
                 </div>
+                <div class="pickup-slots" id="pickupSlotsContainer">
+                    <label class="pickup-slot-card recommended" id="slotCard0">
+                        <input type="radio" name="pickupSlot" id="slot0" value="" />
+                        <div class="slot-radio-indicator"></div>
+                        <div class="slot-info">
+                            <div class="slot-time" id="slotTime0">—</div>
+                            <div class="slot-detail" id="slotDetail0">—</div>
+                        </div>
+                        <div class="slot-wait-badge" id="slotBadge0">—</div>
+                    </label>
+                    <label class="pickup-slot-card" id="slotCard1">
+                        <input type="radio" name="pickupSlot" id="slot1" value="" />
+                        <div class="slot-radio-indicator"></div>
+                        <div class="slot-info">
+                            <div class="slot-time" id="slotTime1">—</div>
+                            <div class="slot-detail" id="slotDetail1">—</div>
+                        </div>
+                        <div class="slot-wait-badge" id="slotBadge1">—</div>
+                    </label>
+                    <label class="pickup-slot-card" id="slotCard2">
+                        <input type="radio" name="pickupSlot" id="slot2" value="" />
+                        <div class="slot-radio-indicator"></div>
+                        <div class="slot-info">
+                            <div class="slot-time" id="slotTime2">—</div>
+                            <div class="slot-detail" id="slotDetail2">—</div>
+                        </div>
+                        <div class="slot-wait-badge" id="slotBadge2">—</div>
+                    </label>
+                </div>
+                <asp:HiddenField ID="hdnSelectedPickupSlot" runat="server" Value="" />
                 <div class="modal-buttons">
                     <button type="button" class="modal-btn modal-btn-cancel" onclick="hidePickupTimeModal()">Cancel</button>
                     <asp:Button ID="btnConfirmPickupTime" runat="server"
-                        Text="Confirm"
+                        Text="Confirm Pickup"
                         CssClass="modal-btn modal-btn-confirm"
+                        OnClientClick="return syncPickupSlot();"
                         OnClick="btnConfirmPickupTime_Click"
                         CausesValidation="false" />
                 </div>
             </div>
         </div>
 
+        <!-- ALERT MODAL -->
+        <div id="alertModal" class="modal-overlay">
+            <div class="alert-modal-box">
+                <div class="alert-modal-icon" id="alertModalIcon">⚠️</div>
+                <div class="alert-modal-head" id="alertModalTitle">Alert</div>
+                <div class="alert-modal-msg" id="alertModalMessage">This is an alert message.</div>
+                <button type="button" class="alert-modal-btn" onclick="closeAlertModal()">OK</button>
+            </div>
+        </div>
+
         <!-- LOCATION NOT AVAILABLE MODAL -->
         <div id="locationModal" class="modal-overlay">
             <div class="modal-box">
-                <div class="modal-header" style="color: #e8401c;">Location Not Available</div>
-                <div class="modal-message">This location is only available for delivery orders. Please select "Delivery" as your delivery type or choose a different location that supports walk-in.</div>
+                <div class="modal-header" style="color:#e8401c;">Location Not Available</div>
+                <div class="modal-message">This location is only available for delivery orders. Please select "Delivery" or choose a different location.</div>
                 <div class="modal-buttons">
-                    <button type="button" class="modal-btn modal-btn-confirm" onclick="hideLocationModal()" style="width: 100%;">OK</button>
+                    <button type="button" class="modal-btn modal-btn-confirm" onclick="hideLocationModal()" style="width:100%;">OK</button>
                 </div>
             </div>
         </div>
 
-        <!-- PAYMENT QR CODE MODAL (Phase 2.5 - 2 Column Grid) -->
+        <!-- PAYMENT QR CODE MODAL -->
         <div id="qrCodeModal" class="modal-overlay">
-            <div class="modal-box" style="max-width: 650px; padding: 24px;">
-                <div class="modal-header" style="margin-bottom: 8px;">Scan QR Code to Pay</div>
-                <div class="modal-message" style="margin-bottom: 20px; font-size: 13px;">
-                    Scan the QR code to get your payment reference, then enter it below
-                </div>
-                
-                <!-- 2x2 Grid Layout -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
-                    <!-- LEFT SIDE: QR CODE -->
-                    <div style="background: white; padding: 16px; border-radius: 10px; text-align: center; border: 2px solid #e8f5ee;">
-                        <div style="background: linear-gradient(135deg, #f5c800 0%, #e8b000 100%); padding: 12px; border-radius: 8px; margin-bottom: 12px;">
-                            <div style="font-size: 20px; font-weight: 900; color: #1a1a1a;">
-                                PHP <asp:Label ID="lblQRTotal" runat="server" Text="0.00"></asp:Label>
-                            </div>
-                            <div style="font-size: 11px; color: #1a1a1a; opacity: 0.8;">Total Amount</div>
+            <div class="modal-box" style="max-width:650px; padding:24px;">
+                <div class="modal-header" style="margin-bottom:8px;">Scan QR Code to Pay</div>
+                <div class="modal-message" style="margin-bottom:20px; font-size:13px;">Scan the QR code to get your payment reference, then enter it below</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+                    <div style="background:white; padding:16px; border-radius:10px; text-align:center; border:2px solid #e8f5ee;">
+                        <div style="background:linear-gradient(135deg,#f5c800 0%,#e8b000 100%); padding:12px; border-radius:8px; margin-bottom:12px;">
+                            <div style="font-size:20px; font-weight:900; color:#1a1a1a;">PHP <asp:Label ID="lblQRTotal" runat="server" Text="0.00"></asp:Label></div>
+                            <div style="font-size:11px; color:#1a1a1a; opacity:0.8;">Total Amount</div>
                         </div>
-                        
-                        <img id="qrCodeImage" src="" alt="Payment QR Code" style="width: 100%; max-width: 220px; height: auto; aspect-ratio: 1; border: 3px solid #119247; border-radius: 10px; padding: 8px; background: white;" />
-                        
-                        <div style="margin-top: 12px; padding: 10px; background: #e3f2fd; border-radius: 6px; border-left: 3px solid #119247;">
-                            <div style="font-size: 11px; color: #0d47a1; font-weight: 600; line-height: 1.4;">
-                                📱 Use your phone camera or QR scanner app
-                            </div>
+                        <img id="qrCodeImage" src="" alt="Payment QR Code" style="width:100%; max-width:220px; height:auto; aspect-ratio:1; border:3px solid #119247; border-radius:10px; padding:8px; background:white;" />
+                        <div style="margin-top:12px; padding:10px; background:#e3f2fd; border-radius:6px; border-left:3px solid #119247;">
+                            <div style="font-size:11px; color:#0d47a1; font-weight:600; line-height:1.4;">📱 Use your phone camera or QR scanner app</div>
                         </div>
                     </div>
-                    
-                    <!-- RIGHT SIDE: REFERENCE INPUT -->
-                    <div style="background: #f8f9fa; padding: 16px; border-radius: 10px; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid #e0e0e0;">
+                    <div style="background:#f8f9fa; padding:16px; border-radius:10px; display:flex; flex-direction:column; justify-content:space-between; border:2px solid #e0e0e0;">
                         <div>
-                            <div style="font-size: 13px; font-weight: 800; color: #119247; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.3px;">
-                                Enter Payment Reference
-                            </div>
-                            <div style="font-size: 11px; color: #666; margin-bottom: 12px; line-height: 1.5;">
-                                After scanning the QR code, you will see a reference number. Enter it below to confirm your payment.
-                            </div>
-                            <asp:TextBox ID="txtPaymentReferenceModal" runat="server" 
-                                placeholder="e.g., REF-2024-001234"
-                                CssClass="file-upload-input"
-                                MaxLength="50"
-                                style="text-transform: uppercase; font-family: monospace; font-size: 14px; font-weight: 600; width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;"></asp:TextBox>
-                            <div id="modalRefError" style="color: #dc3545; font-size: 11px; font-weight: 600; margin-top: 6px; min-height: 16px;"></div>
+                            <div style="font-size:13px; font-weight:800; color:#119247; margin-bottom:8px; text-transform:uppercase;">Enter Payment Reference</div>
+                            <div style="font-size:11px; color:#666; margin-bottom:12px; line-height:1.5;">After scanning, enter the reference number shown to confirm your payment.</div>
+                            <asp:TextBox ID="txtPaymentReferenceModal" runat="server" placeholder="e.g., REF-2024-001234" CssClass="file-upload-input" MaxLength="50" style="text-transform:uppercase; font-family:monospace; font-size:14px; font-weight:600; width:100%; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"></asp:TextBox>
+                            <div id="modalRefError" style="color:#dc3545; font-size:11px; font-weight:600; margin-top:6px; min-height:16px;"></div>
                         </div>
-                        
-                        <div style="text-align: center; margin-top: 12px;">
-                            <asp:Button ID="btnSubmitPaymentModal" runat="server" 
-                                Text="Done" 
-                                CssClass="modal-btn modal-btn-confirm" 
-                                OnClientClick="return validateAndSubmitReference();"
-                                OnClick="btnSubmitPaymentModal_Click"
-                                style="padding: 10px 32px; font-size: 13px; font-weight: 700; background: linear-gradient(135deg, #119247 0%, #0d7336 100%); color: white; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s; display: inline-block;" />
+                        <div style="text-align:center; margin-top:12px;">
+                            <asp:Button ID="btnSubmitPaymentModal" runat="server" Text="Done" CssClass="modal-btn modal-btn-confirm" OnClientClick="return validateAndSubmitReference();" OnClick="btnSubmitPaymentModal_Click" style="padding:10px 32px; font-size:13px; font-weight:700; background:linear-gradient(135deg,#119247 0%,#0d7336 100%); color:white; border:none; border-radius:8px; cursor:pointer; text-transform:uppercase;" />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- LOGIN REQUIRED MODAL -->
+        <div id="loginRequiredModal" class="login-modal-overlay">
+            <div class="login-modal-box">
+                <span class="login-modal-icon">🛒</span>
+                <div class="login-modal-head">Login Required</div>
+                <div class="login-modal-msg">
+                    You need to be logged in to place an order.
+                    Create an account to start ordering your favorite
+                    <strong>Potato Corner</strong> flavors!
+                </div>
+                <div class="login-modal-btn-group">
+                    <a href="Login.aspx" class="btn-login-modal">Login</a>
+                    <a href="Register.aspx" class="btn-create-modal">Register</a>
+                </div>
+                <button type="button" class="btn-browse-modal" onclick="hideLoginRequiredModal()">
+                    Already browsing? Continue as guest
+                </button>
+            </div>
+        </div>
+
     </form>
 
     <script>
-        // ── QR CODE MODAL ──
-        function showQRCodeModal(paymentMethod, total) {
-            document.getElementById('<%= lblQRTotal.ClientID %>').textContent = total;
-            
-            // Get the generated reference from hidden field
-            var reference = document.getElementById('<%= hdnGeneratedReference.ClientID %>').value;
-            
-            // Create QR code data (this is what customer sees when they scan)
-            var qrData = 'PAYMENT SUCCESSFUL!\n' +
-                        'Merchant: Potato Corner\n' +
-                        'Amount: PHP ' + total + '\n' +
-                        'Reference: ' + reference + '\n' +
-                        'Date: ' + new Date().toLocaleString();
-            
-            // Generate QR code image
-            var qrImage = document.getElementById('qrCodeImage');
-            qrImage.src = 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=' + encodeURIComponent(qrData);
-            
-            // Clear previous input and error
-            document.getElementById('<%= txtPaymentReferenceModal.ClientID %>').value = '';
-            document.getElementById('modalRefError').textContent = '';
-            
-            document.getElementById('qrCodeModal').classList.add('active');
-        }
-        
-        function hideQRCodeModal() {
-            document.getElementById('qrCodeModal').classList.remove('active');
-        }
-        
-        // Validate reference in modal before submitting
-        function validateAndSubmitReference() {
-            var enteredRef = document.getElementById('<%= txtPaymentReferenceModal.ClientID %>').value.trim().toUpperCase();
-            var generatedRef = document.getElementById('<%= hdnGeneratedReference.ClientID %>').value;
-            var errorDiv = document.getElementById('modalRefError');
-            
-            if (enteredRef === '') {
-                errorDiv.textContent = 'Please enter the payment reference number from the QR code.';
-                return false;
+        // ════════════════════════════════════════
+        // DELIVERY TYPE — SHOW/HIDE FIELDS
+        // ════════════════════════════════════════
+
+        function setDeliveryFields(type) {
+            var locationGroup = document.getElementById('locationGroup');
+            var streetGroup = document.getElementById('streetGroup');
+            var locationSel = document.getElementById('<%= ddlLocation.ClientID %>');
+            var streetInput = document.getElementById('<%= txtStreet.ClientID %>');
+
+            if (type === 'WalkIn') {
+                locationGroup.style.display = 'none';
+                streetGroup.style.display = 'none';
+                // Clear values and validation states so they don't block submit
+                locationSel.selectedIndex = 0;
+                streetInput.value = '';
+                clearState(locationSel, document.getElementById('errLocation'));
+                clearState(streetInput, document.getElementById('errStreet'));
+            } else {
+                locationGroup.style.display = 'block';
+                streetGroup.style.display = 'block';
             }
-            
-            if (!enteredRef.startsWith('REF-') || enteredRef.length < 15) {
-                errorDiv.textContent = 'Invalid reference format. Please scan the QR code and enter the correct reference.';
-                return false;
-            }
-            
-            if (enteredRef !== generatedRef) {
-                errorDiv.textContent = 'Reference number does not match. Please check and try again.';
-                return false;
-            }
-            
-            // Valid reference - allow form submission
-            return true;
         }
-        
-        // Generate reference when payment method is selected
-        function generatePaymentReference() {
-            var timestamp = new Date().getTime();
-            var random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-            var reference = 'REF-' + new Date().getFullYear() + '-' + timestamp.toString().slice(-6) + random;
-            
-            // Store in hidden field
-            document.getElementById('<%= hdnGeneratedReference.ClientID %>').value = reference;
-            
-            return reference;
+
+        // Called by Walk-in button — opens pickup modal and hides address fields
+        function selectWalkIn() {
+            setDeliveryFields('WalkIn');
+            document.getElementById('<%= hdnDeliveryType.ClientID %>').value = 'WalkIn';
+            document.getElementById('<%= btnWalkIn.ClientID %>').className = 'option-btn selected';
+            document.getElementById('<%= btnDelivery.ClientID %>').className = 'option-btn';
+            openPickupModal();
         }
-        
-        // ── MODAL ──
-        function showPickupTimeModal() {
+
+        // Called client-side before Delivery postback — shows address fields
+        function selectDelivery() {
+            setDeliveryFields('Delivery');
+            document.getElementById('<%= btnDelivery.ClientID %>').className = 'option-btn selected';
+            document.getElementById('<%= btnWalkIn.ClientID %>').className = 'option-btn';
+            // Allow postback to continue (no return false here)
+        }
+
+        // ════════════════════════════════════════
+        // PREP TIME LOOKUP TABLE
+        // ════════════════════════════════════════
+        var PREP_TIMES = {
+            'French Fries': 5,
+            'Chicken Pops': 10,
+            'Loopys': 7
+        };
+
+        function calcPrepMinutes() {
+            var cartItems = document.querySelectorAll('.cart-item');
+            if (cartItems.length === 0) return 10;
+            var maxPrepPerProduct = {};
+            cartItems.forEach(function (item) {
+                var header = item.querySelector('.cart-item-header span');
+                if (!header) return;
+                var text = header.textContent.trim();
+                var productName = text.split('(')[0].trim();
+                var detailEl = item.querySelector('.cart-item-details');
+                var qty = 1;
+                if (detailEl) {
+                    var match = detailEl.textContent.match(/Qty:\s*(\d+)/);
+                    if (match) qty = parseInt(match[1], 10);
+                }
+                var baseMins = PREP_TIMES[productName] || 8;
+                var totalMins = Math.min(baseMins + (qty - 1) * 2, 20);
+                if (!maxPrepPerProduct[productName] || totalMins > maxPrepPerProduct[productName])
+                    maxPrepPerProduct[productName] = totalMins;
+            });
+            if (Object.keys(maxPrepPerProduct).length === 0) return 10;
+            var products = Object.keys(maxPrepPerProduct);
+            var longestPrep = Math.max.apply(null, Object.values(maxPrepPerProduct));
+            var buffer = (products.length - 1) * 3;
+            return Math.min(longestPrep + buffer, 30);
+        }
+
+        function formatTime(date) {
+            var h = date.getHours(), m = date.getMinutes(), ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            return h + ':' + (m < 10 ? '0' + m : m) + ' ' + ampm;
+        }
+
+        function formatValue(date) {
+            var y = date.getFullYear(), mo = date.getMonth() + 1, d = date.getDate(),
+                h = date.getHours(), mi = date.getMinutes();
+            return y + '-' + (mo < 10 ? '0' + mo : mo) + '-' + (d < 10 ? '0' + d : d) + ' ' + (h < 10 ? '0' + h : h) + ':' + (mi < 10 ? '0' + mi : mi);
+        }
+
+        function roundUp5(date) {
+            var ms = date.getTime(), rem = ms % (5 * 60 * 1000);
+            return rem === 0 ? new Date(ms) : new Date(ms + (5 * 60 * 1000 - rem));
+        }
+
+        function openPickupModal() {
+            var prepMins = calcPrepMinutes();
+            document.getElementById('prepMinLabel').textContent = prepMins;
+            var cartItems = document.querySelectorAll('.cart-item');
+            var hasChicken = false;
+            cartItems.forEach(function (item) {
+                var h = item.querySelector('.cart-item-header span');
+                if (h && h.textContent.indexOf('Chicken') >= 0) hasChicken = true;
+            });
+            document.querySelector('.prep-banner-icon').textContent = hasChicken ? '🍗' : '🍟';
+            var now = new Date();
+            var offsets = [prepMins, prepMins + 5, prepMins + 10];
+            var labels = [
+                'Earliest ready — food just done cooking',
+                '+5 min buffer — a little extra time',
+                '+10 min buffer — no rush at all'
+            ];
+            offsets.forEach(function (offset, i) {
+                var slotDate = roundUp5(new Date(now.getTime() + offset * 60 * 1000));
+                document.getElementById('slot' + i).value = formatValue(slotDate);
+                document.getElementById('slotTime' + i).textContent = formatTime(slotDate);
+                document.getElementById('slotDetail' + i).textContent = labels[i];
+                document.getElementById('slotBadge' + i).textContent = '~' + offset + ' min wait';
+            });
+            document.getElementById('slot0').checked = true;
             document.getElementById('pickupTimeModal').classList.add('active');
         }
+
+        function syncPickupSlot() {
+            var selected = document.querySelector('input[name="pickupSlot"]:checked');
+            if (!selected || !selected.value) {
+                showAlertModal('🕐', 'Select a Time', 'Please select a pickup time slot.');
+                return false;
+            }
+            document.getElementById('<%= hdnSelectedPickupSlot.ClientID %>').value = selected.value;
+            return true;
+        }
+
         function hidePickupTimeModal() {
             document.getElementById('pickupTimeModal').classList.remove('active');
         }
-        function showLocationModal() {
-            document.getElementById('locationModal').classList.add('active');
+
+        // ════════════════════════════════════════
+        // LOGIN MODAL
+        // ════════════════════════════════════════
+        var isLoggedIn = '<%= Session["CustomerID"] != null ? "True" : "" %>';
+        function showLoginRequiredModal() { document.getElementById('loginRequiredModal').classList.add('active'); }
+        function hideLoginRequiredModal() {
+            // Non-logged-in users should not stay on Order page
+            window.location.href = 'Default.aspx';
         }
-        function hideLocationModal() {
-            document.getElementById('locationModal').classList.remove('active');
-        }
-        function removeCartItem(index) {
-            if (confirm('Remove this item from cart?')) {
-                __doPostBack('RemoveCartItem', index);
-            }
-        }
-        
-        // Check location availability
-        function checkLocationAvailability() {
-            var locationDropdown = document.getElementById('<%= ddlLocation.ClientID %>');
-            var deliveryType = document.getElementById('<%= hdnDeliveryType.ClientID %>').value;
-            var selectedValue = locationDropdown.value;
-            
-            if (selectedValue) {
-                var parts = selectedValue.split('|');
-                var locationType = parts[1];
-                
-                // If location is Delivery-only and user selected Walk-in
-                if (locationType === 'Delivery' && deliveryType === 'WalkIn') {
-                    showLocationModal();
-                    locationDropdown.selectedIndex = 0; // Reset to "Select Location"
-                }
-            }
-        }
-        
+
         document.addEventListener('DOMContentLoaded', function () {
-            var modal = document.getElementById('pickupTimeModal');
-            if (modal) {
-                modal.addEventListener('click', function (e) {
-                    if (e.target === this) hidePickupTimeModal();
-                });
-            }
-            
-            var locationModalEl = document.getElementById('locationModal');
-            if (locationModalEl) {
-                locationModalEl.addEventListener('click', function (e) {
-                    if (e.target === this) hideLocationModal();
-                });
-            }
-            
-            var qrModalEl = document.getElementById('qrCodeModal');
-            if (qrModalEl) {
-                qrModalEl.addEventListener('click', function (e) {
-                    if (e.target === this) hideQRCodeModal();
-                });
-            }
+            // Apply correct initial state (Walk-in is default — hide address fields)
+            setDeliveryFields('<%= hdnDeliveryType.Value %>');
+
+            if (isLoggedIn !== 'True') showLoginRequiredModal();
+
+            document.getElementById('loginRequiredModal').addEventListener('click', function (e) {
+                if (e.target === this) hideLoginRequiredModal();
+            });
+            document.getElementById('pickupTimeModal').addEventListener('click', function (e) {
+                if (e.target === this) hidePickupTimeModal();
+            });
+            document.getElementById('locationModal').addEventListener('click', function (e) {
+                if (e.target === this) hideLocationModal();
+            });
+            document.getElementById('qrCodeModal').addEventListener('click', function (e) {
+                if (e.target === this) hideQRCodeModal();
+            });
         });
 
-        // ── REAL-TIME INPUT VALIDATION ──
-        var nameInput    = document.getElementById('<%= txtName.ClientID %>');
-        var streetInput  = document.getElementById('<%= txtStreet.ClientID %>');
-        var contactInput = document.getElementById('<%= txtContact.ClientID %>');
-        var locationDropdown = document.getElementById('<%= ddlLocation.ClientID %>');
-
-        var errName    = document.getElementById('errName');
-        var errStreet  = document.getElementById('errStreet');
-        var errContact = document.getElementById('errContact');
-        var errLocation = document.getElementById('errLocation');
-
-        function setValid(input, errEl) {
-            input.classList.remove('invalid');
-            input.classList.add('valid');
-            errEl.textContent = '';
+        // ════════════════════════════════════════
+        // QR CODE MODAL
+        // ════════════════════════════════════════
+        function showQRCodeModal(paymentMethod, total) {
+            document.getElementById('<%= lblQRTotal.ClientID %>').textContent = total;
+            var reference = document.getElementById('<%= hdnGeneratedReference.ClientID %>').value;
+            var qrData = 'PAYMENT SUCCESSFUL!\nMerchant: Potato Corner\nAmount: PHP ' + total + '\nReference: ' + reference + '\nDate: ' + new Date().toLocaleString();
+            document.getElementById('qrCodeImage').src = 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=' + encodeURIComponent(qrData);
+            document.getElementById('<%= txtPaymentReferenceModal.ClientID %>').value = '';
+            document.getElementById('modalRefError').textContent = '';
+            document.getElementById('qrCodeModal').classList.add('active');
         }
-        function setInvalid(input, errEl, msg) {
-            input.classList.remove('valid');
-            input.classList.add('invalid');
-            errEl.textContent = msg;
-        }
-        function clearState(input, errEl) {
-            input.classList.remove('valid', 'invalid');
-            errEl.textContent = '';
-        }
+        function hideQRCodeModal() { document.getElementById('qrCodeModal').classList.remove('active'); }
 
-        // NAME
-        nameInput.addEventListener('input', function () {
-            var val = this.value.trim();
-            if (val === '') {
-                clearState(this, errName);
-            } else if (val.length < 2) {
-                setInvalid(this, errName, 'Name must be at least 2 characters.');
-            } else if (/\d/.test(val)) {
-                setInvalid(this, errName, 'Name cannot contain numbers.');
-            } else if (!/^[a-zA-Z\s\-\.]+$/.test(val)) {
-                setInvalid(this, errName, 'Name can only contain letters, spaces, hyphens, or periods.');
-            } else {
-                setValid(this, errName);
-            }
-        });
-        nameInput.addEventListener('blur', function () {
-            if (this.value.trim() === '') setInvalid(this, errName, 'Full name is required.');
-        });
-
-        // STREET ADDRESS
-        streetInput.addEventListener('input', function () {
-            var val = this.value.trim();
-            if (val === '') {
-                clearState(this, errStreet);
-            } else if (val.length < 5) {
-                setInvalid(this, errStreet, 'Please enter a valid street address (min 5 characters).');
-            } else if (!/^[a-zA-Z0-9\s,.\-#\/]+$/.test(val)) {
-                setInvalid(this, errStreet, 'Street address contains invalid characters.');
-            } else {
-                setValid(this, errStreet);
-            }
-        });
-        streetInput.addEventListener('blur', function () {
-            if (this.value.trim() === '') setInvalid(this, errStreet, 'Street address is required.');
-        });
-
-        // CONTACT — digits only, must be exactly 11 digits starting with 09
-        contactInput.addEventListener('input', function () {
-            this.value = this.value.replace(/[^0-9]/g, '');
-            var val = this.value.trim();
-            if (val === '') {
-                clearState(this, errContact);
-            } else if (val.length < 11) {
-                setInvalid(this, errContact, 'Contact number must be exactly 11 digits.');
-            } else if (val.length === 11 && !/^09\d{9}$/.test(val)) {
-                setInvalid(this, errContact, 'Contact must start with 09 (e.g. 09123456789).');
-            } else if (val.length === 11) {
-                setValid(this, errContact);
-            }
-        });
-        contactInput.addEventListener('blur', function () {
-            var val = this.value.trim();
-            if (val === '') {
-                setInvalid(this, errContact, 'Contact number is required.');
-            } else if (val.length !== 11) {
-                setInvalid(this, errContact, 'Contact number must be exactly 11 digits.');
-            } else if (!/^09\d{9}$/.test(val)) {
-                setInvalid(this, errContact, 'Contact must start with 09.');
-            }
-        });
-
-        // LOCATION VALIDATION
-        locationDropdown.addEventListener('change', function () {
-            if (this.value === '') {
-                setInvalid(this, errLocation, 'Please select a location.');
-            } else {
-                setValid(this, errLocation);
-            }
-        });
-
-        // BLOCK CONFIRM if frontend validation fails
-        var confirmBtn = document.getElementById('<%= btnConfirm.ClientID %>');
-        
-        function handleConfirmOrder() {
-            var nameVal = nameInput.value.trim();
-            var streetVal = streetInput.value.trim();
-            var contactVal = contactInput.value.trim();
-            var locationVal = locationDropdown.value;
-            var paymentMethod = document.getElementById('<%= hdnPaymentMethod.ClientID %>').value;
-            var hasError = false;
-
-            if (nameVal === '') {
-                setInvalid(nameInput, errName, 'Full name is required.');
-                hasError = true;
-            } else if (/\d/.test(nameVal) || !/^[a-zA-Z\s\-\.]+$/.test(nameVal)) {
-                setInvalid(nameInput, errName, 'Please enter a valid full name.');
-                hasError = true;
-            }
-
-            if (locationVal === '') {
-                setInvalid(locationDropdown, errLocation, 'Please select a location.');
-                hasError = true;
-            }
-
-            if (streetVal === '') {
-                setInvalid(streetInput, errStreet, 'Street address is required.');
-                hasError = true;
-            } else if (streetVal.length < 5) {
-                setInvalid(streetInput, errStreet, 'Please enter a complete street address.');
-                hasError = true;
-            }
-
-            if (contactVal === '') {
-                setInvalid(contactInput, errContact, 'Contact number is required.');
-                hasError = true;
-            } else if (contactVal.length !== 11) {
-                setInvalid(contactInput, errContact, 'Contact number must be exactly 11 digits.');
-                hasError = true;
-            } else if (!/^09\d{9}$/.test(contactVal)) {
-                setInvalid(contactInput, errContact, 'Enter a valid 11-digit number starting with 09.');
-                hasError = true;
-            }
-
-            // CHECK IF CART IS EMPTY
-            var cartCountElement = document.getElementById('<%= lblTotal.ClientID %>');
-            if (!cartCountElement || cartCountElement.textContent === '0.00') {
-                alert('Your cart is empty! Please add items before checking out.');
-                hasError = true;
-            }
-            
-            // CHECK PAYMENT METHOD
-            if (!paymentMethod) {
-                alert('Please select a payment method.');
-                hasError = true;
-            }
-
-            if (hasError) {
-                if (!cartCountElement || cartCountElement.textContent === '0.00') {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                } else {
-                    nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-                return false;
-            }
-            
-            // If payment method is NOT Points, generate reference and show QR modal
-            if (paymentMethod !== 'Points') {
-                // Generate reference number
-                generatePaymentReference();
-                
-                var total = document.getElementById('<%= lblTotal.ClientID %>').textContent;
-                showQRCodeModal(paymentMethod, total);
-                return false; // Prevent form submission, user will enter reference in modal
-            }
-            
-            // For Points payment, allow form submission
+        function validateAndSubmitReference() {
+            var enteredRef   = document.getElementById('<%= txtPaymentReferenceModal.ClientID %>').value.trim().toUpperCase();
+            var generatedRef = document.getElementById('<%= hdnGeneratedReference.ClientID %>').value;
+            var errorDiv     = document.getElementById('modalRefError');
+            if (enteredRef === '') { errorDiv.textContent = 'Please enter the payment reference number.'; return false; }
+            if (!enteredRef.startsWith('REF-') || enteredRef.length < 15) { errorDiv.textContent = 'Invalid format. Scan QR and enter the correct reference.'; return false; }
+            if (enteredRef !== generatedRef) { errorDiv.textContent = 'Reference does not match. Please check and try again.'; return false; }
             return true;
         }
-        
-        if (confirmBtn) {
-            confirmBtn.addEventListener('click', function (e) {
-                // Validation is now handled in handleConfirmOrder
-            });
+
+        function generatePaymentReference() {
+            var ts  = new Date().getTime();
+            var rnd = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            var ref = 'REF-' + new Date().getFullYear() + '-' + ts.toString().slice(-6) + rnd;
+            document.getElementById('<%= hdnGeneratedReference.ClientID %>').value = ref;
+            return ref;
+        }
+
+        // ════════════════════════════════════════
+        // OTHER MODALS
+        // ════════════════════════════════════════
+        function showLocationModal() { document.getElementById('locationModal').classList.add('active'); }
+        function hideLocationModal() { document.getElementById('locationModal').classList.remove('active'); }
+        function showAlertModal(icon, title, message) {
+            document.getElementById('alertModalIcon').textContent    = icon;
+            document.getElementById('alertModalTitle').textContent   = title;
+            document.getElementById('alertModalMessage').textContent = message;
+            document.getElementById('alertModal').classList.add('active');
+        }
+        function closeAlertModal() { document.getElementById('alertModal').classList.remove('active'); }
+        function removeCartItem(index) {
+            if (confirm('Remove this item from cart?')) __doPostBack('RemoveCartItem', index);
+        }
+        function checkLocationAvailability() {
+            var dd = document.getElementById('<%= ddlLocation.ClientID %>');
+            var deliveryType = document.getElementById('<%= hdnDeliveryType.ClientID %>').value;
+            if (dd.value) {
+                var locationType = dd.value.split('|')[1];
+                if (locationType === 'Delivery' && deliveryType === 'WalkIn') {
+                    showLocationModal();
+                    dd.selectedIndex = 0;
+                }
+            }
+        }
+
+        // ════════════════════════════════════════
+        // DUAL FLAVOR LOGIC
+        // ════════════════════════════════════════
+        var friesSizeRadios = [
+            document.getElementById('<%= rbFriesRegular.ClientID %>'),
+            document.getElementById('<%= rbFriesLarge.ClientID %>'),
+            document.getElementById('<%= rbFriesJumbo.ClientID %>'),
+            document.getElementById('<%= rbFriesMega.ClientID %>'),
+            document.getElementById('<%= rbFriesGiga.ClientID %>'),
+            document.getElementById('<%= rbFriesTerra.ClientID %>')
+        ];
+        var friesFlavorCheckboxes = [
+            document.getElementById('<%= cbFriesSourCream.ClientID %>'),
+            document.getElementById('<%= cbFriesBBQ.ClientID %>'),
+            document.getElementById('<%= cbFriesCheese.ClientID %>'),
+            document.getElementById('<%= cbFriesSalt.ClientID %>')
+        ];
+        function updateFriesFlavorMode() {
+            var isBig = friesSizeRadios[3].checked || friesSizeRadios[4].checked || friesSizeRadios[5].checked;
+            document.getElementById('friesFlavorNote').textContent = isBig ? '(Choose 1 or 2 flavors)' : '';
+            if (!isBig) { var c=0; friesFlavorCheckboxes.forEach(function(cb){ if(cb.checked){c++; if(c>1)cb.checked=false;} }); }
+        }
+        friesSizeRadios.forEach(function(r){ if(r) r.addEventListener('change', updateFriesFlavorMode); });
+        friesFlavorCheckboxes.forEach(function(cb){ if(cb) cb.addEventListener('change', function(){
+            var isBig = friesSizeRadios[3].checked || friesSizeRadios[4].checked || friesSizeRadios[5].checked;
+            var cnt = friesFlavorCheckboxes.filter(function(c){return c.checked;}).length;
+            if(!isBig && cnt>1){ friesFlavorCheckboxes.forEach(function(c){if(c!==cb)c.checked=false;}); }
+            else if(cnt>2){ cb.checked=false; }
+        }); });
+
+        var chickenSizeRadios = [
+            document.getElementById('<%= rbChickenSolo.ClientID %>'),
+            document.getElementById('<%= rbChickenLarge.ClientID %>'),
+            document.getElementById('<%= rbChickenMega.ClientID %>')
+        ];
+        var chickenFlavorCheckboxes = [
+            document.getElementById('<%= cbChickenSourCream.ClientID %>'),
+            document.getElementById('<%= cbChickenBBQ.ClientID %>'),
+            document.getElementById('<%= cbChickenCheese.ClientID %>'),
+            document.getElementById('<%= cbChickenSalt.ClientID %>')
+        ];
+        function updateChickenFlavorMode() {
+            var isMega = chickenSizeRadios[2].checked;
+            document.getElementById('chickenFlavorNote').textContent = isMega ? '(Choose 1 or 2 flavors)' : '';
+            if(!isMega){ var c=0; chickenFlavorCheckboxes.forEach(function(cb){ if(cb.checked){c++; if(c>1)cb.checked=false;} }); }
+        }
+        chickenSizeRadios.forEach(function(r){ if(r) r.addEventListener('change', updateChickenFlavorMode); });
+        chickenFlavorCheckboxes.forEach(function(cb){ if(cb) cb.addEventListener('change', function(){
+            var isMega = chickenSizeRadios[2].checked;
+            var cnt = chickenFlavorCheckboxes.filter(function(c){return c.checked;}).length;
+            if(!isMega && cnt>1){ chickenFlavorCheckboxes.forEach(function(c){if(c!==cb)c.checked=false;}); }
+            else if(cnt>2){ cb.checked=false; }
+        }); });
+
+        var loopysSizeRadios = [
+            document.getElementById('<%= rbLoopysLarge.ClientID %>'),
+            document.getElementById('<%= rbLoopysMega.ClientID %>')
+        ];
+        var loopysFlavorCheckboxes = [
+            document.getElementById('<%= cbLoopysSourCream.ClientID %>'),
+            document.getElementById('<%= cbLoopysBBQ.ClientID %>'),
+            document.getElementById('<%= cbLoopysCheese.ClientID %>'),
+            document.getElementById('<%= cbLoopysSalt.ClientID %>')
+        ];
+        function updateLoopysFlavorMode() {
+            var isMega = loopysSizeRadios[1].checked;
+            document.getElementById('loopysFlavorNote').textContent = isMega ? '(Choose 1 or 2 flavors)' : '';
+            if(!isMega){ var c=0; loopysFlavorCheckboxes.forEach(function(cb){ if(cb.checked){c++; if(c>1)cb.checked=false;} }); }
+        }
+        loopysSizeRadios.forEach(function(r){ if(r) r.addEventListener('change', updateLoopysFlavorMode); });
+        loopysFlavorCheckboxes.forEach(function(cb){ if(cb) cb.addEventListener('change', function(){
+            var isMega = loopysSizeRadios[1].checked;
+            var cnt = loopysFlavorCheckboxes.filter(function(c){return c.checked;}).length;
+            if(!isMega && cnt>1){ loopysFlavorCheckboxes.forEach(function(c){if(c!==cb)c.checked=false;}); }
+            else if(cnt>2){ cb.checked=false; }
+        }); });
+
+        // ════════════════════════════════════════
+        // REAL-TIME INPUT VALIDATION
+        // ════════════════════════════════════════
+        var nameInput      = document.getElementById('<%= txtName.ClientID %>');
+        var streetInput    = document.getElementById('<%= txtStreet.ClientID %>');
+        var contactInput   = document.getElementById('<%= txtContact.ClientID %>');
+        var locationSelect = document.getElementById('<%= ddlLocation.ClientID %>');
+        var errName     = document.getElementById('errName');
+        var errStreet   = document.getElementById('errStreet');
+        var errContact  = document.getElementById('errContact');
+        var errLocation = document.getElementById('errLocation');
+
+        function setValid(el,e){ el.classList.remove('invalid'); el.classList.add('valid'); e.textContent=''; }
+        function setInvalid(el,e,m){ el.classList.remove('valid'); el.classList.add('invalid'); e.textContent=m; }
+        function clearState(el,e){ el.classList.remove('valid','invalid'); e.textContent=''; }
+
+        nameInput.addEventListener('input', function(){
+            var v=this.value.trim();
+            if(!v) clearState(this,errName);
+            else if(v.length<2) setInvalid(this,errName,'Name must be at least 2 characters.');
+            else if(/\d/.test(v)) setInvalid(this,errName,'Name cannot contain numbers.');
+            else if(!/^[a-zA-Z\s\-\.]+$/.test(v)) setInvalid(this,errName,'Letters, spaces, hyphens or periods only.');
+            else setValid(this,errName);
+        });
+        nameInput.addEventListener('blur', function(){ if(!this.value.trim()) setInvalid(this,errName,'Full name is required.'); });
+
+        streetInput.addEventListener('input', function(){
+            var v=this.value.trim();
+            if(!v) clearState(this,errStreet);
+            else if(v.length<5) setInvalid(this,errStreet,'Min 5 characters required.');
+            else if(!/^[a-zA-Z0-9\s,.\-#\/]+$/.test(v)) setInvalid(this,errStreet,'Invalid characters in address.');
+            else setValid(this,errStreet);
+        });
+        streetInput.addEventListener('blur', function(){ if(!this.value.trim()) setInvalid(this,errStreet,'Street address is required.'); });
+
+        contactInput.addEventListener('input', function(){
+            this.value=this.value.replace(/[^0-9]/g,'');
+            var v=this.value.trim();
+            if(!v) clearState(this,errContact);
+            else if(v.length<11) setInvalid(this,errContact,'Must be exactly 11 digits.');
+            else if(v.length===11 && !/^09\d{9}$/.test(v)) setInvalid(this,errContact,'Must start with 09.');
+            else if(v.length===11) setValid(this,errContact);
+        });
+        contactInput.addEventListener('blur', function(){
+            var v=this.value.trim();
+            if(!v) setInvalid(this,errContact,'Contact number is required.');
+            else if(v.length!==11) setInvalid(this,errContact,'Must be exactly 11 digits.');
+            else if(!/^09\d{9}$/.test(v)) setInvalid(this,errContact,'Must start with 09.');
+        });
+
+        locationSelect.addEventListener('change', function(){
+            if(!this.value) setInvalid(this,errLocation,'Please select a location.');
+            else setValid(this,errLocation);
+        });
+
+        // ════════════════════════════════════════
+        // CONFIRM ORDER HANDLER
+        // ════════════════════════════════════════
+        function handleConfirmOrder() {
+            var nameVal       = nameInput.value.trim();
+            var contactVal    = contactInput.value.trim();
+            var paymentMethod = document.getElementById('<%= hdnPaymentMethod.ClientID %>').value;
+            var deliveryType  = document.getElementById('<%= hdnDeliveryType.ClientID %>').value;
+            var hasError      = false;
+
+            if (!nameVal) { setInvalid(nameInput,errName,'Full name is required.'); hasError=true; }
+            else if(/\d/.test(nameVal)||!/^[a-zA-Z\s\-\.]+$/.test(nameVal)) { setInvalid(nameInput,errName,'Enter a valid full name.'); hasError=true; }
+
+            // Only validate location & street for Delivery
+            if (deliveryType === 'Delivery') {
+                var locationVal = locationSelect.value;
+                var streetVal   = streetInput.value.trim();
+                if (!locationVal) { setInvalid(locationSelect,errLocation,'Please select a location.'); hasError=true; }
+                if (!streetVal)   { setInvalid(streetInput,errStreet,'Street address is required.'); hasError=true; }
+                else if(streetVal.length<5) { setInvalid(streetInput,errStreet,'Please enter a complete address.'); hasError=true; }
+            }
+
+            if (!contactVal) { setInvalid(contactInput,errContact,'Contact number is required.'); hasError=true; }
+            else if(contactVal.length!==11) { setInvalid(contactInput,errContact,'Must be exactly 11 digits.'); hasError=true; }
+            else if(!/^09\d{9}$/.test(contactVal)) { setInvalid(contactInput,errContact,'Must start with 09.'); hasError=true; }
+
+            var totalEl = document.getElementById('<%= lblTotal.ClientID %>');
+            if (!totalEl || totalEl.textContent === '0.00') { showAlertModal('🛒', 'Cart Empty', 'Your cart is empty! Add items before checking out.'); hasError = true; }
+            if (!paymentMethod) { showAlertModal('💳', 'Payment Required', 'Please select a payment method.'); hasError = true; }
+
+            if (hasError) { nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
+
+            if (paymentMethod !== 'Points') {
+                generatePaymentReference();
+                showQRCodeModal(paymentMethod, totalEl.textContent);
+                return false;
+            }
+            return true;
         }
     </script>
 </body>

@@ -61,7 +61,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="aboutus.jpg" />
+    <Content Include="AccountAdmin.aspx" />
+    <Content Include="ActivityLog.aspx" />
     <Content Include="Admin.aspx" />
+    <Content Include="AdminDashboard.aspx" />
     <Content Include="AdminLogin.aspx" />
     <Content Include="award.jpg" />
     <Content Include="ba.jpg" />
@@ -74,8 +77,11 @@
     <Content Include="logopotcor.png" />
     <Content Include="loopys.png" />
     <Content Include="pops.png" />
+    <Content Include="potato.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="ResetPassword.aspx" />
-    <Content Include="Sale.aspx" />
+    <Content Include="Sales.aspx" />
     <Content Include="TestDatabase.aspx" />
     <Content Include="Update.aspx" />
     <Content Include="VerifyResetCode.aspx" />
@@ -89,12 +95,34 @@
     <Compile Include="AboutUs.aspx.designer.cs">
       <DependentUpon>AboutUs.aspx</DependentUpon>
     </Compile>
+    <Compile Include="AccountAdmin.aspx.cs">
+      <DependentUpon>AccountAdmin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccountAdmin.aspx.designer.cs">
+      <DependentUpon>AccountAdmin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityLog.aspx.cs">
+      <DependentUpon>ActivityLog.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ActivityLog.aspx.designer.cs">
+      <DependentUpon>ActivityLog.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityLogHelper.cs" />
     <Compile Include="Admin.aspx.cs">
       <DependentUpon>Admin.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Admin.aspx.designer.cs">
       <DependentUpon>Admin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard.aspx.cs">
+      <DependentUpon>AdminDashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard.aspx.designer.cs">
+      <DependentUpon>AdminDashboard.aspx</DependentUpon>
     </Compile>
     <Compile Include="AdminLogin.aspx.cs">
       <DependentUpon>AdminLogin.aspx</DependentUpon>
@@ -203,12 +231,12 @@
     <Compile Include="ResetPassword.aspx.designer.cs">
       <DependentUpon>ResetPassword.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Sale.aspx.cs">
-      <DependentUpon>Sale.aspx</DependentUpon>
+    <Compile Include="Sales.aspx.cs">
+      <DependentUpon>Sales.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Sale.aspx.designer.cs">
-      <DependentUpon>Sale.aspx</DependentUpon>
+    <Compile Include="Sales.aspx.designer.cs">
+      <DependentUpon>Sales.aspx</DependentUpon>
     </Compile>
     <Compile Include="TestDatabase.aspx.cs">
       <DependentUpon>TestDatabase.aspx</DependentUpon>

@@ -14,6 +14,11 @@ namespace PotatoCornerSys
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["UserName"] == null || Session["MembershipLevel"]?.ToString() != "Admin")
+            {
+                Response.Redirect("~/AdminLogin.aspx");
+            }
+
             backupFolder = Server.MapPath("~/Backups/");
 
             if (!Directory.Exists(backupFolder))
@@ -194,22 +199,12 @@ namespace PotatoCornerSys
             }
         }
 
-        
+
 
         protected void btnExportOrders_Click(object sender, EventArgs e)
         {
             try
             {
-                // ✅ Only export for logged-in user
-                if (Session["CustomerID"] == null)
-                {
-                    ShowMessage(lblExportMessage,
-                        "✗ You must be logged in to export your orders.", "error");
-                    return;
-                }
-
-                int customerID = Convert.ToInt32(Session["CustomerID"]);
-
                 string connectionString = ConfigurationManager
                     .ConnectionStrings["PotatoCornerDB"].ConnectionString;
 
@@ -217,71 +212,54 @@ namespace PotatoCornerSys
                 {
                     conn.Open();
 
+                    // Export ALL orders for admin
                     string query = @"
-                SELECT 
-                    o.OrderID,
-                    o.OrderDate,
-                    u.Fullname AS CustomerName,
-                    u.Email,
-                    u.PhoneNumber,
-                    o.DeliveryType,
-                    o.TotalAmount,
-                    o.Discount,
-                    o.AmountPaid,
-                    o.ChangeAmount,
-                    o.PaymentMethod,
-                    o.OrderStatus,
-                    o.TotalQuantity
+                SELECT o.OrderID, o.OrderDate, u.Fullname AS CustomerName,
+                       u.Email, u.PhoneNumber, o.DeliveryType, o.TotalAmount,
+                       o.Discount, o.AmountPaid, o.ChangeAmount,
+                       o.PaymentMethod, o.OrderStatus, o.TotalQuantity
                 FROM Orders o
                 INNER JOIN USERS u ON o.CustomerID = u.CustomerID
-                WHERE o.CustomerID = @CustomerID
                 ORDER BY o.OrderDate DESC";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        cmd.Parameters.AddWithValue("@CustomerID", customerID);
+                        StringBuilder csv = new StringBuilder();
+                        csv.AppendLine("OrderID,OrderDate,CustomerName,Email," +
+                            "PhoneNumber,DeliveryType,TotalAmount,Discount," +
+                            "AmountPaid,ChangeAmount,PaymentMethod,OrderStatus,TotalQuantity");
 
-                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        while (reader.Read())
                         {
-                            StringBuilder csv = new StringBuilder();
-                            csv.AppendLine("OrderID,OrderDate,CustomerName,Email," +
-                                "PhoneNumber,DeliveryType,TotalAmount,Discount," +
-                                "AmountPaid,ChangeAmount,PaymentMethod,OrderStatus,TotalQuantity");
-
-                            while (reader.Read())
-                            {
-                                csv.AppendLine(
-                                    $"{reader["OrderID"]}," +
-                                    $"{reader["OrderDate"]}," +
-                                    $"\"{reader["CustomerName"]}\"," +
-                                    $"{reader["Email"]}," +
-                                    $"{reader["PhoneNumber"]}," +
-                                    $"{reader["DeliveryType"]}," +
-                                    $"{reader["TotalAmount"]}," +
-                                    $"{reader["Discount"]}," +
-                                    $"{reader["AmountPaid"]}," +
-                                    $"{reader["ChangeAmount"]}," +
-                                    $"{reader["PaymentMethod"]}," +
-                                    $"{reader["OrderStatus"]}," +
-                                    $"{reader["TotalQuantity"]}");
-                            }
-
-                            string filename =
-                                $"MyOrders_Export_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
-                            Response.Clear();
-                            Response.ContentType = "text/csv";
-                            Response.AddHeader("Content-Disposition",
-                                $"attachment; filename={filename}");
-                            Response.Write(csv.ToString());
-                            Response.End();
+                            csv.AppendLine(
+                                $"{reader["OrderID"]}," +
+                                $"{reader["OrderDate"]}," +
+                                $"\"{reader["CustomerName"]}\"," +
+                                $"{reader["Email"]}," +
+                                $"{reader["PhoneNumber"]}," +
+                                $"{reader["DeliveryType"]}," +
+                                $"{reader["TotalAmount"]}," +
+                                $"{reader["Discount"]}," +
+                                $"{reader["AmountPaid"]}," +
+                                $"{reader["ChangeAmount"]}," +
+                                $"{reader["PaymentMethod"]}," +
+                                $"{reader["OrderStatus"]}," +
+                                $"{reader["TotalQuantity"]}");
                         }
+
+                        string filename = $"AllOrders_Export_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+                        Response.Clear();
+                        Response.ContentType = "text/csv";
+                        Response.AddHeader("Content-Disposition", $"attachment; filename={filename}");
+                        Response.Write(csv.ToString());
+                        Response.End();
                     }
                 }
             }
             catch (Exception ex)
             {
-                ShowMessage(lblExportMessage,
-                    $"✗ Export Orders failed: {ex.Message}", "error");
+                ShowMessage(lblExportMessage, $"✗ Export Orders failed: {ex.Message}", "error");
             }
         }
 
@@ -289,16 +267,6 @@ namespace PotatoCornerSys
         {
             try
             {
-                // ✅ Only export logged-in user's own profile data
-                if (Session["CustomerID"] == null)
-                {
-                    ShowMessage(lblExportMessage,
-                        "✗ You must be logged in to export your profile.", "error");
-                    return;
-                }
-
-                int customerID = Convert.ToInt32(Session["CustomerID"]);
-
                 string connectionString = ConfigurationManager
                     .ConnectionStrings["PotatoCornerDB"].ConnectionString;
 
@@ -306,64 +274,51 @@ namespace PotatoCornerSys
                 {
                     conn.Open();
 
+                    // Export ALL users for admin
                     string query = @"
-                SELECT 
-                    u.CustomerID,
-                    u.UserName,
-                    u.Fullname,
-                    u.Email,
-                    u.PhoneNumber,
-                    u.[Address],
-                    u.Points,
-                    u.MembershipLevel,
-                    u.DateCreated,
-                    m.MembershipNumber
+                SELECT u.CustomerID, u.UserName, u.Fullname, u.Email,
+                       u.PhoneNumber, u.[Address], u.Points,
+                       u.MembershipLevel, u.DateCreated,
+                       m.MembershipNumber
                 FROM USERS u
                 LEFT JOIN Membership m ON u.CustomerID = m.CustomerID
-                WHERE u.CustomerID = @CustomerID";
+                ORDER BY u.DateCreated DESC";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        cmd.Parameters.AddWithValue("@CustomerID", customerID);
+                        StringBuilder csv = new StringBuilder();
+                        csv.AppendLine("CustomerID,UserName,Fullname,Email," +
+                            "PhoneNumber,Address,Points,MembershipLevel," +
+                            "DateCreated,MembershipNumber");
 
-                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        while (reader.Read())
                         {
-                            StringBuilder csv = new StringBuilder();
-                            csv.AppendLine("CustomerID,UserName,Fullname,Email," +
-                                "PhoneNumber,Address,Points,MembershipLevel," +
-                                "DateCreated,MembershipNumber");
-
-                            while (reader.Read())
-                            {
-                                csv.AppendLine(
-                                    $"{reader["CustomerID"]}," +
-                                    $"{reader["UserName"]}," +
-                                    $"\"{reader["Fullname"]}\"," +
-                                    $"{reader["Email"]}," +
-                                    $"{reader["PhoneNumber"]}," +
-                                    $"\"{reader["Address"]}\"," +
-                                    $"{reader["Points"]}," +
-                                    $"{reader["MembershipLevel"]}," +
-                                    $"{reader["DateCreated"]}," +
-                                    $"{(reader["MembershipNumber"] == DBNull.Value ? "N/A" : reader["MembershipNumber"])}");
-                            }
-
-                            string filename =
-                                $"MyProfile_Export_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
-                            Response.Clear();
-                            Response.ContentType = "text/csv";
-                            Response.AddHeader("Content-Disposition",
-                                $"attachment; filename={filename}");
-                            Response.Write(csv.ToString());
-                            Response.End();
+                            csv.AppendLine(
+                                $"{reader["CustomerID"]}," +
+                                $"{reader["UserName"]}," +
+                                $"\"{reader["Fullname"]}\"," +
+                                $"{reader["Email"]}," +
+                                $"{reader["PhoneNumber"]}," +
+                                $"\"{reader["Address"]}\"," +
+                                $"{reader["Points"]}," +
+                                $"{reader["MembershipLevel"]}," +
+                                $"{reader["DateCreated"]}," +
+                                $"{(reader["MembershipNumber"] == DBNull.Value ? "N/A" : reader["MembershipNumber"])}");
                         }
+
+                        string filename = $"AllUsers_Export_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+                        Response.Clear();
+                        Response.ContentType = "text/csv";
+                        Response.AddHeader("Content-Disposition", $"attachment; filename={filename}");
+                        Response.Write(csv.ToString());
+                        Response.End();
                     }
                 }
             }
             catch (Exception ex)
             {
-                ShowMessage(lblExportMessage,
-                    $"✗ Export Profile failed: {ex.Message}", "error");
+                ShowMessage(lblExportMessage, $"✗ Export Users failed: {ex.Message}", "error");
             }
         }
 

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Sales.aspx.cs" Inherits="PotatoCornerSys.Sales" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Sale.aspx.cs" Inherits="PotatoCornerSys.Sales" %>
 
 <!DOCTYPE html>
 
@@ -509,7 +509,7 @@
         
         <div class="navbar">
             <div class="navbar-logo">
-                <img src="logopotcor.png" alt="Potato Corner" />
+                <img src="potato.png" alt="Potato Corner" />
             </div>
             <ul class="navbar-links">
                 <li><asp:LinkButton ID="lnkSales" runat="server" OnClick="lnkSales_Click" Text="Sales" CssClass="active"></asp:LinkButton></li>

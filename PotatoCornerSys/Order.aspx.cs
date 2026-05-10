@@ -23,6 +23,11 @@ namespace PotatoCornerSys
             public int Qty { get; set; }
             public decimal UnitPrice { get; set; }
             public decimal LineTotal => UnitPrice * Qty;
+
+            public List<string> GetFlavors()
+            {
+                return Flavor.Split(new[] { " + " }, StringSplitOptions.None).ToList();
+            }
         }
 
         private List<CartItem> Cart
@@ -37,25 +42,24 @@ namespace PotatoCornerSys
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // No redirect — let the page load so the login modal can show client-side
+
             if (!IsPostBack)
             {
-                // Auto-fill name from session
-                if (Session["Name"] != null)
+                if (Session["CustomerID"] != null)
                 {
-                    txtName.Text = Session["Name"].ToString();
-                }
-                else if (Session["Fullname"] != null)
-                {
-                    txtName.Text = Session["Fullname"].ToString();
-                }
-                else if (Session["Username"] != null)
-                {
-                    txtName.Text = Session["Username"].ToString();
+                    if (Session["Name"] != null)
+                        txtName.Text = Session["Name"].ToString();
+                    else if (Session["Fullname"] != null)
+                        txtName.Text = Session["Fullname"].ToString();
+                    else if (Session["Username"] != null)
+                        txtName.Text = Session["Username"].ToString();
                 }
             }
-            
+
             if (Request.Form["__EVENTTARGET"] == "RemoveCartItem")
             {
+                if (Session["CustomerID"] == null) return;
                 try
                 {
                     int index = Convert.ToInt32(Request.Form["__EVENTARGUMENT"]);
@@ -80,7 +84,11 @@ namespace PotatoCornerSys
                 hdnFriesQty.Value = "1";
                 hdnChickenQty.Value = "1";
                 hdnLoopysQty.Value = "1";
-                LoadPickupTimeSlots();
+
+                // Default to Walk-in
+                hdnDeliveryType.Value = "WalkIn";
+                btnWalkIn.CssClass = "option-btn selected";
+                btnDelivery.CssClass = "option-btn";
 
                 if (Session["ReorderMessage"] != null)
                 {
@@ -93,19 +101,6 @@ namespace PotatoCornerSys
             BindCart();
         }
 
-        private void LoadPickupTimeSlots()
-        {
-            rblPickupTime.Items.Clear();
-            DateTime now = DateTime.Now;
-
-            for (int i = 1; i <= 12; i++)
-            {
-                DateTime slotTime = now.AddMinutes(15 * i);
-                string timeText = slotTime.ToString("h:mm tt") + " (" + (15 * i) + " mins)";
-                rblPickupTime.Items.Add(new ListItem(timeText, slotTime.ToString("yyyy-MM-dd HH:mm")));
-            }
-        }
-
         protected void lnkProfile_Click(object sender, EventArgs e)
         {
             Response.Redirect("~/Profile.aspx");
@@ -113,6 +108,8 @@ namespace PotatoCornerSys
 
         protected void btnValidate_Click(object sender, EventArgs e)
         {
+            if (Session["CustomerID"] == null) return;
+
             string royaltyNo = txtRoyaltyNo.Text.Trim();
 
             if (string.IsNullOrEmpty(royaltyNo))
@@ -128,7 +125,7 @@ namespace PotatoCornerSys
                 !char.IsLetter(royaltyNo[1]) ||
                 !royaltyNo.Substring(2).All(char.IsDigit))
             {
-                lblRoyaltyMsg.Text = "Invalid royalty number format. Should be 2 letters + 5 numbers (e.g., PC12345)";
+                lblRoyaltyMsg.Text = "Invalid royalty number format. Should be 2 letters + 5 numbers (e.g., PC12345).";
                 lblRoyaltyMsg.CssClass = "status-msg status-error";
                 lblRoyaltyMsg.Visible = true;
                 hdnIsRoyalty.Value = "false";
@@ -139,45 +136,57 @@ namespace PotatoCornerSys
             bool hasRoyalty = Session["HasRoyaltyMembership"] != null && (bool)Session["HasRoyaltyMembership"];
             string storedRoyaltyNo = Session["RoyaltyNumber"]?.ToString();
 
-            if (isLoggedIn && hasRoyalty && !string.IsNullOrEmpty(storedRoyaltyNo))
+            if (!isLoggedIn)
             {
-                if (!royaltyNo.Equals(storedRoyaltyNo, StringComparison.OrdinalIgnoreCase))
+                lblRoyaltyMsg.Text = "You need to be a Royalty member to validate a card. Please log in or sign up.";
+                lblRoyaltyMsg.CssClass = "status-msg status-error";
+                lblRoyaltyMsg.Visible = true;
+                hdnIsRoyalty.Value = "false";
+                return;
+            }
+
+            if (!hasRoyalty)
+            {
+                lblRoyaltyMsg.Text = "You are not a Royalty member yet. Upgrade your membership to enjoy exclusive discounts!";
+                lblRoyaltyMsg.CssClass = "status-msg status-error";
+                lblRoyaltyMsg.Visible = true;
+                hdnIsRoyalty.Value = "false";
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(storedRoyaltyNo) &&
+                !royaltyNo.Equals(storedRoyaltyNo, StringComparison.OrdinalIgnoreCase))
+            {
+                lblRoyaltyMsg.Text = "Card number doesn't match your registered Royalty card. Please use your own card.";
+                lblRoyaltyMsg.CssClass = "status-msg status-error";
+                lblRoyaltyMsg.Visible = true;
+                hdnIsRoyalty.Value = "false";
+                return;
+            }
+
+            string storedFullName = Session["Fullname"]?.ToString();
+            if (!string.IsNullOrEmpty(storedFullName))
+            {
+                Func<string, string> normalize = s =>
+                    System.Text.RegularExpressions.Regex.Replace(s.Trim().ToLower(), @"\s+", " ");
+
+                string enteredName = normalize(txtName.Text);
+                string accountName = normalize(storedFullName);
+
+                if (enteredName != accountName)
                 {
-                    lblRoyaltyMsg.Text = "Card number doesn't match to the user card number.";
-                    lblRoyaltyMsg.CssClass = "status-msg status-error";
-                    lblRoyaltyMsg.Visible = true;
-                    hdnIsRoyalty.Value = "false";
-                    return;
-                }
+                    string[] enteredParts = enteredName.Split(' ');
+                    string[] accountParts = accountName.Split(' ');
+                    bool firstMatch = enteredParts[0] == accountParts[0];
+                    bool lastMatch = enteredParts.Last() == accountParts.Last();
 
-                // ✅ Flexible name matching
-                string storedFullName = Session["Fullname"]?.ToString();
-
-                if (!string.IsNullOrEmpty(storedFullName))
-                {
-                    Func<string, string> normalize = s =>
-                        System.Text.RegularExpressions.Regex
-                            .Replace(s.Trim().ToLower(), @"\s+", " ");
-
-                    string enteredName = normalize(txtName.Text);
-                    string accountName = normalize(storedFullName);
-
-                    if (enteredName != accountName)
+                    if (!firstMatch || !lastMatch)
                     {
-                        string[] enteredParts = enteredName.Split(' ');
-                        string[] accountParts = accountName.Split(' ');
-
-                        bool firstMatch = enteredParts[0] == accountParts[0];
-                        bool lastMatch = enteredParts.Last() == accountParts.Last();
-
-                        if (!firstMatch || !lastMatch)
-                        {
-                            lblRoyaltyMsg.Text = "Customer name doesn't match the royalty card holder.";
-                            lblRoyaltyMsg.CssClass = "status-msg status-error";
-                            lblRoyaltyMsg.Visible = true;
-                            hdnIsRoyalty.Value = "false";
-                            return;
-                        }
+                        lblRoyaltyMsg.Text = "Customer name doesn't match the Royalty card holder.";
+                        lblRoyaltyMsg.CssClass = "status-msg status-error";
+                        lblRoyaltyMsg.Visible = true;
+                        hdnIsRoyalty.Value = "false";
+                        return;
                     }
                 }
             }
@@ -185,26 +194,23 @@ namespace PotatoCornerSys
             try
             {
                 string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
-
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-
                     string query = @"
-                SELECT u.CustomerID, u.Fullname, u.MembershipLevel
-                FROM USERS u
-                INNER JOIN Membership m ON u.CustomerID = m.CustomerID
-                WHERE u.MembershipLevel = 'Royalty' AND m.MembershipNumber = @MembershipNumber";
+                        SELECT u.CustomerID
+                        FROM USERS u
+                        INNER JOIN Membership m ON u.CustomerID = m.CustomerID
+                        WHERE u.MembershipLevel = 'Royalty' AND m.MembershipNumber = @MembershipNumber";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@MembershipNumber", royaltyNo);
-
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
                             if (reader.Read())
                             {
-                                lblRoyaltyMsg.Text = "Royalty number validated! 10% discount applied.";
+                                lblRoyaltyMsg.Text = "Royalty card validated! 10% discount applied.";
                                 lblRoyaltyMsg.CssClass = "status-msg status-success";
                                 lblRoyaltyMsg.Visible = true;
                                 hdnIsRoyalty.Value = "true";
@@ -225,7 +231,7 @@ namespace PotatoCornerSys
                 if (hasRoyalty && !string.IsNullOrEmpty(storedRoyaltyNo) &&
                     storedRoyaltyNo.Equals(royaltyNo, StringComparison.OrdinalIgnoreCase))
                 {
-                    lblRoyaltyMsg.Text = "Royalty number validated! 10% discount applied.";
+                    lblRoyaltyMsg.Text = "Royalty card validated! 10% discount applied.";
                     lblRoyaltyMsg.CssClass = "status-msg status-success";
                     lblRoyaltyMsg.Visible = true;
                     hdnIsRoyalty.Value = "true";
@@ -233,7 +239,7 @@ namespace PotatoCornerSys
                 }
                 else
                 {
-                    lblRoyaltyMsg.Text = "Card number doesn't match to the user card number.";
+                    lblRoyaltyMsg.Text = "Validation error. Please try again.";
                     lblRoyaltyMsg.CssClass = "status-msg status-error";
                     lblRoyaltyMsg.Visible = true;
                     hdnIsRoyalty.Value = "false";
@@ -243,6 +249,7 @@ namespace PotatoCornerSys
 
         protected void btnChickenMinus_Click(object sender, EventArgs e)
         {
+            if (Session["CustomerID"] == null) return;
             int qty = int.Parse(hdnChickenQty.Value);
             if (qty > 1) qty--;
             hdnChickenQty.Value = qty.ToString();
@@ -252,6 +259,7 @@ namespace PotatoCornerSys
 
         protected void btnChickenPlus_Click(object sender, EventArgs e)
         {
+            if (Session["CustomerID"] == null) return;
             int qty = int.Parse(hdnChickenQty.Value);
             qty++;
             hdnChickenQty.Value = qty.ToString();
@@ -261,6 +269,7 @@ namespace PotatoCornerSys
 
         protected void btnLoopysMinus_Click(object sender, EventArgs e)
         {
+            if (Session["CustomerID"] == null) return;
             int qty = int.Parse(hdnLoopysQty.Value);
             if (qty > 1) qty--;
             hdnLoopysQty.Value = qty.ToString();
@@ -270,6 +279,7 @@ namespace PotatoCornerSys
 
         protected void btnLoopysPlus_Click(object sender, EventArgs e)
         {
+            if (Session["CustomerID"] == null) return;
             int qty = int.Parse(hdnLoopysQty.Value);
             qty++;
             hdnLoopysQty.Value = qty.ToString();
@@ -279,6 +289,7 @@ namespace PotatoCornerSys
 
         protected void btnFriesMinus_Click(object sender, EventArgs e)
         {
+            if (Session["CustomerID"] == null) return;
             int qty = int.Parse(hdnFriesQty.Value);
             if (qty > 1) qty--;
             hdnFriesQty.Value = qty.ToString();
@@ -288,6 +299,7 @@ namespace PotatoCornerSys
 
         protected void btnFriesPlus_Click(object sender, EventArgs e)
         {
+            if (Session["CustomerID"] == null) return;
             int qty = int.Parse(hdnFriesQty.Value);
             qty++;
             hdnFriesQty.Value = qty.ToString();
@@ -297,6 +309,8 @@ namespace PotatoCornerSys
 
         protected void btnAddFries_Click(object sender, EventArgs e)
         {
+            if (Session["CustomerID"] == null) return;
+
             string size = "";
             decimal price = 0;
 
@@ -313,18 +327,35 @@ namespace PotatoCornerSys
                 return;
             }
 
-            string flavor = "";
-            if (rbFriesSourCream.Checked) flavor = "Sour Cream";
-            else if (rbFriesBBQ.Checked) flavor = "BBQ";
-            else if (rbFriesCheese.Checked) flavor = "Cheese";
-            else if (rbFriesSalt.Checked) flavor = "Salt";
-            else
+            List<string> selectedFlavors = new List<string>();
+            if (cbFriesSourCream.Checked) selectedFlavors.Add("Sour Cream");
+            if (cbFriesBBQ.Checked) selectedFlavors.Add("BBQ");
+            if (cbFriesCheese.Checked) selectedFlavors.Add("Cheese");
+            if (cbFriesSalt.Checked) selectedFlavors.Add("Salt");
+
+            if (selectedFlavors.Count == 0)
             {
-                lblErrorMsg.Text = "Please select a flavor for French Fries.";
+                lblErrorMsg.Text = "Please select at least one flavor for French Fries.";
                 lblErrorMsg.Visible = true;
                 return;
             }
 
+            bool isMegaOrAbove = rbFriesMega.Checked || rbFriesGiga.Checked || rbFriesTerra.Checked;
+            if (!isMegaOrAbove && selectedFlavors.Count > 1)
+            {
+                lblErrorMsg.Text = "Only Mega size and above can have 2 flavors.";
+                lblErrorMsg.Visible = true;
+                return;
+            }
+
+            if (selectedFlavors.Count > 2)
+            {
+                lblErrorMsg.Text = "You can select a maximum of 2 flavors.";
+                lblErrorMsg.Visible = true;
+                return;
+            }
+
+            string flavor = string.Join(" + ", selectedFlavors);
             int qty = int.Parse(hdnFriesQty.Value);
             Cart.Add(new CartItem { Product = "French Fries", Size = size, Flavor = flavor, Qty = qty, UnitPrice = price });
 
@@ -334,8 +365,8 @@ namespace PotatoCornerSys
 
             rbFriesRegular.Checked = rbFriesLarge.Checked = rbFriesJumbo.Checked = false;
             rbFriesMega.Checked = rbFriesGiga.Checked = rbFriesTerra.Checked = false;
-            rbFriesSourCream.Checked = rbFriesBBQ.Checked = rbFriesCheese.Checked = false;
-            rbFriesSalt.Checked = false;
+            cbFriesSourCream.Checked = cbFriesBBQ.Checked = cbFriesCheese.Checked = false;
+            cbFriesSalt.Checked = false;
             hdnFriesQty.Value = "1";
             lblFriesQty.Text = "1";
 
@@ -344,6 +375,8 @@ namespace PotatoCornerSys
 
         protected void btnAddChicken_Click(object sender, EventArgs e)
         {
+            if (Session["CustomerID"] == null) return;
+
             string size = "";
             decimal price = 0;
 
@@ -357,24 +390,41 @@ namespace PotatoCornerSys
                 return;
             }
 
-            string flavor = "";
-            if (rbChickenSourCream.Checked) flavor = "Sour Cream";
-            else if (rbChickenBBQ.Checked) flavor = "BBQ";
-            else if (rbChickenCheese.Checked) flavor = "Cheese";
-            else if (rbChickenSalt.Checked) flavor = "Salt";
-            else
+            List<string> selectedFlavors = new List<string>();
+            if (cbChickenSourCream.Checked) selectedFlavors.Add("Sour Cream");
+            if (cbChickenBBQ.Checked) selectedFlavors.Add("BBQ");
+            if (cbChickenCheese.Checked) selectedFlavors.Add("Cheese");
+            if (cbChickenSalt.Checked) selectedFlavors.Add("Salt");
+
+            if (selectedFlavors.Count == 0)
             {
-                lblErrorMsg.Text = "Please select a flavor for Chicken Pops.";
+                lblErrorMsg.Text = "Please select at least one flavor for Chicken Pops.";
                 lblErrorMsg.Visible = true;
                 return;
             }
 
+            bool isMega = rbChickenMega.Checked;
+            if (!isMega && selectedFlavors.Count > 1)
+            {
+                lblErrorMsg.Text = "Only Mega Mix size can have 2 flavors.";
+                lblErrorMsg.Visible = true;
+                return;
+            }
+
+            if (selectedFlavors.Count > 2)
+            {
+                lblErrorMsg.Text = "You can select a maximum of 2 flavors.";
+                lblErrorMsg.Visible = true;
+                return;
+            }
+
+            string flavor = string.Join(" + ", selectedFlavors);
             int qty = int.Parse(hdnChickenQty.Value);
             Cart.Add(new CartItem { Product = "Chicken Pops", Size = size, Flavor = flavor, Qty = qty, UnitPrice = price });
 
             rbChickenSolo.Checked = rbChickenLarge.Checked = rbChickenMega.Checked = false;
-            rbChickenSourCream.Checked = rbChickenBBQ.Checked = rbChickenCheese.Checked = false;
-            rbChickenSalt.Checked = false;
+            cbChickenSourCream.Checked = cbChickenBBQ.Checked = cbChickenCheese.Checked = false;
+            cbChickenSalt.Checked = false;
             hdnChickenQty.Value = "1";
             lblChickenQty.Text = "1";
             lblErrorMsg.Visible = false;
@@ -384,6 +434,8 @@ namespace PotatoCornerSys
 
         protected void btnAddLoopys_Click(object sender, EventArgs e)
         {
+            if (Session["CustomerID"] == null) return;
+
             string size = "";
             decimal price = 0;
 
@@ -396,24 +448,41 @@ namespace PotatoCornerSys
                 return;
             }
 
-            string flavor = "";
-            if (rbLoopysSourCream.Checked) flavor = "Sour Cream";
-            else if (rbLoopysBBQ.Checked) flavor = "BBQ";
-            else if (rbLoopysCheese.Checked) flavor = "Cheese";
-            else if (rbLoopysSalt.Checked) flavor = "Salt";
-            else
+            List<string> selectedFlavors = new List<string>();
+            if (cbLoopysSourCream.Checked) selectedFlavors.Add("Sour Cream");
+            if (cbLoopysBBQ.Checked) selectedFlavors.Add("BBQ");
+            if (cbLoopysCheese.Checked) selectedFlavors.Add("Cheese");
+            if (cbLoopysSalt.Checked) selectedFlavors.Add("Salt");
+
+            if (selectedFlavors.Count == 0)
             {
-                lblErrorMsg.Text = "Please select a flavor for Loopys.";
+                lblErrorMsg.Text = "Please select at least one flavor for Loopys.";
                 lblErrorMsg.Visible = true;
                 return;
             }
 
+            bool isMega = rbLoopysMega.Checked;
+            if (!isMega && selectedFlavors.Count > 1)
+            {
+                lblErrorMsg.Text = "Only Mega size can have 2 flavors.";
+                lblErrorMsg.Visible = true;
+                return;
+            }
+
+            if (selectedFlavors.Count > 2)
+            {
+                lblErrorMsg.Text = "You can select a maximum of 2 flavors.";
+                lblErrorMsg.Visible = true;
+                return;
+            }
+
+            string flavor = string.Join(" + ", selectedFlavors);
             int qty = int.Parse(hdnLoopysQty.Value);
             Cart.Add(new CartItem { Product = "Loopys", Size = size, Flavor = flavor, Qty = qty, UnitPrice = price });
 
             rbLoopysLarge.Checked = rbLoopysMega.Checked = false;
-            rbLoopysSourCream.Checked = rbLoopysBBQ.Checked = rbLoopysCheese.Checked = false;
-            rbLoopysSalt.Checked = false;
+            cbLoopysSourCream.Checked = cbLoopysBBQ.Checked = cbLoopysCheese.Checked = false;
+            cbLoopysSalt.Checked = false;
             hdnLoopysQty.Value = "1";
             lblLoopysQty.Text = "1";
             lblErrorMsg.Visible = false;
@@ -423,6 +492,8 @@ namespace PotatoCornerSys
 
         protected void rptCart_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
+            if (Session["CustomerID"] == null) return;
+
             if (e.CommandName == "Remove")
             {
                 try
@@ -443,6 +514,8 @@ namespace PotatoCornerSys
 
         protected void btnRemoveItem_Click(object sender, EventArgs e)
         {
+            if (Session["CustomerID"] == null) return;
+
             try
             {
                 Button btn = (Button)sender;
@@ -461,25 +534,25 @@ namespace PotatoCornerSys
 
         protected void btnDeliveryType_Click(object sender, EventArgs e)
         {
-            Button btn = (Button)sender;
+            if (Session["CustomerID"] == null) return;
+
+            hdnDeliveryType.Value = "Delivery";
             btnWalkIn.CssClass = "option-btn";
-            btnDelivery.CssClass = "option-btn";
-            btn.CssClass = "option-btn selected";
+            btnDelivery.CssClass = "option-btn selected";
 
-            hdnDeliveryType.Value = btn.ID == "btnDelivery" ? "Delivery" : "WalkIn";
-
-            if (hdnDeliveryType.Value == "Delivery")
-            {
-                hdnPickupTime.Value = "";
-                lblPickupTime.Visible = false;
-            }
+            hdnPickupTime.Value = "";
+            lblPickupTime.Visible = false;
 
             UpdateCartTotals();
+
+            ScriptManager.RegisterStartupScript(this, GetType(), "showDeliveryFields",
+                "setDeliveryFields('Delivery');", true);
         }
 
-        // ✅ Payment method selection with Points balance check
         protected void btnPayment_Click(object sender, EventArgs e)
         {
+            if (Session["CustomerID"] == null) return;
+
             Button btn = (Button)sender;
             btnGoTyme.CssClass = "option-btn";
             btnMayaBank.CssClass = "option-btn";
@@ -495,12 +568,12 @@ namespace PotatoCornerSys
                 if (Session["Points"] != null)
                     int.TryParse(Session["Points"].ToString(), out userPoints);
 
-                decimal pointsValue = userPoints * 10m; // 1 point = PHP 10
+                decimal pointsValue = userPoints * 10m;
 
                 if (userPoints == 0 || pointsValue < currentTotal)
                 {
                     lblErrorMsg.Text = $"Insufficient points balance. You have {userPoints} pts " +
-                                       $"(PHP {pointsValue:0.00}) but the total is PHP {currentTotal:0.00}.";
+                                          $"(PHP {pointsValue:0.00}) but the total is PHP {currentTotal:0.00}.";
                     lblErrorMsg.CssClass = "status-msg status-error";
                     lblErrorMsg.Visible = true;
                     hdnPaymentMethod.Value = "";
@@ -515,51 +588,45 @@ namespace PotatoCornerSys
 
         protected void btnConfirmPickupTime_Click(object sender, EventArgs e)
         {
-            if (rblPickupTime.SelectedValue != "")
+            if (Session["CustomerID"] == null) return;
+
+            string selectedSlot = hdnSelectedPickupSlot.Value;
+
+            if (!string.IsNullOrEmpty(selectedSlot))
             {
-                hdnPickupTime.Value = rblPickupTime.SelectedValue;
+                hdnPickupTime.Value = selectedSlot;
                 hdnDeliveryType.Value = "WalkIn";
                 btnWalkIn.CssClass = "option-btn selected";
                 btnDelivery.CssClass = "option-btn";
 
-                DateTime selectedTime = DateTime.Parse(rblPickupTime.SelectedValue);
+                DateTime selectedTime = DateTime.Parse(selectedSlot);
                 lblPickupTime.Text = "Pickup Time: " + selectedTime.ToString("MMM dd, yyyy h:mm tt");
                 lblPickupTime.Visible = true;
 
                 UpdateCartTotals();
-                ScriptManager.RegisterStartupScript(this, GetType(), "hideModal", "hidePickupTimeModal();", true);
+                ScriptManager.RegisterStartupScript(this, GetType(), "hideModal",
+                    "hidePickupTimeModal(); setDeliveryFields('WalkIn');", true);
             }
         }
 
-        // ✅ NEW: Handle modal submission with reference validation
         protected void btnSubmitPaymentModal_Click(object sender, EventArgs e)
         {
+            if (Session["CustomerID"] == null) return;
+
             string enteredReference = txtPaymentReferenceModal.Text.Trim().ToUpper();
-            string generatedReference = hdnGeneratedReference.Value;
-            
-            // Validate reference format
-            if (!enteredReference.StartsWith("REF-") || enteredReference.Length < 15)
+
+            if (string.IsNullOrEmpty(enteredReference) ||
+                !enteredReference.StartsWith("REF-") ||
+                enteredReference.Length < 15)
             {
-                lblErrorMsg.Text = "Invalid reference number format. Please scan the QR code and enter the correct reference.";
+                lblErrorMsg.Text = "Invalid reference number format.";
                 lblErrorMsg.CssClass = "status-msg status-error";
                 lblErrorMsg.Visible = true;
-                ScriptManager.RegisterStartupScript(this, GetType(), "showModal", 
+                ScriptManager.RegisterStartupScript(this, GetType(), "showModal",
                     $"showQRCodeModal('{hdnPaymentMethod.Value}', '{lblTotal.Text}');", true);
                 return;
             }
-            
-            // Validate reference matches generated one
-            if (enteredReference != generatedReference)
-            {
-                lblErrorMsg.Text = "Reference number does not match. Please scan the QR code and enter the correct reference.";
-                lblErrorMsg.CssClass = "status-msg status-error";
-                lblErrorMsg.Visible = true;
-                ScriptManager.RegisterStartupScript(this, GetType(), "showModal", 
-                    $"showQRCodeModal('{hdnPaymentMethod.Value}', '{lblTotal.Text}');", true);
-                return;
-            }
-            
-            // Check for duplicate reference
+
             try
             {
                 string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
@@ -571,13 +638,12 @@ namespace PotatoCornerSys
                     {
                         cmd.Parameters.AddWithValue("@Reference", enteredReference);
                         int count = (int)cmd.ExecuteScalar();
-                        
                         if (count > 0)
                         {
-                            lblErrorMsg.Text = "This reference number has already been used. Please generate a new QR code.";
+                            lblErrorMsg.Text = "This reference number has already been used. Please check your payment app for the correct reference.";
                             lblErrorMsg.CssClass = "status-msg status-error";
                             lblErrorMsg.Visible = true;
-                            ScriptManager.RegisterStartupScript(this, GetType(), "showModal", 
+                            ScriptManager.RegisterStartupScript(this, GetType(), "showModal",
                                 $"showQRCodeModal('{hdnPaymentMethod.Value}', '{lblTotal.Text}');", true);
                             return;
                         }
@@ -586,109 +652,89 @@ namespace PotatoCornerSys
             }
             catch (Exception ex)
             {
-                lblErrorMsg.Text = "Error validating reference: " + ex.Message;
-                lblErrorMsg.CssClass = "status-msg status-error";
-                lblErrorMsg.Visible = true;
-                return;
+                System.Diagnostics.Debug.WriteLine("Duplicate check error: " + ex.Message);
             }
-            
-            // Reference is valid, process order
+
             ProcessOrder(enteredReference);
+
+            if (lblErrorMsg.Visible)
+            {
+                ScriptManager.RegisterStartupScript(this, GetType(), "scrollToError",
+                    "document.getElementById('" + lblErrorMsg.ClientID + "').scrollIntoView({behavior:'smooth', block:'center'});", true);
+            }
         }
 
-        // ✅ Points payment or direct submission
         protected void btnConfirm_Click(object sender, EventArgs e)
         {
-            // Only Points payment reaches here (GCash/Maya/GoTyme show modal instead)
+            if (Session["CustomerID"] == null) return;
+
             if (hdnPaymentMethod.Value == "Points")
-            {
                 ProcessOrder(null);
-            }
         }
-        
+
         private void ProcessOrder(string paymentReference)
         {
-            if (string.IsNullOrEmpty(txtName.Text.Trim()) ||
-                string.IsNullOrEmpty(ddlLocation.SelectedValue) ||
-                string.IsNullOrEmpty(txtStreet.Text.Trim()) ||
-                string.IsNullOrEmpty(txtContact.Text.Trim()))
-            {
-                lblErrorMsg.Text = "Please fill in all customer information.";
-                lblErrorMsg.Visible = true;
-                return;
-            }
-
             string name = txtName.Text.Trim();
-            if (name.Any(char.IsDigit))
-            {
-                lblErrorMsg.Text = "Full name cannot contain numbers.";
-                lblErrorMsg.Visible = true;
-                return;
-            }
-
             string contact = txtContact.Text.Trim();
-            if (!contact.All(char.IsDigit))
-            {
-                lblErrorMsg.Text = "Phone number can only contain numbers.";
-                lblErrorMsg.Visible = true;
-                return;
-            }
+            bool isDelivery = hdnDeliveryType.Value == "Delivery";
 
-            string street = txtStreet.Text.Trim();
-            if (!street.All(c => char.IsLetterOrDigit(c) || c == ' ' || c == ',' || c == '.' || c == '-' || c == '#' || c == '/'))
-            {
-                lblErrorMsg.Text = "Street address contains invalid characters.";
-                lblErrorMsg.Visible = true;
-                return;
-            }
-
-            // Parse location
-            string[] locationParts = ddlLocation.SelectedValue.Split('|');
-            string barangay = locationParts[0];
-            string locationType = locationParts[1];
-
-            // Validate delivery type matches location
-            if (locationType == "Delivery" && hdnDeliveryType.Value == "WalkIn")
-            {
-                lblErrorMsg.Text = "This location is only available for delivery orders.";
-                lblErrorMsg.Visible = true;
-                return;
-            }
-
-            if (hdnDeliveryType.Value == "WalkIn" && string.IsNullOrEmpty(hdnPickupTime.Value))
-            {
-                lblErrorMsg.Text = "Please select a pickup time for walk-in orders.";
+            Action<string> fail = (msg) => {
+                lblErrorMsg.Text = msg;
                 lblErrorMsg.CssClass = "status-msg status-error";
                 lblErrorMsg.Visible = true;
-                return;
+                ScriptManager.RegisterStartupScript(this, GetType(), "processOrderErr",
+                    $"showAlertModal('❌', 'Order Error', {System.Web.HttpUtility.JavaScriptStringEncode(msg, true)});", true);
+            };
+
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(contact))
+            { fail("Please fill in all customer information."); return; }
+
+            if (name.Any(char.IsDigit))
+            { fail("Full name cannot contain numbers."); return; }
+
+            if (!contact.All(char.IsDigit))
+            { fail("Phone number can only contain numbers."); return; }
+
+            string barangay = "Walk-in";
+            string street = "Walk-in";
+            string locationType = "Both";
+
+            if (isDelivery)
+            {
+                if (string.IsNullOrEmpty(ddlLocation.SelectedValue) ||
+                    string.IsNullOrEmpty(txtStreet.Text.Trim()))
+                { fail("Please fill in location and street address for delivery orders."); return; }
+
+                string[] locationParts = ddlLocation.SelectedValue.Split('|');
+                barangay = locationParts[0];
+                locationType = locationParts[1];
+                street = txtStreet.Text.Trim();
+
+                if (!street.All(c => char.IsLetterOrDigit(c) || c == ' ' || c == ',' || c == '.' || c == '-' || c == '#' || c == '/'))
+                { fail("Street address contains invalid characters."); return; }
+
+                if (locationType == "Delivery" && !isDelivery)
+                { fail("This location is only available for delivery orders."); return; }
             }
+
+            if (!isDelivery && string.IsNullOrEmpty(hdnPickupTime.Value))
+            { fail("Please select a pickup time. Click Walk-in again to choose a time."); return; }
 
             if (Cart.Count == 0)
-            {
-                lblErrorMsg.Text = "Your cart is empty. Please add at least one item.";
-                lblErrorMsg.Visible = true;
-                return;
-            }
+            { fail("Your cart is empty. Please add at least one item."); return; }
 
             if (string.IsNullOrEmpty(hdnPaymentMethod.Value))
-            {
-                lblErrorMsg.Text = "Please select a payment method.";
-                lblErrorMsg.Visible = true;
-                return;
-            }
+            { fail("Please select a payment method."); return; }
 
             decimal orderTotal = decimal.Parse(lblTotal.Text);
             decimal subtotal = decimal.Parse(lblSubtotal.Text);
             decimal discount = decimal.Parse(lblDiscount.Text);
             decimal deliveryFee = decimal.Parse(lblDeliveryFee.Text);
-            
-            // Points payment validation
             decimal amountPaid = orderTotal;
             decimal change = 0;
 
             if (hdnPaymentMethod.Value == "Points")
             {
-                // ✅ Safety re-check — cart total may have changed after Points was selected
                 int userPoints = 0;
                 if (Session["Points"] != null)
                     int.TryParse(Session["Points"].ToString(), out userPoints);
@@ -697,11 +743,7 @@ namespace PotatoCornerSys
 
                 if (pointsValue < orderTotal)
                 {
-                    lblErrorMsg.Text = $"Insufficient points balance. You have {userPoints} pts " +
-                                       $"(PHP {pointsValue:0.00}) but the total is PHP {orderTotal:0.00}. " +
-                                       $"Please select another payment method.";
-                    lblErrorMsg.CssClass = "status-msg status-error";
-                    lblErrorMsg.Visible = true;
+                    fail($"Insufficient points. You have {userPoints} pts (PHP {pointsValue:0.00}) but total is PHP {orderTotal:0.00}.");
                     hdnPaymentMethod.Value = "";
                     btnPoints.CssClass = "option-btn";
                     return;
@@ -714,20 +756,16 @@ namespace PotatoCornerSys
 
                 if (orderID > 0)
                 {
-                    // Deduct stock for each item
                     DeductStockForOrder();
 
-                    // ✅ FIX: Deduct points if paid with Points, otherwise add earned points
                     int pointsEarned = (int)(orderTotal / 500) * 2;
 
                     if (hdnPaymentMethod.Value == "Points")
                     {
-                        // Points used to pay = orderTotal / 10 (1 pt = PHP 10), rounded up
                         int pointsUsed = (int)Math.Ceiling(orderTotal / 10m);
-                        // Net delta: subtract points spent, then add points earned
                         int pointsDelta = pointsEarned - pointsUsed;
                         UpdateCustomerPoints(pointsDelta);
-                        Session["PointsEarned"] = "0"; // no bonus points shown on receipt when paying with points
+                        Session["PointsEarned"] = "0";
                     }
                     else
                     {
@@ -737,9 +775,9 @@ namespace PotatoCornerSys
 
                     Session["OrderID"] = orderID.ToString();
                     Session["OrderName"] = name;
-                    Session["OrderAddress"] = barangay + ", " + street;
+                    Session["OrderAddress"] = isDelivery ? barangay + ", " + street : "";
                     Session["OrderContact"] = contact;
-                    Session["OrderDelivery"] = hdnDeliveryType.Value == "Delivery" ? "Delivery" : "Walk-in";
+                    Session["OrderDelivery"] = isDelivery ? "Delivery" : "Walk-in";
                     Session["OrderPickupTime"] = hdnPickupTime.Value;
                     Session["OrderIsRoyalty"] = hdnIsRoyalty.Value;
                     Session["OrderTotal"] = orderTotal.ToString("0.00");
@@ -760,17 +798,15 @@ namespace PotatoCornerSys
                 }
                 else
                 {
-                    lblErrorMsg.Text = "Failed to save order. Please try again.";
-                    lblErrorMsg.Visible = true;
+                    fail("Failed to save order. Please try again.");
                 }
             }
             catch (Exception ex)
             {
-                lblErrorMsg.Text = "Error processing order: " + ex.Message;
+                string errMsg = "Error processing order: " + ex.Message;
                 if (ex.InnerException != null)
-                    lblErrorMsg.Text += "<br/>Inner Error: " + ex.InnerException.Message;
-                lblErrorMsg.Text += "<br/>Stack Trace: " + ex.StackTrace;
-                lblErrorMsg.Visible = true;
+                    errMsg += " | Inner: " + ex.InnerException.Message;
+                fail(errMsg);
             }
         }
 
@@ -781,23 +817,22 @@ namespace PotatoCornerSys
             try
             {
                 string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
-
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
 
                     int customerID = GetOrCreateCustomerID(conn, customerName, barangay + ", " + street, contact);
 
-                    // Phase 2.5: All orders start as "Pending", but PaymentVerified flag differs
-                    string orderStatus = "Pending";
-                    bool paymentVerified = hdnPaymentMethod.Value == "Points"; // Points = auto-verified
+                    bool paymentVerified = hdnPaymentMethod.Value == "Points";
 
                     string orderQuery = @"
-                        INSERT INTO Orders (CustomerID, OrderDate, DeliveryType, TotalAmount, Discount, 
-                                          AmountPaid, ChangeAmount, PaymentMethod, OrderStatus, PickupTime, TotalQuantity, Barangay, Street, PaymentReference, PaymentVerified)
-                        VALUES (@CustomerID, @OrderDate, @DeliveryType, @TotalAmount, @Discount, 
-                                @AmountPaid, @ChangeAmount, @PaymentMethod, @OrderStatus, @PickupTime, @TotalQuantity, @Barangay, @Street, @PaymentReference, @PaymentVerified);
-                        SELECT SCOPE_IDENTITY();";
+                INSERT INTO Orders (CustomerID, OrderDate, DeliveryType, TotalAmount, Discount,
+                                   AmountPaid, ChangeAmount, PaymentMethod, OrderStatus, PickupTime,
+                                   TotalQuantity, Barangay, Street, PaymentReference, PaymentVerified)
+                VALUES (@CustomerID, @OrderDate, @DeliveryType, @TotalAmount, @Discount,
+                        @AmountPaid, @ChangeAmount, @PaymentMethod, @OrderStatus, @PickupTime,
+                        @TotalQuantity, @Barangay, @Street, @PaymentReference, @PaymentVerified);
+                SELECT SCOPE_IDENTITY();";
 
                     int orderID = 0;
                     using (SqlCommand cmd = new SqlCommand(orderQuery, conn))
@@ -810,13 +845,13 @@ namespace PotatoCornerSys
                         cmd.Parameters.AddWithValue("@AmountPaid", amountPaid);
                         cmd.Parameters.AddWithValue("@ChangeAmount", change);
                         cmd.Parameters.AddWithValue("@PaymentMethod", hdnPaymentMethod.Value);
-                        cmd.Parameters.AddWithValue("@OrderStatus", orderStatus);
+                        cmd.Parameters.AddWithValue("@OrderStatus", "Pending");
                         cmd.Parameters.AddWithValue("@PickupTime",
                             !string.IsNullOrEmpty(hdnPickupTime.Value) ? (object)DateTime.Parse(hdnPickupTime.Value) : DBNull.Value);
                         cmd.Parameters.AddWithValue("@TotalQuantity", Cart.Sum(item => item.Qty));
                         cmd.Parameters.AddWithValue("@Barangay", barangay);
                         cmd.Parameters.AddWithValue("@Street", street);
-                        cmd.Parameters.AddWithValue("@PaymentReference", 
+                        cmd.Parameters.AddWithValue("@PaymentReference",
                             !string.IsNullOrEmpty(paymentReference) ? (object)paymentReference : DBNull.Value);
                         cmd.Parameters.AddWithValue("@PaymentVerified", paymentVerified);
 
@@ -827,17 +862,19 @@ namespace PotatoCornerSys
                     {
                         int productID = GetProductID(conn, item.Product);
                         int? sizeID = GetSizeID(conn, productID, item.Size);
-                        int? flavorID = GetFlavorID(conn, productID, item.Flavor);
+                        List<string> flavors = item.GetFlavors();
 
                         string itemQuery = @"
-                            INSERT INTO OrderItems (OrderID, ProductID, SizeID, FlavorID, Quantity, UnitPrice, TotalPrice)
-                            VALUES (@OrderID, @ProductID, @SizeID, @FlavorID, @Quantity, @UnitPrice, @TotalPrice)";
+                    INSERT INTO OrderItems (OrderID, ProductID, SizeID, FlavorID, Quantity, UnitPrice, TotalPrice)
+                    VALUES (@OrderID, @ProductID, @SizeID, @FlavorID, @Quantity, @UnitPrice, @TotalPrice)";
 
                         using (SqlCommand cmd = new SqlCommand(itemQuery, conn))
                         {
                             cmd.Parameters.AddWithValue("@OrderID", orderID);
                             cmd.Parameters.AddWithValue("@ProductID", productID);
                             cmd.Parameters.AddWithValue("@SizeID", sizeID.HasValue ? (object)sizeID.Value : DBNull.Value);
+
+                            int? flavorID = GetFlavorID(conn, productID, flavors[0]);
                             cmd.Parameters.AddWithValue("@FlavorID", flavorID.HasValue ? (object)flavorID.Value : DBNull.Value);
                             cmd.Parameters.AddWithValue("@Quantity", item.Qty);
                             cmd.Parameters.AddWithValue("@UnitPrice", item.UnitPrice);
@@ -845,6 +882,27 @@ namespace PotatoCornerSys
                             cmd.ExecuteNonQuery();
                         }
                     }
+
+                    string customerNameForLog = Session["Username"]?.ToString() ?? customerName;
+                    string orderSummary = $"Order #{orderID} placed by {customerNameForLog} - " +
+                                         $"{Cart.Count} item(s), Total: PHP {totalAmount:0.00}, " +
+                                         $"Payment: {hdnPaymentMethod.Value}, Delivery: {(hdnDeliveryType.Value == "Delivery" ? "Delivery" : "Walk-in")}";
+
+                    ActivityLogHelper.LogActivity(
+                        activityType: "Order Placed",
+                        description: orderSummary,
+                        performedBy: customerNameForLog,
+                        targetEntity: $"Order #{orderID}",
+                        severity: "Info"
+                    );
+
+                    ActivityLogHelper.LogActivity(
+                        "Order Placed",
+                        "Order #" + orderID + " placed via " + (hdnDeliveryType.Value == "Delivery" ? "Delivery" : "Walk-in"),
+                        Session["UserName"]?.ToString() ?? "Walk-in",
+                        "Order #" + orderID,
+                        "Info"
+                    );
 
                     return orderID;
                 }
@@ -921,7 +979,6 @@ namespace PotatoCornerSys
             }
         }
 
-        // ✅ UPDATED — handles both earning (positive delta) and spending (negative delta) points
         private void UpdateCustomerPoints(int pointsDelta)
         {
             if (Session["CustomerID"] == null) return;
@@ -930,18 +987,12 @@ namespace PotatoCornerSys
             try
             {
                 string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
-
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-
-                    // Prevent points from going below 0 in the database
                     string updateQuery = @"
                         UPDATE USERS 
-                        SET Points = CASE 
-                            WHEN Points + @Delta < 0 THEN 0 
-                            ELSE Points + @Delta 
-                        END
+                        SET Points = CASE WHEN Points + @Delta < 0 THEN 0 ELSE Points + @Delta END
                         WHERE CustomerID = @CustomerID";
 
                     using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
@@ -951,12 +1002,10 @@ namespace PotatoCornerSys
                         cmd.ExecuteNonQuery();
                     }
 
-                    // Sync session to reflect updated balance
                     if (Session["Points"] != null)
                     {
                         int currentPoints = Convert.ToInt32(Session["Points"]);
-                        int newPoints = currentPoints + pointsDelta;
-                        Session["Points"] = Math.Max(0, newPoints).ToString();
+                        Session["Points"] = Math.Max(0, currentPoints + pointsDelta).ToString();
                     }
                 }
             }
@@ -971,24 +1020,20 @@ namespace PotatoCornerSys
             try
             {
                 string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
-
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-
                     foreach (var item in Cart)
                     {
                         int productID = GetProductID(conn, item.Product);
                         int? sizeID = GetSizeID(conn, productID, item.Size);
-                        int? flavorID = GetFlavorID(conn, productID, item.Flavor);
+                        List<string> flavors = item.GetFlavors();
 
-                        // Deduct size stock (1:1 ratio - 1 order = 1 stock unit)
                         if (sizeID.HasValue)
                         {
                             string sizeStockQuery = @"
                                 UPDATE ProductSizeStock 
-                                SET StockQuantity = StockQuantity - @Quantity,
-                                    LastUpdated = GETDATE()
+                                SET StockQuantity = StockQuantity - @Quantity, LastUpdated = GETDATE()
                                 WHERE ProductID = @ProductID AND SizeID = @SizeID";
 
                             using (SqlCommand cmd = new SqlCommand(sizeStockQuery, conn))
@@ -1000,22 +1045,23 @@ namespace PotatoCornerSys
                             }
                         }
 
-                        // Deduct flavor stock (1:10 ratio - 1 flavor unit serves 10 orders)
-                        if (flavorID.HasValue)
+                        foreach (string flavorName in flavors)
                         {
-                            int flavorUnitsNeeded = (int)Math.Ceiling(item.Qty / 10.0);
-
-                            string flavorStockQuery = @"
-                                UPDATE FlavorStock 
-                                SET StockQuantity = StockQuantity - @FlavorUnits,
-                                    LastUpdated = GETDATE()
-                                WHERE FlavorID = @FlavorID";
-
-                            using (SqlCommand cmd = new SqlCommand(flavorStockQuery, conn))
+                            int? flavorID = GetFlavorID(conn, productID, flavorName);
+                            if (flavorID.HasValue)
                             {
-                                cmd.Parameters.AddWithValue("@FlavorID", flavorID.Value);
-                                cmd.Parameters.AddWithValue("@FlavorUnits", flavorUnitsNeeded);
-                                cmd.ExecuteNonQuery();
+                                int flavorUnitsNeeded = (int)Math.Ceiling(item.Qty / 10.0);
+                                string flavorStockQuery = @"
+                                    UPDATE FlavorStock 
+                                    SET StockQuantity = StockQuantity - @FlavorUnits, LastUpdated = GETDATE()
+                                    WHERE FlavorID = @FlavorID";
+
+                                using (SqlCommand cmd = new SqlCommand(flavorStockQuery, conn))
+                                {
+                                    cmd.Parameters.AddWithValue("@FlavorID", flavorID.Value);
+                                    cmd.Parameters.AddWithValue("@FlavorUnits", flavorUnitsNeeded);
+                                    cmd.ExecuteNonQuery();
+                                }
                             }
                         }
                     }
@@ -1034,10 +1080,10 @@ namespace PotatoCornerSys
             if (cart.Count == 0)
             {
                 cartDisplay.InnerHtml = @"
-            <div class='cart-empty' style='text-align:center;color:#aaa;padding:60px 20px;font-size:16px;font-weight:600;'>
-                Your cart is empty<br/>
-                <small style='font-size:13px;color:#ccc;'>Add items from the menu to get started</small>
-            </div>";
+                    <div class='cart-empty' style='text-align:center;color:#aaa;padding:60px 20px;font-size:16px;font-weight:600;'>
+                        Your cart is empty<br/>
+                        <small style='font-size:13px;color:#ccc;'>Add items from the menu to get started</small>
+                    </div>";
             }
             else
             {
@@ -1047,16 +1093,16 @@ namespace PotatoCornerSys
                 {
                     var item = cart[i];
                     html.AppendFormat(@"
-                <div class='cart-item'>
-                    <div class='cart-item-header'>
-                        <span>{0} ({1})</span>
-                        <button type='button' class='btn-remove' onclick='removeCartItem({2})'>Remove</button>
-                    </div>
-                    <div class='cart-item-details'>
-                        <strong>Flavor:</strong> {3}<br/>
-                        <strong>Qty:</strong> {4} &times; PHP {5:0.00} = <strong>PHP {6:0.00}</strong>
-                    </div>
-                </div>",
+                        <div class='cart-item'>
+                            <div class='cart-item-header'>
+                                <span>{0} ({1})</span>
+                                <button type='button' class='btn-remove' onclick='removeCartItem({2})'>Remove</button>
+                            </div>
+                            <div class='cart-item-details'>
+                                <strong>Flavor:</strong> {3}<br/>
+                                <strong>Qty:</strong> {4} &times; PHP {5:0.00} = <strong>PHP {6:0.00}</strong>
+                            </div>
+                        </div>",
                         item.Product, item.Size, i, item.Flavor, item.Qty, item.UnitPrice, item.LineTotal);
                 }
 
@@ -1068,12 +1114,12 @@ namespace PotatoCornerSys
                 decimal total = subtotal - discount + delivery;
 
                 html.AppendFormat(@"
-            <div class='cart-totals'>
-                <div class='total-row'><span>Subtotal:</span><span>PHP {0:0.00}</span></div>
-                <div class='total-row'><span>Discount:</span><span>PHP {1:0.00}</span></div>
-                <div class='total-row'><span>Delivery Fee:</span><span>PHP {2:0.00}</span></div>
-                <div class='total-row grand'><span>Total:</span><span>PHP {3:0.00}</span></div>
-            </div>", subtotal, discount, delivery, total);
+                    <div class='cart-totals'>
+                        <div class='total-row'><span>Subtotal:</span><span>PHP {0:0.00}</span></div>
+                        <div class='total-row'><span>Discount:</span><span>PHP {1:0.00}</span></div>
+                        <div class='total-row'><span>Delivery Fee:</span><span>PHP {2:0.00}</span></div>
+                        <div class='total-row grand'><span>Total:</span><span>PHP {3:0.00}</span></div>
+                    </div>", subtotal, discount, delivery, total);
 
                 cartDisplay.InnerHtml = html.ToString();
                 lblSubtotal.Text = subtotal.ToString("0.00");

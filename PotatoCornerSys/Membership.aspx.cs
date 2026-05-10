@@ -15,7 +15,7 @@ namespace PotatoCornerSys
 
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            if (Session["IsLoggedIn"] == null || !(bool)Session["IsLoggedIn"]) // not logged in
+            if (Session["CustomerID"] == null)
             {
                 ClientScript.RegisterStartupScript(this.GetType(),
                     "showModal", "showLoginModal();", true);

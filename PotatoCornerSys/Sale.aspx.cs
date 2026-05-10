@@ -19,9 +19,10 @@ namespace PotatoCornerSys
             if (!IsPostBack)
             {
                 // ✅ Only check UserName, remove MembershipLevel check
-                if (Session["UserName"] == null)
+                if (Session["AdminID"] == null)
                 {
                     Response.Redirect("~/AdminLogin.aspx");
+                    return;
                 }
                 LoadSalesData();
             }
@@ -106,11 +107,11 @@ namespace PotatoCornerSys
                 string whereClause = string.IsNullOrEmpty(statusFilter) ? "" : "WHERE o.OrderStatus = @StatusFilter";
 
                 string query = $@"SELECT o.OrderID, u.Fullname AS CustomerName, o.OrderDate, 
-                                o.TotalAmount, o.OrderStatus, o.DeliveryType
-                                FROM Orders o
-                                INNER JOIN USERS u ON o.CustomerID = u.CustomerID
-                                {whereClause}
-                                ORDER BY o.OrderID DESC";
+                o.TotalAmount, o.OrderStatus, o.DeliveryType
+                FROM Orders o
+                INNER JOIN USERS u ON o.CustomerID = u.CustomerID
+                {whereClause}
+                ORDER BY o.OrderID DESC";
 
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
                 if (!string.IsNullOrEmpty(statusFilter))
@@ -310,7 +311,7 @@ namespace PotatoCornerSys
 
         protected void lnkProfile_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/ProfileAdmin.aspx");
+            Response.Redirect("~/AccountAdmin.aspx");
         }
 
         protected void ddlStatusFilter_SelectedIndexChanged(object sender, EventArgs e)
@@ -323,6 +324,39 @@ namespace PotatoCornerSys
         {
             gvOrders.PageIndex = e.NewPageIndex;
             LoadOrders();
+        }
+        protected void lnkActivityLog_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("~/ActivityLog.aspx");
+        }
+        protected void gvMembershipRequests_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "ApproveMembership")
+            {
+                int userID = Convert.ToInt32(e.CommandArgument);
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string query = "UPDATE USERS SET MembershipLevel = 'Member' WHERE CustomerID = @UserID";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@UserID", userID);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                LoadSalesData();
+            }
+            else if (e.CommandName == "RejectMembership")
+            {
+                int userID = Convert.ToInt32(e.CommandArgument);
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string query = "UPDATE USERS SET MembershipLevel = 'Regular' WHERE CustomerID = @UserID";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@UserID", userID);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                LoadSalesData();
+            }
         }
     }
 }

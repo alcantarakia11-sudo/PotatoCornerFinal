@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+    <meta charset="utf-8" />
     <title>Potato Corner - Home</title>
     <style type="text/css">
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -85,6 +86,8 @@
             text-transform: uppercase;
             box-shadow: 0 4px 12px rgba(232,64,28,0.3);
             transition: all 0.3s;
+            border: none;
+            cursor: pointer;
         }
 
         .navbar-links .btn-order-nav::after {
@@ -99,7 +102,6 @@
         }
 
         /* ACTIVE NAV LINK */
-
         .navbar-links .active {
             color: #f5c800 !important;
         }
@@ -160,14 +162,8 @@
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
         /* PROMO BANNER */
@@ -215,7 +211,7 @@
 
         @keyframes rotate {
             from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            to   { transform: rotate(360deg); }
         }
 
         .promo-inner:hover {
@@ -313,7 +309,7 @@
             transform: translateY(-1px);
         }
 
-        /* FLAVOR THE MOMENT - MATCHES BODY BACKGROUND */
+        /* FLAVOR THE MOMENT */
         .flavor-section {
             text-align: center;
             padding: 100px 40px;
@@ -351,31 +347,135 @@
             text-shadow: 0 2px 8px rgba(245,200,0,0.5);
         }
 
-        .footer .footer-links {
-            margin-bottom: 24px;
+        .footer .footer-links { margin-bottom: 24px; }
+        .footer .footer-copy  { margin-top: 20px; font-size: 14px; color: #ccc; }
+
+        /* LOGIN REQUIRED MODAL */
+        .login-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
         }
 
-        .footer .footer-copy {
-            margin-top: 20px;
+        .login-modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes modalPop {
+            from { transform: translateY(-30px) scale(0.95); opacity: 0; }
+            to   { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .login-modal-box {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 48px 40px 40px;
+            max-width: 440px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+            animation: modalPop 0.3s ease-out;
+        }
+
+        .login-modal-icon {
+            font-size: 60px;
+            margin-bottom: 18px;
+        }
+
+        .login-modal-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #119247;
+            margin-bottom: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .login-modal-msg {
+            font-size: 15px;
+            color: #888;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+
+        .login-modal-msg strong {
+            color: #1a1612;
+        }
+
+        .login-modal-btns {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .login-modal-btns a {
+            flex: 1;
+            padding: 14px 10px;
+            border-radius: 12px;
             font-size: 14px;
-            color: #ccc;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: all 0.25s;
         }
 
-        /* Responsive adjustments */
+        .btn-modal-login {
+            background: linear-gradient(135deg, #119247, #0d7336);
+            color: #ffffff !important;
+            box-shadow: 0 6px 18px rgba(17,146,71,0.35);
+        }
+
+        .btn-modal-login:hover {
+            background: linear-gradient(135deg, #0d7336, #095c2a);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(17,146,71,0.45);
+        }
+
+        .btn-modal-register {
+            background: linear-gradient(135deg, #e8401c, #c73516);
+            color: #ffffff !important;
+            box-shadow: 0 6px 18px rgba(232,64,28,0.35);
+        }
+
+        .btn-modal-register:hover {
+            background: linear-gradient(135deg, #c73516, #a82a12);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(232,64,28,0.45);
+        }
+
+        .login-modal-skip {
+            display: block;
+            font-size: 13px;
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.2s;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+        }
+
+        .login-modal-skip:hover {
+            color: #666;
+            text-decoration: underline;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
             .promo-inner {
                 flex-direction: column;
                 text-align: center;
                 padding: 40px;
             }
-            
-            .promo-img {
-                margin-top: 30px;
-            }
-            
-            .hero-overlay h1 {
-                font-size: 36px;
-            }
+            .promo-img { margin-top: 30px; }
+            .hero-overlay h1 { font-size: 36px; }
+            .login-modal-btns { flex-direction: column; }
         }
     </style>
 </head>
@@ -385,14 +485,21 @@
         <!-- NAVBAR -->
         <div class="navbar">
             <div class="navbar-logo">
-                <img src="logo.png" alt="Potato Corner" />
+                <img src="potato.png" alt="Potato Corner" />
             </div>
             <ul class="navbar-links">
                 <li><asp:LinkButton ID="lnkHome" runat="server" CssClass="active" OnClick="lnkHome_Click" Text="Home"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="lnkMenu" runat="server" OnClick="lnkMenu_Click" Text="Menu"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="lnkMembership" runat="server" OnClick="lnkMembership_Click" Text="Membership"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="lnkAboutUs" runat="server" OnClick="lnkAboutUs_Click" Text="About Us"></asp:LinkButton></li>
-                <li><asp:LinkButton ID="btnOrderNav" runat="server" CssClass="btn-order-nav" OnClick="btnOrderNav_Click" Text="Order Now"></asp:LinkButton></li>
+                <li>
+                    <asp:LinkButton ID="btnOrderNav" runat="server"
+                        CssClass="btn-order-nav"
+                        OnClick="btnOrderNav_Click"
+                        OnClientClick="return handleOrderClick();"
+                        Text="Order Now">
+                    </asp:LinkButton>
+                </li>
                 <li>
                     <asp:LinkButton ID="lnkProfile" runat="server" ForeColor="White" Font-Bold="true" Text="Profile" OnClick="lnkProfile_Click"></asp:LinkButton>
                 </li>
@@ -407,7 +514,7 @@
             </video>
             <div class="hero-overlay">
                 <h1>Make It A Potato Party</h1>
-                <p>The World's Best Flavored Fries & Snacks</p>
+                <p>The World's Best Flavored Fries &amp; Snacks</p>
             </div>
         </div>
 
@@ -417,7 +524,11 @@
                 <div class="promo-text">
                     <h2>Craving Something<br />Delicious?</h2>
                     <p>Indulge in the crispiest, most flavorful fries you'll ever taste. Choose from a wide range of seasonings and sizes - there's a perfect fry for every mood.</p>
-                    <asp:Button ID="btnOrder1" runat="server" Text="Order Now" CssClass="btn-order" OnClick="btnOrder_Click" />
+                    <asp:Button ID="btnOrder1" runat="server"
+                        Text="Order Now"
+                        CssClass="btn-order"
+                        OnClick="btnOrder_Click"
+                        OnClientClick="return handleOrderClick();" />
                 </div>
                 <div class="promo-img">
                     <img src="ba.jpg" alt="Potato Corner Fries" />
@@ -452,6 +563,53 @@
             <div class="footer-copy">© 2026 Potato Corner. All rights reserved.</div>
         </div>
 
+        <!-- LOGIN REQUIRED MODAL -->
+        <div id="loginRequiredModal" class="login-modal-overlay">
+            <div class="login-modal-box">
+                <div class="login-modal-icon">🛒</div>
+                <div class="login-modal-title">Login Required</div>
+                <div class="login-modal-msg">
+                    You need to be logged in to place an order. Create an account
+                    to start ordering your favorite <strong>Potato Corner</strong> flavors!
+                </div>
+                <div class="login-modal-btns">
+                    <a href="Login.aspx" class="btn-modal-login">Login</a>
+                    <a href="Register.aspx" class="btn-modal-register">Register</a>
+                </div>
+                <button type="button" class="login-modal-skip" onclick="closeLoginModal()">
+                    Already browsing? Continue as guest
+                </button>
+            </div>
+        </div>
+
     </form>
+
+    <script type="text/javascript">
+        // Rendered from server — true if user session exists, false if guest
+        var isLoggedIn = <%= Session["CustomerID"] != null ? "true" : "false" %>;
+
+        function handleOrderClick() {
+            if (!isLoggedIn) {
+                openLoginModal();
+                return false; // Prevent postback / navigation
+            }
+            return true; // Allow normal postback for logged-in users
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginRequiredModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginRequiredModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close when clicking the dark backdrop
+        document.getElementById('loginRequiredModal').addEventListener('click', function (e) {
+            if (e.target === this) closeLoginModal();
+        });
+    </script>
 </body>
 </html>

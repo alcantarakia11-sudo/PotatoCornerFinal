@@ -20,9 +20,10 @@ namespace PotatoCornerSys
         {
             if (!IsPostBack)
             {
-                if (Session["UserName"] == null || Session["MembershipLevel"]?.ToString() != "Admin")
+                if (Session["AdminID"] == null)
                 {
-                    Response.Redirect("~/Login.aspx");
+                    Response.Redirect("~/AdminLogin.aspx");
+                    return;
                 }
                 LoadStockData();
                 CheckLowStock();
@@ -33,24 +34,28 @@ namespace PotatoCornerSys
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                // Get product sizes stock - use DISTINCT to avoid duplicates
-                string query = @"SELECT DISTINCT
-                                    pss.StockID AS ProductID,
-                                    p.ProductName + ' - ' + ps.SizeName AS ProductName,
-                                    'Size' AS Category,
-                                    pss.StockQuantity AS CurrentStock
-                                FROM ProductSizeStock pss
-                                INNER JOIN Products p ON pss.ProductID = p.ProductID
-                                INNER JOIN ProductSizes ps ON pss.SizeID = ps.SizeID
-                                UNION
-                                SELECT DISTINCT
-                                    fs.StockID AS ProductID,
-                                    pf.FlavorName AS ProductName,
-                                    'Flavor' AS Category,
-                                    fs.StockQuantity AS CurrentStock
-                                FROM FlavorStock fs
-                                INNER JOIN ProductFlavors pf ON fs.FlavorID = pf.FlavorID
-                                ORDER BY Category, ProductName";
+                // Each row = one StockID so the Update button targets the exact record.
+                // Sizes: group by ProductID+SizeID (one logical entry per product/size combo).
+                // Flavors: group by FlavorID (one entry per flavor).
+                string query = @"SELECT 
+                            MIN(pss.StockID) AS ProductID,
+                            p.ProductName + ' - ' + ps.SizeName AS ProductName,
+                            'Size' AS Category,
+                            SUM(pss.StockQuantity) AS CurrentStock
+                        FROM ProductSizeStock pss
+                        INNER JOIN Products p ON pss.ProductID = p.ProductID
+                        INNER JOIN ProductSizes ps ON pss.SizeID = ps.SizeID AND ps.ProductID = pss.ProductID
+                        GROUP BY pss.ProductID, pss.SizeID, p.ProductName, ps.SizeName
+                        UNION ALL
+                        SELECT 
+                            MIN(fs.StockID) AS ProductID,
+                            pf.FlavorName AS ProductName,
+                            'Flavor' AS Category,
+                            SUM(fs.StockQuantity) AS CurrentStock
+                        FROM FlavorStock fs
+                        INNER JOIN ProductFlavors pf ON fs.FlavorID = pf.FlavorID
+                        GROUP BY fs.FlavorID, pf.FlavorName
+                        ORDER BY Category, ProductName";
 
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
@@ -60,6 +65,7 @@ namespace PotatoCornerSys
                 gvStock.DataBind();
             }
         }
+
 
         private void CheckLowStock()
         {
@@ -71,7 +77,7 @@ namespace PotatoCornerSys
                                         pss.StockQuantity AS CurrentStock
                                     FROM ProductSizeStock pss
                                     INNER JOIN Products p ON pss.ProductID = p.ProductID
-                                    INNER JOIN ProductSizes ps ON pss.SizeID = ps.SizeID
+                                    INNER JOIN ProductSizes ps ON pss.SizeID = ps.SizeID AND ps.ProductID = pss.ProductID
                                     WHERE pss.StockQuantity < @Threshold
                                     UNION ALL
                                     SELECT 
@@ -103,7 +109,7 @@ namespace PotatoCornerSys
                 if (hasLowStock)
                 {
                     pnlLowStockAlert.Visible = true;
-                    lblLowStockItems.Text = "The following items are running low: " + 
+                    lblLowStockItems.Text = "The following items are running low: " +
                         lowStockItems.ToString().TrimEnd(',', ' ');
                 }
                 else
@@ -138,39 +144,30 @@ namespace PotatoCornerSys
         {
             if (e.CommandName == "UpdateStock")
             {
-                int productID = Convert.ToInt32(e.CommandArgument);
+                string[] args = e.CommandArgument.ToString().Split('|');
+                int stockID = Convert.ToInt32(args[0]);
+                string category = args[1];
+
                 GridViewRow row = (GridViewRow)((Button)e.CommandSource).NamingContainer;
                 TextBox txtAddStock = (TextBox)row.FindControl("txtAddStock");
-                
+
                 int addStock = 0;
                 if (int.TryParse(txtAddStock.Text, out addStock) && addStock > 0)
                 {
-                    UpdateProductStock(productID, addStock);
+                    UpdateProductStock(stockID, category, addStock);
                     LoadStockData();
                     CheckLowStock();
                 }
             }
         }
 
-        private void UpdateProductStock(int stockID, int addStock)
+        private void UpdateProductStock(int stockID, string category, int addStock)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                // Try updating ProductSizeStock first
-                string querySizeStock = @"UPDATE ProductSizeStock 
-                                SET StockQuantity = StockQuantity + @AddStock,
-                                    LastUpdated = GETDATE()
-                                WHERE StockID = @StockID";
-
-                SqlCommand cmd = new SqlCommand(querySizeStock, conn);
-                cmd.Parameters.AddWithValue("@StockID", stockID);
-                cmd.Parameters.AddWithValue("@AddStock", addStock);
-
                 conn.Open();
-                int rowsAffected = cmd.ExecuteNonQuery();
 
-                // If no rows affected, try FlavorStock
-                if (rowsAffected == 0)
+                if (category == "Flavor")
                 {
                     string queryFlavorStock = @"UPDATE FlavorStock 
                                     SET StockQuantity = StockQuantity + @AddStock,
@@ -181,6 +178,18 @@ namespace PotatoCornerSys
                     cmdFlavor.Parameters.AddWithValue("@StockID", stockID);
                     cmdFlavor.Parameters.AddWithValue("@AddStock", addStock);
                     cmdFlavor.ExecuteNonQuery();
+                }
+                else
+                {
+                    string querySizeStock = @"UPDATE ProductSizeStock 
+                                    SET StockQuantity = StockQuantity + @AddStock,
+                                        LastUpdated = GETDATE()
+                                    WHERE StockID = @StockID";
+
+                    SqlCommand cmd = new SqlCommand(querySizeStock, conn);
+                    cmd.Parameters.AddWithValue("@StockID", stockID);
+                    cmd.Parameters.AddWithValue("@AddStock", addStock);
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
@@ -197,7 +206,16 @@ namespace PotatoCornerSys
 
         protected void lnkProfile_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/ProfileAdmin.aspx");
+            Response.Redirect("~/AccountAdmin.aspx");
+        }
+
+        protected void lnkActivityLog_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("~/ActivityLog.aspx");
+        }
+        protected void lnkHome_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("~/Admin.aspx");
         }
     }
 }

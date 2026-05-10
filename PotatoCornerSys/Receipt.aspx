@@ -219,7 +219,7 @@
             <div class="receipt-box">
 
                 <div class="receipt-header">
-                    <img src="logopotcor.png" alt="Potato Corner" />
+                    <img src="potato.png" alt="Potato Corner" />
                     <h2>Thank You For Your Order!</h2>
                     <p>Order #<asp:Label ID="lblOrderNo" runat="server"></asp:Label> &nbsp;|&nbsp; <asp:Label ID="lblOrderDate" runat="server"></asp:Label></p>
                 </div>
@@ -228,7 +228,9 @@
 
                     <div class="section-label">Customer Details</div>
                     <div class="info-row"><span>Name</span><span><asp:Label ID="lblName" runat="server"></asp:Label></span></div>
-                    <div class="info-row"><span>Address</span><span><asp:Label ID="lblAddress" runat="server"></asp:Label></span></div>
+                    <asp:Panel ID="pnlAddress" runat="server">
+                        <div class="info-row"><span>Address</span><span><asp:Label ID="lblAddress" runat="server"></asp:Label></span></div>
+                    </asp:Panel>
                     <div class="info-row"><span>Contact</span><span><asp:Label ID="lblContact" runat="server"></asp:Label></span></div>
                     <div class="info-row"><span>Delivery Type</span><span><asp:Label ID="lblDelivery" runat="server"></asp:Label></span></div>
 

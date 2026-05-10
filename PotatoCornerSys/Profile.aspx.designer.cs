@@ -60,6 +60,24 @@ namespace PotatoCornerSys
         protected global::System.Web.UI.WebControls.Button btnMarkDeliveredHidden;
 
         /// <summary>
+        /// hdnReorderOrderID control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnReorderOrderID;
+
+        /// <summary>
+        /// btnReorderHidden control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnReorderHidden;
+
+        /// <summary>
         /// profileCardContainer control.
         /// </summary>
         /// <remarks>
@@ -175,6 +193,33 @@ namespace PotatoCornerSys
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblMembershipRequestStatus;
+
+        /// <summary>
+        /// txtNewPhone control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtNewPhone;
+
+        /// <summary>
+        /// lblPhoneMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPhoneMsg;
+
+        /// <summary>
+        /// btnUpdatePhone control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnUpdatePhone;
 
         /// <summary>
         /// lblPoints control.

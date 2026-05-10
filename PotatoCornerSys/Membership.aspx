@@ -106,14 +106,14 @@
         
         .hero-banner {
             background: linear-gradient(135deg, #e8401c 0%, #ff6b47 100%);
-            padding: 25px 40px;
+            padding: 15px 40px;
             border-radius: 16px;
             text-align: center;
             box-shadow: 0 6px 20px rgba(232,64,28,0.3);
         }
         
         .hero-banner h1 { 
-            font-size: 42px; 
+            font-size: 48px; 
             color: white; 
             font-weight: 900; 
             text-transform: uppercase; 
@@ -345,8 +345,8 @@
         .modal-box {
             background: white;
             border-radius: 20px;
-            padding: 36px 32px;
-            max-width: 420px;
+            padding: 40px 36px;
+            max-width: 440px;
             width: 90%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.25);
             text-align: center;
@@ -356,18 +356,28 @@
             from { transform: translateY(-24px) scale(0.97); opacity: 0; }
             to   { transform: translateY(0) scale(1); opacity: 1; }
         }
-        .modal-icon { font-size: 48px; margin-bottom: 12px; }
+        .modal-lock-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+            display: block;
+        }
         .modal-head {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 900;
             color: #119247;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
         }
         .modal-msg {
-            font-size: 14px;
+            font-size: 15px;
             color: #666;
-            margin-bottom: 28px;
-            line-height: 1.6;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+        .modal-divider {
+            border: none;
+            border-top: 2px solid #f0f0f0;
+            margin-bottom: 24px;
         }
         .modal-btn-group {
             display: flex;
@@ -376,9 +386,9 @@
         }
         .btn-modal-login {
             flex: 1;
-            padding: 14px;
+            padding: 15px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             background: linear-gradient(135deg, #119247 0%, #0d7336 100%);
             color: white;
             font-size: 15px;
@@ -389,18 +399,22 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
             transition: all 0.3s;
             letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(17,146,71,0.3);
         }
         .btn-modal-login:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(17,146,71,0.4);
+            color: white;
+            text-decoration: none;
         }
         .btn-modal-register {
             flex: 1;
-            padding: 14px;
+            padding: 15px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             background: linear-gradient(135deg, #e8401c 0%, #c73516 100%);
             color: white;
             font-size: 15px;
@@ -411,24 +425,30 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
             transition: all 0.3s;
             letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(232,64,28,0.3);
         }
         .btn-modal-register:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(232,64,28,0.4);
+            color: white;
+            text-decoration: none;
         }
-        .btn-modal-close {
+        .btn-modal-guest {
             background: none;
             border: none;
-            color: #999;
+            color: #aaa;
             font-size: 13px;
             cursor: pointer;
             text-decoration: underline;
-            margin-top: 4px;
+            padding: 8px;
+            transition: color 0.2s;
+            width: 100%;
         }
-        .btn-modal-close:hover { color: #555; }
-        
+        .btn-modal-guest:hover { color: #666; }
+
         /* RESPONSIVE */
         @media (max-width: 1024px) {
             .content-grid { grid-template-columns: 1fr; }
@@ -437,6 +457,7 @@
         @media (max-width: 768px) {
             .hero h1 { font-size: 36px; }
             .navbar { flex-direction: column; gap: 20px; }
+            .modal-btn-group { flex-direction: column; }
         }
     </style>
 </head>
@@ -444,7 +465,7 @@
     <form id="form1" runat="server">
         <div class="navbar">
             <div class="navbar-logo">
-                <img src="logopotcor.png" alt="Potato Corner" />
+                <img src="potato.png" alt="Potato Corner" />
             </div>
             <ul class="navbar-links">
                 <li><a href="Default.aspx">Home</a></li>
@@ -476,7 +497,7 @@
                         <li class="benefit-item">Earn 2 points for every PHP 500 spent</li>
                         <li class="benefit-item">Redeem points for free items</li>
                         <li class="benefit-item">Exclusive access to new flavors</li>
-                        <li class="benefit-item">Birthday special treats</li>
+                        <li class="benefit-item">Avails special treats</li>
                         <li class="benefit-item">Priority service during peak hours</li>
                         <li class="benefit-item">Member-only promotions</li>
                     </ul>
@@ -522,8 +543,7 @@
             <div class="cta-section">
                 <h2>Ready to Join?</h2>
                 <p>Start enjoying exclusive benefits today - it's free and easy!</p>
-
-                <%-- KEY CHANGE: OnClientClick handles modal, return false prevents postback --%>
+                <%-- OnClientClick checks login status, return false prevents postback --%>
                 <asp:Button ID="btnRegister" runat="server" Text="Register Now" 
                     CssClass="btn-register" 
                     OnClientClick="handleRegisterClick(); return false;" />
@@ -542,19 +562,24 @@
         <!-- LOGIN REQUIRED MODAL -->
         <div id="loginRequiredModal" class="modal-overlay">
             <div class="modal-box">
-                <div class="modal-icon">🔒</div>
+                <span class="modal-lock-icon">🔒</span>
                 <div class="modal-head">Login Required</div>
                 <div class="modal-msg">
-                    To register as a Royalty Member, you need an account first 
-                    to track your <strong>points</strong>, <strong>perks</strong>, 
+                    To register as a Royalty Member, you need an account
+                    first to track your <strong>points</strong>, <strong>perks</strong>,
                     and <strong>membership status</strong>.
                 </div>
+                <hr class="modal-divider" />
                 <div class="modal-btn-group">
-                    <a href="Login.aspx" class="btn-modal-login">Login</a>
-                    <a href="Register.aspx" class="btn-modal-register">Create Account</a>
+                    <a href="Login.aspx" class="btn-modal-login">
+                        Login
+                    </a>
+                    <a href="Register.aspx" class="btn-modal-register">
+                        Register
+                    </a>
                 </div>
-                <button type="button" class="btn-modal-close" onclick="hideLoginModal()">
-                    Continue browsing
+                <button type="button" class="btn-modal-guest" onclick="hideLoginModal()">
+                    Already browsing? Continue as guest
                 </button>
             </div>
         </div>
@@ -562,8 +587,8 @@
     </form>
 
     <script>
-        // Check session from server side
-        var isLoggedIn = '<%= Session["IsLoggedIn"] %>';
+        // Read session from server
+        var isLoggedIn = '<%= Session["CustomerID"] != null ? "True" : "" %>';
 
         function handleRegisterClick() {
             if (isLoggedIn === 'True') {
@@ -576,10 +601,13 @@
         function showLoginModal() {
             document.getElementById('loginRequiredModal').classList.add('active');
         }
+
         function hideLoginModal() {
             document.getElementById('loginRequiredModal').classList.remove('active');
         }
-        document.getElementById('loginRequiredModal').addEventListener('click', function (e) {
+
+        // Close modal when clicking outside
+        document.getElementById('loginRequiredModal').addEventListener('click', function(e) {
             if (e.target === this) hideLoginModal();
         });
     </script>

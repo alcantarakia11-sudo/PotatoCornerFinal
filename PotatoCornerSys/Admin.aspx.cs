@@ -15,11 +15,17 @@ namespace PotatoCornerSys
             {
                 if (Session["UserName"] != null)
                 {
-                    lblAdminName.Text = Session["Fullname"] != null ? Session["Fullname"].ToString() : Session["UserName"].ToString();
+                    lblAdminName.Text = Session["Fullname"] != null ?
+                        Session["Fullname"].ToString() :
+                        Session["UserName"].ToString();
                 }
                 else
                 {
-                    Response.Redirect("~/Login.aspx");
+                    // TEMP: Comment this out to run Admin directly
+                    // Response.Redirect("~/Login.aspx");
+
+                    // Set a dummy name for testing
+                    lblAdminName.Text = "Test Admin";
                 }
             }
         }
@@ -36,7 +42,12 @@ namespace PotatoCornerSys
 
         protected void lnkProfile_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/ProfileAdmin.aspx");
+            Response.Redirect("~/AccountAdmin.aspx");
+        }
+
+        protected void lnkActivityLog_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("~/ActivityLog.aspx");
         }
 
         protected void btnSalesTab_Click(object sender, EventArgs e)
@@ -51,7 +62,7 @@ namespace PotatoCornerSys
 
         protected void btnProfileTab_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/ProfileAdmin.aspx");
+            Response.Redirect("~/AccountAdmin.aspx");
         }
     }
 }

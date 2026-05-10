@@ -316,17 +316,26 @@
             font-size: 14px;
             color: #ccc;
         }
+
+        /* ACTIVE NAV LINK */
+        .navbar-links .active {
+            color: #f5c800 !important;
+        }
+
+        .navbar-links .active::after{
+            width: 0 !important;
+        }
     </style>
 </head>
 <body>
     <form id="form1" runat="server">
         <div class="navbar">
             <div class="navbar-logo">
-                <img src="logopotcor.png" alt="Potato Corner" />
+                <img src="potato.png" alt="Potato Corner" />
             </div>
             <ul class="navbar-links">
                 <li><a href="Default.aspx">Home</a></li>
-                <li><a href="Menu.aspx">Menu</a></li>
+                <li><a class="active" href="Menu.aspx">Menu</a></li>
                 <li><a href="Membership.aspx">Membership</a></li>
                 <li><a href="AboutUs.aspx">About Us</a></li>
                 <li><a href="Order.aspx" class="btn-order-nav">Order Now</a></li>

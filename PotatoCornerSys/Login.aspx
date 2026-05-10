@@ -175,11 +175,11 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <asp:Image ID="imgLogo" runat="server" ImageUrl="~/logopotcor.png" CssClass="logo" />
+        <asp:Image ID="imgLogo" runat="server" ImageUrl="~/potato.png" CssClass="logo" />
 
         <div class="login-container">
             <div class="field-group">
-                <asp:TextBox ID="txtUsername" runat="server" placeholder="Username" CssClass="textbox"></asp:TextBox>
+                <asp:TextBox ID="txtUsername" runat="server" placeholder="Email" CssClass="textbox"></asp:TextBox>
             </div>
             <div class="field-group">
                 <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" placeholder="Password" CssClass="textbox" autocomplete="new-password"></asp:TextBox>
@@ -196,7 +196,7 @@
             <div class="divider"></div>
             
             <div class="lockout-note">
-                Security notice: 3 failed login attempts will temporarily lock your account for 1 minute. A 5th failed attempt after unlock will lock it for 3 minutes.
+                Security notice: 5 failed login attempts will temporarily suspend your account for 1 minute.
             </div>
             <div class="register-link">
                 Don't have an account? <asp:LinkButton ID="lnkRegister" runat="server" Text="Register here" OnClick="lnkRegister_Click" ForeColor="#f5c800"></asp:LinkButton>

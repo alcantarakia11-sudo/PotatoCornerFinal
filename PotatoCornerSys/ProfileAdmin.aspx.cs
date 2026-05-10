@@ -96,6 +96,11 @@ namespace PotatoCornerSys
             Response.Redirect("~/ProfileAdmin.aspx");
         }
 
+        protected void lnkActivityLog_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("~/ActivityLog.aspx");
+        }
+
         protected void btnLogout_Click(object sender, EventArgs e)
         {
             Session.Clear();

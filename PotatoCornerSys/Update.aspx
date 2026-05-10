@@ -251,11 +251,13 @@
         
         <div class="navbar">
             <div class="navbar-logo">
-                <img src="logopotcor.png" alt="Potato Corner" />
+                <img src="potato.png" alt="Potato Corner" />
             </div>
             <ul class="navbar-links">
+                <li><asp:LinkButton ID="lnkHome" runat="server" OnClick="lnkHome_Click" Text="Home"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="lnkSales" runat="server" OnClick="lnkSales_Click" Text="Sales"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="lnkUpdate" runat="server" OnClick="lnkUpdate_Click" Text="Update"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="lnkActivityLog" runat="server" OnClick="lnkActivityLog_Click" Text="Activity Log"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="lnkProfile" runat="server" OnClick="lnkProfile_Click" Text="Profile"></asp:LinkButton></li>
             </ul>
         </div>
@@ -275,7 +277,7 @@
                 <asp:GridView ID="gvStock" runat="server" CssClass="stock-table" AutoGenerateColumns="False" 
                     OnRowCommand="gvStock_RowCommand" OnRowDataBound="gvStock_RowDataBound">
                     <Columns>
-                        <asp:BoundField DataField="ProductID" HeaderText="ID" />
+                        <asp:BoundField DataField="ProductID" HeaderText="ID" Visible="false" />
                         <asp:BoundField DataField="ProductName" HeaderText="Product/Flavor" />
                         <asp:BoundField DataField="Category" HeaderText="Category" />
                         <asp:BoundField DataField="CurrentStock" HeaderText="Current Stock" />
@@ -293,7 +295,7 @@
                         <asp:TemplateField HeaderText="Action">
                             <ItemTemplate>
                                 <asp:Button ID="btnUpdateStock" runat="server" Text="Update" CssClass="btn-update" 
-                                    CommandName="UpdateStock" CommandArgument='<%# Eval("ProductID") %>' />
+                                    CommandName="UpdateStock" CommandArgument='<%# Eval("ProductID") + "|" + Eval("Category") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>

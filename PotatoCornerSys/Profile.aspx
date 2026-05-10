@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+    <meta charset="utf-8" />
     <title>Potato Corner - My Profile</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet" />
     <style>
@@ -32,7 +33,6 @@
             overflow-x: hidden;
         }
 
-        /* ── NAVBAR ─────────────────────────────────────────── */
         .navbar {
             background: linear-gradient(135deg, #119247 0%, #0d7336 100%);
             padding: 15px 50px;
@@ -50,9 +50,7 @@
             filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
             transition: transform 0.3s;
         }
-        .navbar-logo img:hover {
-            transform: scale(1.05);
-        }
+        .navbar-logo img:hover { transform: scale(1.05); }
         .navbar-links {
             display: flex;
             align-items: center;
@@ -68,23 +66,16 @@
             transition: all 0.3s;
             position: relative;
         }
-        .navbar-links a:hover {
-            color: #f5c800;
-            transform: translateY(-2px);
-        }
+        .navbar-links a:hover { color: #f5c800; transform: translateY(-2px); }
         .navbar-links a::after {
             content: '';
             position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 3px;
+            bottom: -5px; left: 0;
+            width: 0; height: 3px;
             background: #f5c800;
             transition: width 0.3s;
         }
-        .navbar-links a:hover::after {
-            width: 100%;
-        }
+        .navbar-links a:hover::after { width: 100%; }
         .navbar-links .btn-order-nav {
             background: linear-gradient(135deg, #e8401c 0%, #c73516 100%);
             color: white;
@@ -96,9 +87,7 @@
             box-shadow: 0 4px 12px rgba(232,64,28,0.3);
             transition: all 0.3s;
         }
-        .navbar-links .btn-order-nav::after {
-            display: none;
-        }
+        .navbar-links .btn-order-nav::after { display: none; }
         .navbar-links .btn-order-nav:hover {
             background: linear-gradient(135deg, #c73516 0%, #a82a12 100%);
             color: white;
@@ -106,9 +95,8 @@
             box-shadow: 0 6px 16px rgba(232,64,28,0.4);
         }
 
-        /* ── PAGE HERO ──────────────────────────────────────── */
         .page-hero {
-            background: var(--off-white);
+            background: linear-gradient(135deg, #e8401c 0%, #c73516 100%);
             padding: 48px 48px 0;
             position: relative;
             overflow: hidden;
@@ -119,8 +107,7 @@
             font-family: 'Bebas Neue', sans-serif;
             font-size: 220px;
             color: rgba(17, 146, 71, 0.03);
-            top: -20px;
-            right: -20px;
+            top: -20px; right: -20px;
             line-height: 1;
             pointer-events: none;
             letter-spacing: -4px;
@@ -133,39 +120,14 @@
             gap: 32px;
             padding-bottom: 0;
         }
-        .hero-tag {
-            background: var(--yellow);
-            color: var(--ink);
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 11px;
-            font-weight: 900;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            padding: 4px 12px;
-            border-radius: 2px;
-            display: inline-block;
-            margin-bottom: 12px;
-        }
         .hero-title {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 96px;
             line-height: 0.9;
             letter-spacing: 2px;
         }
-        .hero-title .my-text {
-            color: #e8401c;
-            font-weight: 900;
-        }
-        .hero-title .profile-text {
-            color: var(--yellow);
-        }
-        .hero-subtitle {
-            font-size: 14px;
-            color: var(--grey-mid);
-            font-weight: 600;
-            margin-top: 10px;
-            letter-spacing: 0.5px;
-        }
+        .hero-title .my-text { color: #095c2a; font-weight: 900; }
+        .hero-title .profile-text { color: var(--yellow); }
         .hero-tab-bar {
             background: var(--grey-light);
             border-radius: 10px 10px 0 0;
@@ -186,12 +148,8 @@
             border-radius: 6px 6px 0 0;
             cursor: pointer;
         }
-        .hero-tab.active {
-            background: var(--off-white);
-            color: var(--green);
-        }
+        .hero-tab.active { background: var(--off-white); color: var(--green); }
 
-        /* ── LAYOUT ─────────────────────────────────────────── */
         .page-body {
             max-width: 1360px;
             margin: 0 auto;
@@ -202,7 +160,6 @@
             align-items: start;
         }
 
-        /* ── LEFT SIDEBAR ───────────────────────────────────── */
         .sidebar {
             display: flex;
             flex-direction: column;
@@ -224,30 +181,16 @@
             position: relative;
             overflow: hidden;
         }
-        .profile-card.royalty-gold::before {
-            display: none;
-        }
+        .profile-card.royalty-gold::before { display: none; }
         .profile-card.royalty-gold .profile-card-top {
             background: linear-gradient(160deg, var(--green) 0%, var(--green-deep) 100%);
         }
-        .profile-card.royalty-gold .profile-card-top::after {
-            background: var(--yellow);
-        }
-        .profile-card.royalty-gold .profile-card-body {
-            background: var(--white);
-        }
-        .profile-card.royalty-gold .info-row {
-            border-bottom-color: var(--grey-light);
-        }
-        .profile-card.royalty-gold .info-row-label {
-            color: var(--grey-mid);
-        }
-        .profile-card.royalty-gold .info-row-value {
-            color: var(--grey-dark);
-        }
-        .profile-card.royalty-gold .royalty-number-value {
-            color: var(--green);
-        }
+        .profile-card.royalty-gold .profile-card-top::after { background: var(--yellow); }
+        .profile-card.royalty-gold .profile-card-body { background: var(--white); }
+        .profile-card.royalty-gold .info-row { border-bottom-color: var(--grey-light); }
+        .profile-card.royalty-gold .info-row-label { color: var(--grey-mid); }
+        .profile-card.royalty-gold .info-row-value { color: var(--grey-dark); }
+        .profile-card.royalty-gold .royalty-number-value { color: var(--green); }
         .profile-card-top {
             background: linear-gradient(160deg, var(--green) 0%, var(--green-deep) 100%);
             padding: 28px 24px 20px;
@@ -262,8 +205,7 @@
             background: var(--yellow);
         }
         .avatar-wrap {
-            width: 88px;
-            height: 88px;
+            width: 88px; height: 88px;
             border-radius: 50%;
             border: 4px solid var(--yellow);
             margin: 0 auto 14px;
@@ -305,14 +247,12 @@
             color: rgba(255,255,255,0.9);
             border: 1px solid rgba(255,255,255,0.2);
         }
+        .membership-pill::before { content: '●'; font-size: 7px; }
         .membership-pill.royalty {
             background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffc107 100%);
             color: #1a1612;
             border: none;
-            box-shadow:
-                0 0 20px rgba(255, 215, 0, 0.6),
-                0 4px 12px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 20px rgba(255,215,0,0.6), 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.5);
             font-size: 12px;
             padding: 10px 20px;
             position: relative;
@@ -321,34 +261,21 @@
             letter-spacing: 2.5px;
             border-radius: 25px;
         }
-        .membership-pill.royalty::before {
-            content: '★';
-            font-size: 14px;
-            margin-right: 6px;
-            color: #1a1612;
-        }
+        .membership-pill.royalty::before { content: '\2605'; font-size: 14px; margin-right: 6px; color: #1a1612; }
         .membership-pill.royalty::after {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
             background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent);
             animation: shine 3s infinite;
         }
         @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            0%   { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
             100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
-        .membership-pill::before {
-            content: '●';
-            font-size: 7px;
-        }
 
-        .profile-card-body {
-            padding: 20px 24px;
-        }
+        .profile-card-body { padding: 20px 24px; }
         .info-row {
             display: flex;
             flex-direction: column;
@@ -378,11 +305,72 @@
             letter-spacing: 2px;
         }
 
-        .sidebar-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        /* ── PHONE UPDATE PANEL ── */
+        .phone-update-panel {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px 24px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
         }
+        .phone-update-label {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--grey-mid);
+            margin-bottom: 12px;
+            display: block;
+        }
+        .phone-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--grey-light);
+            border-radius: 8px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 10px;
+            outline: none;
+            transition: border 0.2s;
+            box-sizing: border-box;
+        }
+        .phone-input:focus { border-color: var(--green); }
+        .btn-update-phone {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--green), var(--green-dark));
+            color: var(--white);
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-update-phone:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(17,146,71,0.35);
+        }
+        .phone-msg-success {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--green);
+            margin-top: 8px;
+            display: block;
+        }
+        .phone-msg-error {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--red);
+            margin-top: 8px;
+            display: block;
+        }
+
+        .sidebar-actions { display: flex; flex-direction: column; gap: 10px; }
         .btn-settings {
             width: 100%;
             padding: 13px;
@@ -430,7 +418,6 @@
             box-shadow: 0 6px 20px rgba(232,64,28,0.3);
         }
 
-        /* ── POINTS PANEL ───────────────────────────────────── */
         .points-panel {
             background: linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%);
             border-radius: 16px;
@@ -533,19 +520,9 @@
             z-index: 1;
         }
 
-        /* ── MAIN CONTENT ───────────────────────────────────── */
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
+        .main-content { display: flex; flex-direction: column; gap: 24px; }
 
-        /* ── STATS ROW ──────────────────────────────────────── */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
         .stat-tile {
             background: var(--white);
             border-radius: 14px;
@@ -555,18 +532,10 @@
             box-shadow: 0 2px 12px rgba(0,0,0,0.06);
             border-top: 4px solid transparent;
         }
-        .stat-tile.t-green      { border-top-color: var(--green); }
-        .stat-tile.t-red        { border-top-color: var(--red); }
-        .stat-tile.t-yellow     { border-top-color: var(--yellow); }
-        .stat-tile.t-green-alt  { border-top-color: #0d7336; }
-        .stat-tile::after {
-            content: attr(data-icon);
-            position: absolute;
-            font-size: 52px;
-            right: -6px; bottom: -10px;
-            opacity: 0.06;
-            line-height: 1;
-        }
+        .stat-tile.t-green     { border-top-color: var(--green); }
+        .stat-tile.t-red       { border-top-color: var(--red); }
+        .stat-tile.t-yellow    { border-top-color: var(--yellow); }
+        .stat-tile.t-green-alt { border-top-color: #0d7336; }
         .stat-tile-label {
             font-size: 10px;
             font-weight: 800;
@@ -575,17 +544,12 @@
             color: var(--grey-mid);
             margin-bottom: 8px;
         }
-        .stat-tile-value {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 38px;
-            line-height: 1;
-        }
+        .stat-tile-value { font-family: 'Bebas Neue', sans-serif; font-size: 38px; line-height: 1; }
         .stat-tile.t-green     .stat-tile-value { color: var(--green); }
         .stat-tile.t-red       .stat-tile-value { color: var(--red); }
         .stat-tile.t-yellow    .stat-tile-value { color: #c8970a; }
         .stat-tile.t-green-alt .stat-tile-value { color: #0d7336; }
 
-        /* ── ORDER HISTORY SECTION ──────────────────────────── */
         .section-card {
             background: var(--white);
             border-radius: 16px;
@@ -609,15 +573,8 @@
             text-transform: uppercase;
             color: var(--ink);
         }
-        .section-title-label span {
-            color: var(--green);
-        }
-        .controls-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+        .section-title-label span { color: var(--green); }
+        .controls-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .ctrl-label {
             font-size: 11px;
             font-weight: 700;
@@ -653,12 +610,8 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .btn-summary:hover {
-            background: #e0b600;
-            transform: translateY(-1px);
-        }
+        .btn-summary:hover { background: #e0b600; transform: translateY(-1px); }
 
-        /* search bar */
         .search-bar {
             display: flex;
             align-items: center;
@@ -712,12 +665,8 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .btn-clear-new:hover {
-            border-color: var(--grey-mid);
-            color: var(--grey-dark);
-        }
+        .btn-clear-new:hover { border-color: var(--grey-mid); color: var(--grey-dark); }
 
-        /* search result banner */
         .search-banner {
             background: #edf7f1;
             border-left: 4px solid var(--green);
@@ -727,19 +676,10 @@
             color: var(--green-dark);
         }
 
-        /* empty state */
-        .empty-state {
-            text-align: center;
-            padding: 60px 40px;
-        }
+        .empty-state { text-align: center; padding: 60px 40px; }
         .empty-icon { font-size: 52px; margin-bottom: 14px; }
-        .empty-text {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--grey-mid);
-        }
+        .empty-text { font-size: 14px; font-weight: 700; color: var(--grey-mid); }
 
-        /* order table */
         .order-tbl { width: 100%; border-collapse: collapse; }
         .order-tbl thead tr { background: var(--off-white); }
         .order-tbl th {
@@ -767,43 +707,10 @@
             letter-spacing: 0.5px;
         }
         .order-num span { color: var(--green); }
-        .order-dt {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--grey-mid);
-        }
-        .order-items-text {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--grey-dark);
-            max-width: 220px;
-        }
-        .order-amount {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 18px;
-            font-weight: 900;
-            color: var(--green);
-        }
+        .order-dt { font-size: 12px; font-weight: 600; color: var(--grey-mid); }
+        .order-items-text { font-size: 12px; font-weight: 600; color: var(--grey-dark); max-width: 220px; }
+        .order-amount { font-family: 'Segoe UI', sans-serif; font-size: 18px; font-weight: 900; color: var(--green); }
 
-        /* status badges */
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        .badge-pending      { background: #fff8e1; color: #856404; border: 1px solid #ffe082; }
-        .badge-confirmed    { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
-        .badge-out-delivery { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
-        .badge-delivered    { background: #d4edda; color: #155724; border: 1px solid #81c784; }
-        .badge-picked-up    { background: #f3e5f5; color: #6a1b9a; border: 1px solid #ce93d8; }
-        .badge-no-show      { background: #fff3e0; color: #e65100; border: 1px solid #ffb74d; }
-        .badge-cancelled    { background: #fce4ec; color: #b71c1c; border: 1px solid #ef9a9a; }
-
-        /* order status spans */
         .order-status {
             padding: 6px 14px;
             border-radius: 20px;
@@ -821,7 +728,6 @@
         .status-no-show      { background: #fff3e0; color: #e65100; border: 1px solid #ffb74d; }
         .status-cancelled    { background: #fce4ec; color: #b71c1c; border: 1px solid #ef9a9a; }
 
-        /* action buttons */
         .action-grp { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; }
         .btn-reorder-new {
             background: var(--green);
@@ -838,10 +744,7 @@
             transition: all 0.2s;
             white-space: nowrap;
         }
-        .btn-reorder-new:hover {
-            background: var(--green-dark);
-            transform: translateY(-1px);
-        }
+        .btn-reorder-new:hover { background: var(--green-dark); transform: translateY(-1px); }
         .btn-cancel-new {
             background: transparent;
             color: var(--red);
@@ -857,10 +760,7 @@
             transition: all 0.2s;
             white-space: nowrap;
         }
-        .btn-cancel-new:hover {
-            background: var(--red);
-            color: var(--white);
-        }
+        .btn-cancel-new:hover { background: var(--red); color: var(--white); }
         .btn-delivered-new {
             background: transparent;
             color: var(--green);
@@ -876,10 +776,7 @@
             transition: all 0.2s;
             white-space: nowrap;
         }
-        .btn-delivered-new:hover {
-            background: var(--green);
-            color: var(--white);
-        }
+        .btn-delivered-new:hover { background: var(--green); color: var(--white); }
 
         .view-all-link {
             display: block;
@@ -897,7 +794,6 @@
         }
         .view-all-link:hover { background: var(--off-white); }
 
-        /* ── FOOTER ─────────────────────────────────────────── */
         .footer {
             background: var(--green-deep);
             border-top: 5px solid var(--yellow);
@@ -905,20 +801,9 @@
             padding: 36px 40px;
             margin-top: 48px;
         }
-        .footer a {
-            color: var(--yellow);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-            margin: 0 12px;
-        }
-        .footer p {
-            font-size: 12px;
-            color: rgba(255,255,255,0.4);
-            margin-top: 12px;
-        }
+        .footer a { color: var(--yellow); text-decoration: none; font-size: 13px; font-weight: 600; margin: 0 12px; }
+        .footer p { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 12px; }
 
-        /* ── MODALS ─────────────────────────────────────────── */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -930,6 +815,10 @@
             backdrop-filter: blur(4px);
         }
         .modal-overlay.active { display: flex; }
+        @keyframes modalIn {
+            from { transform: translateY(-24px) scale(0.97); opacity: 0; }
+            to   { transform: translateY(0) scale(1); opacity: 1; }
+        }
         .modal-box {
             background: var(--white);
             border-radius: 20px;
@@ -939,11 +828,6 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.25);
             animation: modalIn 0.25s ease-out;
         }
-        @keyframes modalIn {
-            from { transform: translateY(-24px) scale(0.97); opacity: 0; }
-            to   { transform: translateY(0) scale(1); opacity: 1; }
-        }
-        .modal-icon { font-size: 50px; text-align: center; margin-bottom: 16px; }
         .modal-head {
             font-family: 'Segoe UI', sans-serif;
             font-size: 28px;
@@ -953,48 +837,58 @@
             margin-bottom: 12px;
             letter-spacing: 0.5px;
         }
-        .modal-msg {
-            font-size: 14px;
-            color: var(--grey-mid);
-            text-align: center;
-            margin-bottom: 24px;
-            line-height: 1.6;
-        }
+        .modal-msg { font-size: 14px; color: var(--grey-mid); text-align: center; margin-bottom: 24px; line-height: 1.6; }
         .modal-btns { display: flex; gap: 10px; }
         .modal-btn-cancel-style {
-            flex: 1;
-            padding: 12px;
+            flex: 1; padding: 12px;
             border: 2px solid var(--grey-light);
             border-radius: 10px;
             background: transparent;
             color: var(--grey-dark);
             font-family: 'Segoe UI', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.2s;
+            font-size: 14px; font-weight: 700;
+            letter-spacing: 1px; text-transform: uppercase;
+            cursor: pointer; transition: all 0.2s;
         }
         .modal-btn-cancel-style:hover { background: var(--grey-light); }
         .modal-btn-confirm-style {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: var(--red);
-            color: var(--white);
+            flex: 1; padding: 12px;
+            border: none; border-radius: 10px;
+            background: var(--red); color: var(--white);
             font-family: 'Segoe UI', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.2s;
+            font-size: 14px; font-weight: 700;
+            letter-spacing: 1px; text-transform: uppercase;
+            cursor: pointer; transition: all 0.2s;
         }
         .modal-btn-confirm-style:hover { background: var(--red-dark); }
 
-        /* cancel order modal */
+        .alert-modal-box {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 36px 32px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            animation: modalIn 0.25s ease-out;
+        }
+        .alert-modal-icon { font-size: 56px; text-align: center; margin-bottom: 16px; }
+        .alert-modal-head {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 24px; font-weight: 900;
+            color: var(--ink); text-align: center;
+            margin-bottom: 12px; letter-spacing: 0.5px;
+        }
+        .alert-modal-msg { font-size: 14px; color: var(--grey-mid); text-align: center; margin-bottom: 24px; line-height: 1.6; }
+        .alert-modal-btn {
+            width: 100%; padding: 12px; border: none; border-radius: 10px;
+            background: var(--green); color: var(--white);
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px; font-weight: 700;
+            letter-spacing: 1px; text-transform: uppercase;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .alert-modal-btn:hover { background: var(--green-dark); }
+
         .cancel-modal-overlay {
             display: none;
             position: fixed;
@@ -1014,69 +908,43 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.25);
             animation: modalIn 0.25s ease-out;
         }
-        .cancel-modal-icon { font-size: 50px; text-align: center; margin-bottom: 16px; }
         .cancel-modal-head {
             font-family: 'Segoe UI', sans-serif;
-            font-size: 28px;
-            font-weight: 900;
-            color: var(--red);
-            text-align: center;
-            margin-bottom: 12px;
-            letter-spacing: 0.5px;
+            font-size: 28px; font-weight: 900;
+            color: var(--red); text-align: center;
+            margin-bottom: 12px; letter-spacing: 0.5px;
         }
-        .cancel-modal-body {
-            font-size: 14px;
-            color: var(--grey-mid);
-            text-align: center;
-            line-height: 1.6;
-            margin-bottom: 16px;
-        }
+        .cancel-modal-body { font-size: 14px; color: var(--grey-mid); text-align: center; line-height: 1.6; margin-bottom: 16px; }
         .cancel-warning-box {
             background: #fff8f0;
             border: 2px solid #ff9800;
             border-radius: 10px;
             padding: 12px 16px;
             margin-bottom: 24px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #e65100;
-            text-align: center;
+            font-size: 13px; font-weight: 700;
+            color: #e65100; text-align: center;
         }
         .cancel-modal-btns { display: flex; gap: 10px; }
         .cancel-confirm-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: var(--red);
-            color: var(--white);
+            flex: 1; padding: 12px; border: none; border-radius: 10px;
+            background: var(--red); color: var(--white);
             font-family: 'Segoe UI', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.2s;
+            font-size: 14px; font-weight: 700;
+            letter-spacing: 1px; text-transform: uppercase;
+            cursor: pointer; transition: all 0.2s;
         }
         .cancel-confirm-btn:hover { background: var(--red-dark); }
         .cancel-keep-btn {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid var(--grey-light);
-            border-radius: 10px;
-            background: transparent;
-            color: var(--grey-dark);
+            flex: 1; padding: 12px;
+            border: 2px solid var(--grey-light); border-radius: 10px;
+            background: transparent; color: var(--grey-dark);
             font-family: 'Segoe UI', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.2s;
+            font-size: 14px; font-weight: 700;
+            letter-spacing: 1px; text-transform: uppercase;
+            cursor: pointer; transition: all 0.2s;
         }
         .cancel-keep-btn:hover { background: var(--grey-light); }
 
-        /* ── DELETE ACCOUNT MODAL ─────────────────────────── */
         .delete-modal-box {
             background: var(--white);
             border-radius: 20px;
@@ -1086,61 +954,35 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.25);
             animation: modalIn 0.25s ease-out;
         }
-        .delete-modal-icon { font-size: 50px; text-align: center; margin-bottom: 16px; }
         .delete-modal-title {
             font-family: 'Segoe UI', sans-serif;
-            font-size: 28px;
-            font-weight: 900;
-            color: var(--red);
-            text-align: center;
-            margin-bottom: 12px;
-            letter-spacing: 0.5px;
+            font-size: 28px; font-weight: 900;
+            color: var(--red); text-align: center;
+            margin-bottom: 12px; letter-spacing: 0.5px;
         }
         .delete-modal-warning {
-            font-size: 14px;
-            color: var(--grey-dark);
-            text-align: center;
-            margin-bottom: 24px;
-            line-height: 1.6;
-            font-weight: 600;
+            font-size: 14px; color: var(--grey-dark);
+            text-align: center; margin-bottom: 24px;
+            line-height: 1.6; font-weight: 600;
         }
         .delete-input-group { margin-bottom: 24px; }
         .delete-input-label {
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--grey-mid);
-            margin-bottom: 8px;
-            display: block;
+            font-size: 12px; font-weight: 800;
+            letter-spacing: 1px; text-transform: uppercase;
+            color: var(--grey-mid); margin-bottom: 8px; display: block;
         }
         .delete-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--grey-light);
-            border-radius: 10px;
+            width: 100%; padding: 12px 16px;
+            border: 2px solid var(--grey-light); border-radius: 10px;
             font-family: 'Segoe UI', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--ink);
-            outline: none;
-            transition: border 0.2s;
+            font-size: 14px; font-weight: 600;
+            color: var(--ink); outline: none; transition: border 0.2s;
         }
         .delete-input:focus { border-color: var(--red); }
-        .delete-error-msg {
-            color: var(--red);
-            font-size: 12px;
-            font-weight: 700;
-            margin-top: 8px;
-            display: none;
-        }
+        .delete-error-msg { color: var(--red); font-size: 12px; font-weight: 700; margin-top: 8px; display: none; }
         .delete-error-msg.show { display: block; }
 
-        /* ── RESPONSIVE ─────────────────────────────────────── */
-        @media (max-width: 1100px) {
-            .page-body { grid-template-columns: 1fr; }
-            .sidebar { position: static; }
-        }
+        @media (max-width: 1100px) { .page-body { grid-template-columns: 1fr; } .sidebar { position: static; } }
         @media (max-width: 768px) {
             .page-body { padding: 20px 20px 48px; }
             .stats-row { grid-template-columns: repeat(2, 1fr); }
@@ -1148,14 +990,15 @@
             .hero-title { font-size: 64px; }
             .page-hero { padding: 32px 20px 0; }
         }
-        @media (max-width: 480px) {
-            .stats-row { grid-template-columns: 1fr; }
-            .hero-title { font-size: 52px; }
-        }
+        @media (max-width: 480px) { .stats-row { grid-template-columns: 1fr; } .hero-title { font-size: 52px; } }
+
+        .navbar-links .active { color: #f5c800 !important; }
+        .navbar-links .active::after { width: 0 !important; }
     </style>
 
     <script type="text/javascript">
         var currentOrderID = null;
+
         function cancelOrder(orderID) { currentOrderID = orderID; showCancelModal(); }
         function showCancelModal() {
             document.getElementById('cancelOrderModal').style.display = 'flex';
@@ -1178,8 +1021,11 @@
                 document.getElementById('<%= btnMarkDeliveredHidden.ClientID %>').click();
             }
         }
+        function reorderItems(orderID) {
+            document.getElementById('<%= hdnReorderOrderID.ClientID %>').value = orderID;
+            document.getElementById('<%= btnReorderHidden.ClientID %>').click();
+        }
 
-        // Delete Account Modal
         function showDeleteAccountModal() {
             document.getElementById('deleteAccountModal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -1193,13 +1039,24 @@
         function confirmDelete() {
             var password = document.getElementById('<%= txtDeletePassword.ClientID %>').value;
             if (!password) {
-                alert('Please enter your password');
+                showAlertModal('⚠️', 'Password Required', 'Please enter your password to delete your account.');
                 return false;
             }
             return true;
         }
 
-        // Security: Protect password fields
+        function showAlertModal(icon, title, message) {
+            document.getElementById('alertModalIcon').textContent = icon;
+            document.getElementById('alertModalTitle').textContent = title;
+            document.getElementById('alertModalMessage').textContent = message;
+            document.getElementById('alertModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeAlertModal() {
+            document.getElementById('alertModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             var passwordFields = document.querySelectorAll('input[type="password"]');
             passwordFields.forEach(function (field) {
@@ -1210,36 +1067,29 @@
             });
         });
 
-        // Detect DevTools and clear password
         var devtoolsOpen = false;
         setInterval(function () {
-            if (window.outerWidth - window.innerWidth > 160 ||
-                window.outerHeight - window.innerHeight > 160) {
+            if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
                 if (!devtoolsOpen) {
                     devtoolsOpen = true;
                     var passwordFields = document.querySelectorAll('input[type="password"]');
                     passwordFields.forEach(function (field) { field.value = ''; });
                 }
-            } else {
-                devtoolsOpen = false;
-            }
+            } else { devtoolsOpen = false; }
         }, 500);
 
-        // Disable inspect shortcuts
         document.addEventListener('keydown', function (e) {
             if (e.keyCode == 123 ||
                 (e.ctrlKey && e.shiftKey && e.keyCode == 73) ||
                 (e.ctrlKey && e.shiftKey && e.keyCode == 74) ||
                 (e.ctrlKey && e.keyCode == 85)) {
-                e.preventDefault();
-                return false;
+                e.preventDefault(); return false;
             }
         });
 
         document.addEventListener('DOMContentLoaded', function () {
             var modal = document.getElementById('cancelOrderModal');
             if (modal) modal.addEventListener('click', function (e) { if (e.target === this) closeCancelModal(); });
-
             var deleteModal = document.getElementById('deleteAccountModal');
             if (deleteModal) deleteModal.addEventListener('click', function (e) { if (e.target === this) closeDeleteAccountModal(); });
         });
@@ -1251,11 +1101,13 @@
     <asp:Button ID="btnCancelOrderHidden" runat="server" style="display:none;" OnClick="btnCancelOrder_Click" />
     <asp:HiddenField ID="hdnMarkDeliveredOrderID" runat="server" />
     <asp:Button ID="btnMarkDeliveredHidden" runat="server" style="display:none;" OnClick="btnMarkDelivered_Click" />
+    <asp:HiddenField ID="hdnReorderOrderID" runat="server" />
+    <asp:Button ID="btnReorderHidden" runat="server" style="display:none;" OnClick="btnReorder_Click" />
 
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="navbar-logo">
-            <img src="logopotcor.png" alt="Potato Corner" />
+            <img src="potato.png" alt="Potato Corner" />
         </div>
         <ul class="navbar-links">
             <li><a href="Default.aspx">Home</a></li>
@@ -1263,7 +1115,7 @@
             <li><a href="Membership.aspx">Membership</a></li>
             <li><a href="AboutUs.aspx">About Us</a></li>
             <li><a href="Order.aspx" class="btn-order-nav">Order Now</a></li>
-            <li><a href="Profile.aspx">Profile</a></li>
+            <li><a class="active" href="Profile.aspx">Profile</a></li>
         </ul>
     </nav>
 
@@ -1331,6 +1183,21 @@
                 </div>
             </div>
 
+            <!-- ── UPDATE PHONE NUMBER PANEL ── -->
+            <div class="phone-update-panel">
+                <span class="phone-update-label">Update Phone Number</span>
+                <asp:TextBox ID="txtNewPhone" runat="server"
+                    CssClass="phone-input"
+                    placeholder="Enter new phone number"
+                    MaxLength="15" />
+                <asp:Label ID="lblPhoneMsg" runat="server" Visible="false" />
+                <asp:Button ID="btnUpdatePhone" runat="server"
+                    Text="UPDATE PHONE"
+                    CssClass="btn-update-phone"
+                    OnClick="btnUpdatePhone_Click"
+                    CausesValidation="false" />
+            </div>
+
             <!-- Points Panel -->
             <div class="points-panel">
                 <div class="points-label-small">Available Points</div>
@@ -1350,8 +1217,7 @@
                     Text="USE POINTS ON NEXT ORDER"
                     CssClass="btn-use-points-new"
                     OnClick="btnUsePoints_Click" />
-                <asp:Label ID="lblPointsMsg" runat="server" Visible="false"
-                    CssClass="points-msg" />
+                <asp:Label ID="lblPointsMsg" runat="server" Visible="false" CssClass="points-msg" />
             </div>
 
             <!-- Sidebar Actions -->
@@ -1373,29 +1239,21 @@
 
             <!-- Stats Row -->
             <div class="stats-row">
-                <div class="stat-tile t-green" data-icon="📦">
+                <div class="stat-tile t-green">
                     <div class="stat-tile-label">Total Orders</div>
-                    <div class="stat-tile-value">
-                        <asp:Label ID="lblTotalOrders" runat="server" Text="0" />
-                    </div>
+                    <div class="stat-tile-value"><asp:Label ID="lblTotalOrders" runat="server" Text="0" /></div>
                 </div>
-                <div class="stat-tile t-red" data-icon="💳">
+                <div class="stat-tile t-red">
                     <div class="stat-tile-label">Total Spent</div>
-                    <div class="stat-tile-value">
-                        <asp:Label ID="lblTotalSpent" runat="server" Text="₱0.00" />
-                    </div>
+                    <div class="stat-tile-value"><asp:Label ID="lblTotalSpent" runat="server" Text="₱0.00" /></div>
                 </div>
-                <div class="stat-tile t-yellow" data-icon="📊">
+                <div class="stat-tile t-yellow">
                     <div class="stat-tile-label">Avg. Order</div>
-                    <div class="stat-tile-value">
-                        <asp:Label ID="lblAvgOrder" runat="server" Text="₱0.00" />
-                    </div>
+                    <div class="stat-tile-value"><asp:Label ID="lblAvgOrder" runat="server" Text="₱0.00" /></div>
                 </div>
-                <div class="stat-tile t-green-alt" data-icon="🏆">
+                <div class="stat-tile t-green-alt">
                     <div class="stat-tile-label">Biggest Order</div>
-                    <div class="stat-tile-value">
-                        <asp:Label ID="lblBiggestOrder" runat="server" Text="₱0.00" />
-                    </div>
+                    <div class="stat-tile-value"><asp:Label ID="lblBiggestOrder" runat="server" Text="₱0.00" /></div>
                 </div>
             </div>
 
@@ -1430,7 +1288,6 @@
                     </div>
                 </div>
 
-                <!-- Search -->
                 <div class="search-bar">
                     <asp:TextBox ID="txtSearchOrderID" runat="server"
                         CssClass="search-input"
@@ -1453,6 +1310,7 @@
 
                 <asp:Panel ID="pnlNoOrders" runat="server" Visible="false">
                     <div class="empty-state">
+                        <div class="empty-icon">📋</div>
                         <div class="empty-text">
                             <asp:Label ID="lblNoOrdersMsg" runat="server"
                                 Text="No orders yet. Start ordering to see your history here!" />
@@ -1477,27 +1335,17 @@
                                 OnItemCommand="rptOrderHistory_ItemCommand">
                                 <ItemTemplate>
                                     <tr>
-                                        <td class="order-num">
-                                            <span>#PC-</span><%# Eval("OrderID") %>
-                                        </td>
+                                        <td class="order-num"><span>#PC-</span><%# Eval("OrderID") %></td>
                                         <td class="order-dt">
                                             <%# Eval("OrderDate", "{0:MMM dd, yyyy}") %><br />
                                             <span style="color:#b0a99a;"><%# Eval("OrderDate", "{0:h:mm tt}") %></span>
                                         </td>
                                         <td class="order-items-text"><%# Eval("ItemsSummary") %></td>
-                                        <td class="order-amount">
-                                            PHP <%# Eval("TotalAmount", "{0:0.00}") %>
-                                        </td>
-                                        <td>
-                                            <%# GetOrderStatus((DateTime)Eval("OrderDate"), Eval("OrderStatus").ToString()) %>
-                                        </td>
+                                        <td class="order-amount">PHP <%# Eval("TotalAmount", "{0:0.00}") %></td>
+                                        <td><%# GetOrderStatus((DateTime)Eval("OrderDate"), Eval("OrderStatus").ToString()) %></td>
                                         <td>
                                             <div class="action-grp">
-                                                <asp:Button runat="server"
-                                                    Text="Reorder"
-                                                    CssClass="btn-reorder-new"
-                                                    CommandName="Reorder"
-                                                    CommandArgument='<%# Eval("OrderID") %>' />
+                                                <%# GetReorderButton(Eval("OrderStatus").ToString(), Eval("OrderID").ToString()) %>
                                                 <%# GetMarkDeliveredButton(Eval("DeliveryType").ToString(), Eval("OrderID").ToString(), Eval("OrderStatus").ToString()) %>
                                                 <%# GetCancelButton((DateTime)Eval("OrderDate"), Eval("OrderID").ToString(), Eval("OrderStatus").ToString()) %>
                                             </div>
@@ -1539,27 +1387,22 @@
         </div>
     </div>
 
-    <script>
-        function showLogoutModal() { document.getElementById('logoutModal').classList.add('active'); }
-        function hideLogoutModal() { document.getElementById('logoutModal').classList.remove('active'); }
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('logoutModal').addEventListener('click', function (e) {
-                if (e.target === this) hideLogoutModal();
-            });
-        });
-    </script>
+    <!-- ALERT MODAL -->
+    <div id="alertModal" class="modal-overlay">
+        <div class="alert-modal-box">
+            <div class="alert-modal-icon" id="alertModalIcon">⚠️</div>
+            <div class="alert-modal-head" id="alertModalTitle">Alert</div>
+            <div class="alert-modal-msg" id="alertModalMessage">This is an alert message.</div>
+            <button type="button" class="alert-modal-btn" onclick="closeAlertModal()">OK</button>
+        </div>
+    </div>
 
     <!-- CANCEL ORDER MODAL -->
     <div id="cancelOrderModal" class="cancel-modal-overlay">
         <div class="cancel-modal-box">
             <div class="cancel-modal-head">Cancel Order</div>
-            <div class="cancel-modal-body">
-                Are you sure you want to cancel this order?
-                This action cannot be undone.
-            </div>
-            <div class="cancel-warning-box">
-                Orders can only be cancelled within 10 minutes of placing.
-            </div>
+            <div class="cancel-modal-body">Are you sure you want to cancel this order? This action cannot be undone.</div>
+            <div class="cancel-warning-box">Orders can only be cancelled within 10 minutes of placing.</div>
             <div class="cancel-modal-btns">
                 <button type="button" class="cancel-confirm-btn" onclick="confirmCancelOrder()">Yes, Cancel</button>
                 <button type="button" class="cancel-keep-btn" onclick="closeCancelModal()">Keep Order</button>
@@ -1591,7 +1434,19 @@
         </div>
     </div>
 
-    <!-- AUTO-REFRESH -->
+    <script>
+        function showLogoutModal() { document.getElementById('logoutModal').classList.add('active'); }
+        function hideLogoutModal() { document.getElementById('logoutModal').classList.remove('active'); }
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('logoutModal').addEventListener('click', function (e) {
+                if (e.target === this) hideLogoutModal();
+            });
+            document.getElementById('alertModal').addEventListener('click', function (e) {
+                if (e.target === this) closeAlertModal();
+            });
+        });
+    </script>
+
     <script>
         var _snap = null, _paused = false;
         function checkChanges() {

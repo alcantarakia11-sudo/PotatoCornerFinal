@@ -192,7 +192,6 @@ namespace PotatoCornerSys
                 lblMembershipBadge.Text = "ROYALTY MEMBER";
                 lblMembershipBadge.CssClass = "membership-pill royalty";
 
-                // ✅ FIX: cast the runat="server" div to HtmlGenericControl
                 HtmlGenericControl card = (HtmlGenericControl)profileCardContainer;
                 card.Attributes["class"] = "profile-card royalty-gold";
 
@@ -285,11 +284,14 @@ namespace PotatoCornerSys
                         int.TryParse(Session["CustomerID"].ToString(), out customerID);
                     if (customerID == 0) return false;
 
+                    // Only treat as Royalty if admin has confirmed the membership request
                     string query = @"
                         SELECT m.MembershipNumber, m.RegistrationDate, m.ProfileImagePath, u.MembershipLevel
                         FROM Membership m
                         INNER JOIN USERS u ON m.CustomerID = u.CustomerID
-                        WHERE m.CustomerID = @CustomerID AND u.MembershipLevel = 'Royalty'";
+                        WHERE m.CustomerID = @CustomerID
+                          AND m.RequestStatus = 'Confirmed'
+                          AND u.MembershipLevel = 'Royalty'";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -322,7 +324,7 @@ namespace PotatoCornerSys
             {
                 System.Diagnostics.Debug.WriteLine("Error checking royalty membership: " + ex.Message);
             }
-            return Session["HasRoyaltyMembership"] != null && (bool)Session["HasRoyaltyMembership"];
+            return false;
         }
 
         private string GetProfilePicturePath()
@@ -699,6 +701,17 @@ namespace PotatoCornerSys
                                 ? "✓ Order #" + orderID + " has been cancelled successfully."
                                 : "✗ Failed to cancel order #" + orderID + ".";
                         }
+
+                        string customerName = Session["Username"]?.ToString() ?? "Customer";
+
+                        // Add the specific activity log format you requested
+                        ActivityLogHelper.LogActivity(
+                            "Order Cancelled",
+                            "Order #" + orderID + " was cancelled",
+                            Session["AdminName"]?.ToString() ?? "Admin",
+                            "Order #" + orderID,
+                            "Warning"
+                        );
                     }
                     Response.Redirect(Request.RawUrl);
                 }
@@ -736,6 +749,13 @@ namespace PotatoCornerSys
                 case "pending":
                 default: return "<span class='order-status status-pending'>Pending</span>";
             }
+        }
+
+        protected string GetReorderButton(string orderStatus, string orderID)
+        {
+            if (orderStatus == "Delivered" || orderStatus == "Picked Up")
+                return $"<button type='button' class='btn-reorder-new' onclick='reorderItems({orderID})'>Reorder</button>";
+            return "";
         }
 
         protected string GetMarkDeliveredButton(string deliveryType, string orderID, string orderStatus)
@@ -805,8 +825,6 @@ namespace PotatoCornerSys
             }
         }
 
-        // ── Button event handlers ─────────────────────────────────────────────
-
         protected void btnMarkDelivered_Click(object sender, EventArgs e)
         {
             try
@@ -819,7 +837,8 @@ namespace PotatoCornerSys
                 {
                     conn.Open();
                     string updateQuery = @"UPDATE Orders 
-                                          SET OrderStatus = 'Delivered', DeliveryTime = GETDATE() 
+                                          SET OrderStatus = 'Delivered', 
+                                              DeliveryTime = GETDATE() 
                                           WHERE OrderID = @OrderID 
                                           AND DeliveryType = 'Delivery' 
                                           AND OrderStatus = 'Out for Delivery'";
@@ -918,12 +937,151 @@ namespace PotatoCornerSys
                         cmd.Parameters.AddWithValue("@OrderID", int.Parse(orderID));
                         cmd.ExecuteNonQuery();
                     }
+
+                    string customerName = Session["Username"]?.ToString() ?? "Customer";
+
+                    // Add the specific activity log format you requested
+                    ActivityLogHelper.LogActivity(
+                        "Order Cancelled",
+                        "Order #" + orderID + " was cancelled",
+                        Session["AdminName"]?.ToString() ?? "Admin",
+                        "Order #" + orderID,
+                        "Warning"
+                    );
                 }
                 LoadOrderHistory();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Error cancelling order: " + ex.Message);
+            }
+        }
+
+        protected void btnReorder_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string orderID = hdnReorderOrderID.Value;
+                if (string.IsNullOrEmpty(orderID)) return;
+
+                string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string query = @"
+                        SELECT oi.ProductID, p.ProductName, oi.SizeID, ps.SizeName,
+                               oi.FlavorID, pf.FlavorName, oi.Quantity,
+                               (p.BasePrice + ISNULL(ps.PriceModifier, 0)) AS CurrentPrice,
+                               oi.UnitPrice AS OriginalPrice
+                        FROM OrderItems oi
+                        INNER JOIN Products p ON oi.ProductID = p.ProductID
+                        LEFT JOIN ProductSizes ps ON oi.SizeID = ps.SizeID
+                        LEFT JOIN ProductFlavors pf ON oi.FlavorID = pf.FlavorID
+                        WHERE oi.OrderID = @OrderID
+                        ORDER BY oi.OrderItemID";
+
+                    List<Order.CartItem> cart = new List<Order.CartItem>();
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@OrderID", Convert.ToInt32(orderID));
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                cart.Add(new Order.CartItem
+                                {
+                                    Product = reader["ProductName"].ToString(),
+                                    Size = reader["SizeName"]?.ToString() ?? "Regular",
+                                    Flavor = reader["FlavorName"]?.ToString() ?? "Salt",
+                                    Qty = Convert.ToInt32(reader["Quantity"]),
+                                    UnitPrice = Convert.ToDecimal(reader["CurrentPrice"])
+                                });
+                            }
+                        }
+                    }
+
+                    if (cart.Count > 0)
+                    {
+                        Session["Cart"] = cart;
+                        Session["ReorderMessage"] = "✓ Previous order loaded! Review and confirm your order.";
+                        Response.Redirect("Order.aspx");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error reordering: " + ex.Message);
+            }
+        }
+        protected void btnUpdatePhone_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string newPhone = txtNewPhone.Text.Trim();
+
+                if (string.IsNullOrEmpty(newPhone))
+                {
+                    lblPhoneMsg.Text = "✗ Please enter a phone number.";
+                    lblPhoneMsg.ForeColor = System.Drawing.Color.Red;
+                    lblPhoneMsg.Visible = true;
+                    return;
+                }
+
+                if (newPhone.Length < 7 || newPhone.Length > 15)
+                {
+                    lblPhoneMsg.Text = "✗ Phone number must be 7–15 digits.";
+                    lblPhoneMsg.ForeColor = System.Drawing.Color.Red;
+                    lblPhoneMsg.Visible = true;
+                    return;
+                }
+
+                int customerID = 0;
+                if (Session["CustomerID"] != null)
+                    int.TryParse(Session["CustomerID"].ToString(), out customerID);
+
+                if (customerID == 0)
+                {
+                    Response.Redirect("Login.aspx");
+                    return;
+                }
+
+                string connectionString = ConfigurationManager.ConnectionStrings["PotatoCornerDB"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string query = "UPDATE USERS SET PhoneNumber = @PhoneNumber WHERE CustomerID = @CustomerID";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@PhoneNumber", newPhone);
+                        cmd.Parameters.AddWithValue("@CustomerID", customerID);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                // Update session and displayed label
+                Session["Phone"] = newPhone;
+                lblInfoPhone.Text = newPhone;
+                txtNewPhone.Text = "";
+
+                lblPhoneMsg.Text = "✓ Phone number updated successfully!";
+                lblPhoneMsg.ForeColor = System.Drawing.Color.Green;
+                lblPhoneMsg.Visible = true;
+
+                // Log the activity
+                ActivityLogHelper.LogActivity(
+                    "edit",
+                    "Customer updated phone number",
+                    Session["Username"]?.ToString() ?? "Customer",
+                    "CustomerID #" + customerID,
+                    "Info"
+                );
+            }
+            catch (Exception ex)
+            {
+                lblPhoneMsg.Text = "✗ Error updating phone: " + ex.Message;
+                lblPhoneMsg.ForeColor = System.Drawing.Color.Red;
+                lblPhoneMsg.Visible = true;
+                System.Diagnostics.Debug.WriteLine("Error updating phone: " + ex.Message);
             }
         }
     }

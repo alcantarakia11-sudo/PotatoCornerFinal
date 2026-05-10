@@ -242,7 +242,7 @@
                 </div>
 
                 <div class="back-link">
-                    <a href="Profile.aspx" class="btn-back">Back to Profile</a>
+                    <a href="AccountAdmin.aspx" class="btn-back">Back to Profile</a>
                 </div>
             </div>
         </div>

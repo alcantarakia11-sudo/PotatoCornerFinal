@@ -72,10 +72,19 @@ namespace PotatoCornerSys
                         cmd.Parameters.AddWithValue("@Address", address);
                         cmd.Parameters.AddWithValue("@Email", email);
                         cmd.Parameters.AddWithValue("@Phone", phone);
-                        cmd.Parameters.AddWithValue("@Password", password);
+                        cmd.Parameters.AddWithValue("@Password", PasswordHelper.HashPassword(password));
 
                         if (cmd.ExecuteNonQuery() > 0)
                         {
+                            // Add activity log for user registration
+                            ActivityLogHelper.LogActivity(
+                                "User Registration",
+                                "New user registered: " + name,
+                                name,
+                                "USERS",
+                                "Info"
+                            );
+
                             lblMessage.Text = "✓ Registration successful! Redirecting to login...";
                             lblMessage.CssClass = "success-msg";
                             lblMessage.Visible = true;
